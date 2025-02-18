@@ -41,11 +41,6 @@ spring:
   web:
     resources:
       static-locations: classpath:/static/, classpath:/public/
-#MyBatis ??
-mybatis:
-  mapper-locations: mappers/**/*.xml
-
-
   jpa:
     database: mysql
     hibernate:
@@ -58,6 +53,12 @@ mybatis:
         format_sql: true
         order_updates: true
     show-sql: true
+
+#MyBatis ??
+mybatis:
+  mapper-locations: mappers/**/*.xml
+
+
 
 #Swagger ??
 springdoc:
