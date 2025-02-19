@@ -16,9 +16,9 @@ public class Admin extends UpdatedAt{
     @Column(name = "admin_id")
     private Long adminId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "code", nullable = false)
-//    private Code code;
+    @ManyToOne
+    @JoinColumn(name = "code", nullable = false)
+    private Code code;
 
     @Column
     private Long divisionId;
