@@ -108,4 +108,11 @@
         , phone = #{phone}
         , created_at = "2025-02-19 16:18:02.000000"
     </insert>
+
+    <select id="signInAdminByAid">
+        SELECT admin_id AS adminId, `code` AS code, aid
+             , apw, name, email, phone, division_id AS divisionId
+          FROM admin A
+         WHERE aid = #{aid}
+    </select>
 </mapper>

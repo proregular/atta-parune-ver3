@@ -176,6 +176,31 @@ public class AdminService {
         return res;
     }
 
+    //시스템관리자 로그인
+    @Transactional
+    public SignInAdminRes signInAdmin(SignInAdminReq p, HttpServletResponse response) {
+        SignInAdminRes res = adminMapper.signInAdminByAid(p.getAid());
+
+        if(res == null || !BCrypt.checkpw(p.getApw(), res.getApw())) {
+            throw new CustomException("아이디 혹은 비밀번호를 확인해 주세요.", HttpStatus.BAD_REQUEST);
+        }else{
+            // AT, RT
+            JwtUser jwtUser = new JwtUser();
+
+            jwtUser.setSignedUserId(res.getAdminId());
+            jwtUser.setRoles(res.getCode());
+
+            String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
+            String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
+
+            //RT를 쿠키에 담는다.
+            cookieUtils.setCookie(response, jwtConst.getRefreshTokenCookieName(), refreshToken, jwtConst.getRefreshTokenCookieExpiry());
+            res.setAccessToken(accessToken);
+        }
+
+        return res;
+
+    }
     // 아이디 찾기
     public int findId(AdminFindIdReq p) {
         // 이메일이 존재하는지
