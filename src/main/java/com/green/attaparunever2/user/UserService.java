@@ -11,6 +11,7 @@ import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.model.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +19,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -37,6 +43,9 @@ public class UserService {
     private final JwtConst jwtConst;
     private final AuthenticationFacade authenticationFacade;
     private final UserEmailVerificationRepository userEmailVerificationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // 회원가입
     @Transactional
@@ -281,6 +290,20 @@ public class UserService {
         }
 
         return result;
+    }
+
+    // 회원 정보 수정
+    @Transactional
+    public User updateUserInfo(Long userId, String nickName, String phone) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setNickName(nickName);
+            user.setPhone(phone);
+            return userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
 }

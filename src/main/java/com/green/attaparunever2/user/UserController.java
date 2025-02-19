@@ -2,6 +2,7 @@ package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +12,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -184,4 +187,15 @@ public class UserController {
                 .resultData(result)
                 .build();
     }
+
+    //회원 정보 수정
+//    @PutMapping("v3/userInfo/{userId}")
+//    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
+//    public ResponseEntity<User> updateUser(@PathVariable Long userId,
+//                                           @RequestParam String nickName,
+//                                           @RequestParam String phone,
+//                                           @RequestParam(required = false) String userPic) {
+//        User updatedUser = userService.updateUserInfo(userId, nickName, phone, userPic);
+//        return ResponseEntity.ok(updatedUser);
+//    }
 }
