@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("admin")
@@ -114,6 +116,30 @@ public class AdminController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("비밀번호 찾기가 완료 되었습니다.")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("v3/CompanyPayment")
+    @Operation(summary = "회사 포인트 판매 내역 조회")
+    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
+        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+
+        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 포인트 판매 내역조회")
+                .resultData(res)
+                .build();
+    }
+
+    @PostMapping("v3/signUpAdmin")
+    @Operation(summary = "시스템 관리자 회원가입")
+    public ResultResponse<Integer> signUpAdmin(@RequestBody SignAdminReq p) {
+        int result = adminService.SignUpAdmin(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("시스템 관리자 회원가입 완료")
                 .resultData(result)
                 .build();
     }

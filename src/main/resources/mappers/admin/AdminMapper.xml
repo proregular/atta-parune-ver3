@@ -88,4 +88,24 @@
         </set>
         WHERE admin_id = #{adminId}
     </update>
+
+    <select id="getCompanyPayment">
+        SELECT A.created_at AS createdAt, A.cash_amount AS cashAmount, A.point_amount AS cashAmount, A.admin_id AS adminId, C.name AS name
+        FROM company_point_deposit A
+        INNER JOIN  `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id
+    </select>
+
+    <insert id="signAdmin" useGeneratedKeys="true" keyProperty="adminId">
+        INSERT INTO `admin`
+        SET `code` = '00103'
+        , aid = #{aid}
+        , apw = #{apw}
+        , `name` = #{name}
+        , email = #{email}
+        , phone = #{phone}
+        , created_at = "2025-02-19 16:18:02.000000"
+    </insert>
 </mapper>

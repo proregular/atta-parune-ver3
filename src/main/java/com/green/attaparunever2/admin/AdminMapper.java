@@ -3,6 +3,8 @@ package com.green.attaparunever2.admin;
 import com.green.attaparunever2.admin.model.*;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface AdminMapper {
     int insAdmin(AdminSignUpReq p);
@@ -16,4 +18,8 @@ public interface AdminMapper {
     int delAdminEmailVerification(long adminId);
 
     int patchUpw(AdminUpwPatchReq p);
+
+
+    List<getCompanyPaymentRes> getCompanyPayment();
+    int signAdmin(SignAdminReq p);
 }
