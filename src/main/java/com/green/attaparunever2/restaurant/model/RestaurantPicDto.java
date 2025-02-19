@@ -9,5 +9,6 @@ import java.util.List;
 @Setter
 public class RestaurantPicDto {
     private long restaurantId;
-    private List<String> filePath;
+    private long picId;
+    private List<String> filePath /*picName*/;
 }

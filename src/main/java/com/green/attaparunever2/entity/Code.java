@@ -11,11 +11,11 @@ import lombok.ToString;
 @ToString
 public class Code {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long code;
+    @Column(length = 5)
+    private String code;
 
-    @Column(length = 2)
+    @Column(length = 3)
     private String codeId;
-    @Column(length = 10, nullable = false)
+    @Column(length = 15, nullable = false)
     private String name;
 }

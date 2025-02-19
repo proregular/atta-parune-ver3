@@ -104,17 +104,17 @@ public class RestaurantController {
                 .build();
     }
 
-    @GetMapping("main")
-    @Operation(summary = "메인 화면 식당 조회")
-    public ResultResponse<List<SelRestaurantMainRes>> getRestaurantMain(@ParameterObject @ModelAttribute SelRestaurantMainReq p){
-        List<SelRestaurantMainRes> res = restaurantService.getRestaurantMain(p);
-
-        return ResultResponse.<List<SelRestaurantMainRes>>builder()
-                .statusCode("200")
-                .resultMsg("메인 화면 식당 정보 조회 완료")
-                .resultData(res)
-                .build();
-    }
+//    @GetMapping("main")
+//    @Operation(summary = "메인 화면 식당 조회")
+//    public ResultResponse<List<SelRestaurantMainRes>> getRestaurantMain(@ParameterObject @ModelAttribute SelRestaurantMainReq p){
+//        List<SelRestaurantMainRes> res = restaurantService.getRestaurantMain(p);
+//
+//        return ResultResponse.<List<SelRestaurantMainRes>>builder()
+//                .statusCode("200")
+//                .resultMsg("메인 화면 식당 정보 조회 완료")
+//                .resultData(res)
+//                .build();
+//    }
 
     @GetMapping("dashboard")
     @Operation(summary = "식당 매출정보 대시보드 조회")
@@ -140,4 +140,17 @@ public class RestaurantController {
                 .build();
     }
 
+    //------------------------------------------------------------------------------------------------------------------------------------------
+
+    @GetMapping("v3/main")
+    @Operation(summary = "메인 화면 식당 조회")
+    public ResultResponse<List<GetRestaurantMainRes>> getRestaurantMain(@ParameterObject @ModelAttribute GetRestaurantMainReq req){
+        List<GetRestaurantMainRes> res = restaurantService.getRestaurantMainV3(req);
+
+        return ResultResponse.<List<GetRestaurantMainRes>>builder()
+                .statusCode("200")
+                .resultMsg("메인 화면 식당 정보 조회 완료")
+                .resultData(res)
+                .build();
+    }
 }

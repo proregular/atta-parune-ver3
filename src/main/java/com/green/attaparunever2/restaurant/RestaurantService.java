@@ -234,4 +234,23 @@ public class RestaurantService {
 
         return orderList;
     }
+
+
+
+    //2차 기능 개선 작업 코드 ---------------------------------------------------------------------------------------------
+
+    public List<GetRestaurantMainRes> getRestaurantMainV3(GetRestaurantMainReq req){
+        // 식당 정보 불러오기
+        List<GetRestaurantMainRes> res = restaurantMapper.selRestaurantMainV3(req);
+        // 식당 사진 불러오기
+        for (GetRestaurantMainRes item : res) {
+            List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(item.getRestaurantId());
+
+            if(!picList.isEmpty()) {
+                item.setRestaurantPic(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
+            }
+        }
+
+        return res;
+    }
 }
