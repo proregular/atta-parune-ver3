@@ -28,10 +28,13 @@ public class Restaurant extends UpdatedAt{
     @Column(length = 20, nullable = false)
     private String restaurantNumber;
 
-    @Column(length = 20)
-    private String operatingHours;
+    @Column(nullable = false, length = 20, unique = true)
+    private String businessNumber;
 
     @Column(length = 50)
+    private String operatingHours;
+
+    @Column(length = 200)
     private String restaurantDescription;
 
     @Column(nullable = false, columnDefinition = "int default 0")
@@ -46,7 +49,7 @@ public class Restaurant extends UpdatedAt{
     @Column(nullable = false)
     private double lng;
 
-    @Column
+    @Column(length = 6)
     private String paymentPassword;
 
 }

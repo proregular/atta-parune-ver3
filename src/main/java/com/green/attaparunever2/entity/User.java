@@ -21,7 +21,7 @@ public class User extends UpdatedAt{
     @JoinColumn(name = "code", nullable = false)
     private Code code;
 
-    @Column(nullable = false, length = 8)
+    @Column(nullable = false, length = 8, unique = true)
     private String uid;
 
     @Column(nullable = false, length = 100)
@@ -30,10 +30,13 @@ public class User extends UpdatedAt{
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Column(length = 50)
-    private String pic;
+    @Column(length = 20)
+    private String nickName;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
+    private String userPic;
+
+    @Column(nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(nullable = false, length = 11)

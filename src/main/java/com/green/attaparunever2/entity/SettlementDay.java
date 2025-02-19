@@ -15,6 +15,6 @@ public class SettlementDay extends UpdatedAt{
     @Column(name = "settlement_day_id")
     private Long settlementDayId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String settlementDay;
 }

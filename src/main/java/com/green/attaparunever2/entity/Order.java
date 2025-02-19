@@ -24,10 +24,10 @@ public class Order extends CreatedAt{
     @JoinColumn(name = "user_id", nullable = false)
     private User userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 0")
     private int reservationYn;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int default 0")
     private int reservationStatus;
 
 }
