@@ -236,4 +236,25 @@
         GROUP BY dr.report_date
         ORDER BY dr.report_date
     </select>
+
+    <!-- ver3 쿼리 -->
+
+    <!-- 사용자 메인 화면 식당 조회 -->
+    <select id="selRestaurantMainV3">
+        SELECT restaurant_id AS restaurantId, restaurant_name AS restaurantName
+        , restaurant_address AS restaurantAddress
+        , (
+            SELECT IFNULL(
+                    AVG(
+                        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
+                    ), 40)
+            FROM meal_time B
+            WHERE B.restaurant_id = A.restaurant_id
+            AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
+        ) AS mealTimeAvg
+        FROM restaurant A
+        WHERE A.`status` = 0
+        AND A.category_id = #{categoryId}
+        LIMIT #{startIdx}, #{size}
+    </select>
 </mapper>
