@@ -12,7 +12,7 @@ public class Company extends UpdatedAt{
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
     private Long companyId;
 
-    @Column(nullable = false, length = 4)
+    @Column(nullable = false, length = 4, unique = true)
     private String companyCd;
 
     @Column(nullable = false, length = 50)
@@ -24,7 +24,7 @@ public class Company extends UpdatedAt{
     @Column(nullable = false, length = 30)
     private String ceoName;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 10, unique = true)
     private String businessNumber;
 
     @Column(nullable = false, columnDefinition = "int default 0")

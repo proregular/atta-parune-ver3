@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @Setter
-public class CompanyTicketCreationTime {
+public class CompanyTicketCreationTime extends UpdatedAt{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
     private Long creationId;

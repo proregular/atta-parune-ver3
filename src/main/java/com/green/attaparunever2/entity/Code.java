@@ -14,7 +14,7 @@ public class Code {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long code;
 
-    @Column(length = 2, nullable = false)
+    @Column(length = 2)
     private String codeId;
     @Column(length = 10, nullable = false)
     private String name;
