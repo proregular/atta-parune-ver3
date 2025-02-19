@@ -36,6 +36,7 @@ public class UserService {
     private final CookieUtils cookieUtils;
     private final JwtConst jwtConst;
     private final AuthenticationFacade authenticationFacade;
+    private final UserEmailVerificationRepository userEmailVerificationRepository;
 
     // 회원가입
     @Transactional
