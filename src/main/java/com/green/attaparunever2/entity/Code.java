@@ -16,6 +16,6 @@ public class Code {
 
     @Column(length = 3)
     private String codeId;
-    @Column(length = 10, nullable = false)
+    @Column(length = 15, nullable = false)
     private String name;
 }
