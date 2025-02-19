@@ -12,8 +12,8 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class JacksonFormatConfiguration {
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer(@Value("${constants.jackson.date-format}") final String dateFormat
-                                                                                      , @Value("${constants.jackson.datetime-format}") final String dateTimeFormat) {
+    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer(@Value("${constant.jackson.date-format}") final String dateFormat
+                                                                                      , @Value("${constant.jackson.datetime-format}") final String dateTimeFormat) {
         return builder -> {
             builder.simpleDateFormat(dateFormat)
                     .serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(dateFormat)))
