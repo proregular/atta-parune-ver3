@@ -52,4 +52,10 @@
         WHERE restaurant_id = #{restaurantId}
         LIMIT 1
     </select>
+
+    <select id="selRestaurantPicByRestaurantIdV3">
+        SELECT pic_id AS picId, restaurant_id AS restaurantId, file_path AS filePath /* pic_name AS picName */
+        FROM restaurant_pic
+        WHERE restaurant_id = #{restaurantId}
+    </select>
 </mapper>

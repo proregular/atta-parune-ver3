@@ -19,4 +19,5 @@ public interface RestaurantPicMapper {
     RestaurantPicSel selRestaurantPic(long restaurantId);
     List<RestaurantPicAroundSel> selRestaurantAroundPic(long restaurantId);
     RestaurantPicAroundSel selRestaurantMainPic(long restaurantId);
+    List<RestaurantPicDto> selRestaurantPicByRestaurantIdV3(long restaurantId);
 }
