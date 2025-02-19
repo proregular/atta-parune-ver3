@@ -13,6 +13,7 @@ import lombok.ToString;
 public class Admin extends UpdatedAt{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "admin_id")
     private Long adminId;
 
 //    @ManyToOne
