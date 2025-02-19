@@ -10,6 +10,7 @@ import lombok.Setter;
 public class User extends UpdatedAt{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
+    @Column(name = "user_id")
     private Long userId;
 
     @ManyToOne
