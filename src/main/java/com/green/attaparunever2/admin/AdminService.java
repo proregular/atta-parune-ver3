@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -84,6 +85,7 @@ public class AdminService {
         
         return result;
     }
+
 
     // 관리자 정보 조회
     public AdminGetRes getAdmin(AdminGetReq p) {
@@ -246,6 +248,22 @@ public class AdminService {
         } else {
             throw new CustomException("아이디 혹은 이메일이 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
+
+        return result;
+    }
+
+    public List<getCompanyPaymentRes> getCompanyPayment(){
+        List<getCompanyPaymentRes> res = adminMapper.getCompanyPayment();
+
+        return res;
+    }
+
+    //시스템 관리자 회원가입
+    @Transactional
+    public int SignUpAdmin(SignAdminReq p){
+        p.setApw(BCrypt.hashpw(p.getApw(), BCrypt.gensalt()));
+
+        int result = adminMapper.signAdmin(p);
 
         return result;
     }
