@@ -1,4 +1,8 @@
 package com.green.attaparunever2.user;
 
-public interface UserRepository {
+import com.green.attaparunever2.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+
 }
