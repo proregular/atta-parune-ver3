@@ -25,4 +25,6 @@ public interface RestaurantMapper {
     List<RestaurantWeekOrderCountDto> selRestaurantWeekOrderCount(SelRestaurantWeekOrderReq req);
     // 식당 매출 정보 조회
     List<SelRestaurantOrderRes> selRestaurantPointByCreatedAt(SelRestaurantOrderReq req);
+
+    List<GetRestaurantMainRes> selRestaurantMainV3(GetRestaurantMainReq p);
 }
