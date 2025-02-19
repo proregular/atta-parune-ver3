@@ -23,7 +23,7 @@ public class Admin extends UpdatedAt{
     @Column
     private Long divisionId;
 
-    @Column(length = 50)
+    @Column(length = 50, unique = true)
     private String aid;
 
     @Column(length = 100)
@@ -35,7 +35,7 @@ public class Admin extends UpdatedAt{
     @Column
     private int coalitionState;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
 
     @Column(length = 11)
