@@ -4,10 +4,15 @@ import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.company.model.CompanyStatusReq;
 import com.green.attaparunever2.company.model.CompanyStatusRes;
 import com.green.attaparunever2.company.model.SignUpEmployeeReq;
+import com.green.attaparunever2.entity.Company;
+import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.user.UserEmailVerificationRepository;
 import com.green.attaparunever2.user.UserMapper;
+import com.green.attaparunever2.user.UserRepository;
 import com.green.attaparunever2.user.model.UserMailVerificationDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.*;
@@ -19,16 +24,17 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyMapper companyMapper;
+    private final UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserEmailVerificationRepository userEmailVerificationRepository;
+    private final CompanyRepository companyRepository;
 
     //Status API 호출 URL
     private String STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
@@ -117,5 +123,27 @@ public class CompanyService {
 
         return companyStatusRes;
 
+    }
+
+    public int postEmployee(SignUpEmployeeReq req) {
+        // 인증정보 조회(만약 인증이 만료된 아이디로 가입하려는 경우 인증 정보를 지우고 유저 정보도 지워야 함)
+        UserMailVerificationDTO userMailVerificationDTO = userMapper.selUserEmailVerificationByUId(req.getUid());
+
+        if(userMailVerificationDTO != null) {
+            LocalDateTime now = LocalDateTime.now();
+
+            // 인증 기간이 만료되었다면 인증, 회원정보 삭제
+            if (now.isAfter(DateTimeUtils.convertToLocalDateTime(userMailVerificationDTO.getExpiredDate()))) {
+                userEmailVerificationRepository.deleteById(userMailVerificationDTO.getUserId());
+                userRepository.deleteById(userMailVerificationDTO.getUserId());
+            }
+        }
+
+        // 비밀번호 암호화
+        req.setUpw(BCrypt.hashpw(req.getUpw(), BCrypt.gensalt()));
+
+
+
+         return 0;
     }
 }

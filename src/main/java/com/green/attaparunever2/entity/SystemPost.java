@@ -15,16 +15,12 @@ public class SystemPost extends UpdatedAt {
     private Long inquiryId;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id")
-    private Admin admin;
+    @JoinColumn(name = "post_code", nullable = false)
+    private Code post;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "code", nullable = false)
-    private Code code;
+    @JoinColumn(name = "role_code", nullable = false)
+    private Code role;
 
     @Column(length = 20, nullable = false)
     private String inquiryTitle;
@@ -34,4 +30,7 @@ public class SystemPost extends UpdatedAt {
 
     @Column(length = 300)
     private String pic;
+
+    @Column(nullable = false)
+    private Long Id;
 }
