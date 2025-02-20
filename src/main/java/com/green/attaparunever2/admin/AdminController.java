@@ -68,6 +68,18 @@ public class AdminController {
                 .build();
     }
 
+    @PostMapping("v3/sign-in")
+    @Operation(summary = "관리자 로그인")
+    public ResultResponse<?> signInAdmin(@RequestBody SignInAdminReq p, HttpServletResponse response) {
+        SignInAdminRes res = adminService.signInAdmin(p, response);
+
+        return ResultResponse.<SignInAdminRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("로그인 성공")
+                .resultData(res)
+                .build();
+    }
+
     @DeleteMapping
     @Operation(summary = "관리자 삭제")
     public ResultResponse<Integer> delAdmin(@ModelAttribute AdminDelReq p) {
