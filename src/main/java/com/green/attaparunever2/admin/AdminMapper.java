@@ -23,4 +23,5 @@ public interface AdminMapper {
     List<getCompanyPaymentRes> getCompanyPayment();
     int signAdmin(SignAdminReq p);
     SignInAdminRes signInAdminByAid(String aId);
+    List<SelRefundRes> selRefund();
 }
