@@ -3,9 +3,8 @@ package com.green.attaparunever2.company;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
-import com.green.attaparunever2.company.model.CompanyStatusReq;
-import com.green.attaparunever2.company.model.CompanyStatusRes;
-import com.green.attaparunever2.company.model.SignUpEmployeeReq;
+import com.green.attaparunever2.company.model.*;
+import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.Company;
 import com.green.attaparunever2.entity.User;
@@ -176,5 +175,15 @@ public class CompanyService {
         userRepository.save(user);
 
         return 1;
+    }
+
+    public List<GetEmployeeRes> getEmployee(GetEmployeeReq req) {
+        List<GetEmployeeRes> list = companyMapper.selEmployee(req);
+
+        if (list == null || list.isEmpty()) {
+            throw new CustomException("조건에 맞는 사원이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        return list;
     }
 }
