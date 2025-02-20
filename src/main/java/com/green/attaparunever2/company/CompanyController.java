@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("company")
-@Tag(name="회사 가입정보", description = "가입한 회사정보관련 API")
+@Tag(name="회사", description = "가입한 회사정보관련 API")
 public class CompanyController {
     private final CompanyService companyService;
 
