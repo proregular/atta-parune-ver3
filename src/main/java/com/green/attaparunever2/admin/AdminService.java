@@ -5,11 +5,13 @@ import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.admin.model.*;
+import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.config.CookieUtils;
 import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
 import com.green.attaparunever2.user.MailSendService;
@@ -39,6 +41,7 @@ public class AdminService {
     private final CookieUtils cookieUtils;
     private final JwtConst jwtConst;
     private final AuthenticationFacade authenticationFacade;
+    private final CodeRepository codeRepository;
 
     // 관리자 회원가입
     @Transactional
@@ -188,7 +191,8 @@ public class AdminService {
             JwtUser jwtUser = new JwtUser();
 
             jwtUser.setSignedUserId(res.getAdminId());
-            jwtUser.setRoles(res.getCode());
+            Code code = codeRepository.findByCode(res.getCode());
+            jwtUser.setRoles(code.getName());
 
             String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
             String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
