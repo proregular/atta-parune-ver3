@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                                                 , "/api/admin/access-token"
                                                 ,"api/admin/find-passowrd"
                                                 ,"api/admin/v3/signUpAdmin"
+                                                ,"api/admin/v3/sign-in"
                                                 , "/api/restaurant"
                                                 , "/api/restaurant/main"
                                                 , "/api/restaurant/around"
