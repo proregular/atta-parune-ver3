@@ -1,13 +1,12 @@
 package com.green.attaparunever2.company;
 
 import com.green.attaparunever2.common.model.ResultResponse;
-import com.green.attaparunever2.company.model.CompanyStatusReq;
-import com.green.attaparunever2.company.model.CompanyStatusRes;
-import com.green.attaparunever2.company.model.SignUpEmployeeReq;
+import com.green.attaparunever2.company.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +44,16 @@ public class CompanyController {
                 .build();
     }
 
+    @GetMapping("v3/employee")
+    @Operation(summary = "사원 정보 조회")
+    public ResultResponse<List<GetEmployeeRes>> getEmployee(@ParameterObject GetEmployeeReq req) {
+        List<GetEmployeeRes> list = companyService.getEmployee(req);
+
+        return ResultResponse.<List<GetEmployeeRes>>builder()
+                .statusCode("200")
+                .resultMsg("사원 정보 조회 성공")
+                .resultData(list)
+                .build();
+    }
 
 }
