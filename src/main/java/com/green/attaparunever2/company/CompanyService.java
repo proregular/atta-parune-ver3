@@ -1,9 +1,12 @@
 package com.green.attaparunever2.company;
 
 import com.green.attaparunever2.common.DateTimeUtils;
+import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.model.CompanyStatusReq;
 import com.green.attaparunever2.company.model.CompanyStatusRes;
 import com.green.attaparunever2.company.model.SignUpEmployeeReq;
+import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.Company;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.UserEmailVerificationRepository;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
@@ -35,6 +39,7 @@ public class CompanyService {
     private final UserRepository userRepository;
     private final UserEmailVerificationRepository userEmailVerificationRepository;
     private final CompanyRepository companyRepository;
+    private final CodeRepository codeRepository;
 
     //Status API 호출 URL
     private String STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
@@ -125,9 +130,25 @@ public class CompanyService {
 
     }
 
+    @Transactional
     public int postEmployee(SignUpEmployeeReq req) {
+        // 회사 정보 조회
+        Company company = companyRepository.findById(req.getCompanyId()).orElse(null);
+        if (company == null) {
+            throw new CustomException("회사를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        // 코드 조회
+        Code code = codeRepository.findById("00104").orElse(null);
+        if (code == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // uid 설정
+        String companyCd = company.getCompanyCd();
+        String uid = companyCd + req.getEmployeeNum();
+
         // 인증정보 조회(만약 인증이 만료된 아이디로 가입하려는 경우 인증 정보를 지우고 유저 정보도 지워야 함)
-        UserMailVerificationDTO userMailVerificationDTO = userMapper.selUserEmailVerificationByUId(req.getUid());
+        UserMailVerificationDTO userMailVerificationDTO = userMapper.selUserEmailVerificationByUId(uid);
 
         if(userMailVerificationDTO != null) {
             LocalDateTime now = LocalDateTime.now();
@@ -140,10 +161,20 @@ public class CompanyService {
         }
 
         // 비밀번호 암호화
-        req.setUpw(BCrypt.hashpw(req.getUpw(), BCrypt.gensalt()));
+        String hashedPassword = BCrypt.hashpw(req.getUpw(), BCrypt.gensalt());
 
+        // 유저 정보 설정
+        User user = new User();
+        user.setCompany(company);
+        user.setName(req.getName());
+        user.setPhone(req.getPhone());
+        user.setEmail(req.getEmail());
+        user.setUid(uid);
+        user.setUpw(hashedPassword);
+        user.setCode(code);
 
+        userRepository.save(user);
 
-         return 0;
+        return 1;
     }
 }
