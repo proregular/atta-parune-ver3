@@ -47,8 +47,7 @@ public class SecurityConfiguration {
                                                 , "/api/user/company/status"
                                         ,"/", "/favicon.ico", "/index.html", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll() // 인증 없이 접근 허용
                                 .requestMatchers("/api/user/**", "/api/restaurant/**").hasAnyRole("USER", "RESTAURANT")
-                                .requestMatchers("/api/admin/**").hasRole("RESTAURANT")
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT", "ADMIN")
                                 .requestMatchers("/api/admin/**", "/api/restaurant/**", "/api/user/**").authenticated()
                                 .anyRequest().permitAll()
                 )
