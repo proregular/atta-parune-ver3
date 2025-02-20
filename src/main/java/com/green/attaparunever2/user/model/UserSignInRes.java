@@ -12,7 +12,7 @@ public class UserSignInRes {
     private long userId;
     private long companyId;
     private String companyName;
-    private String roleId;
+    private String code;
     private String uid;
     private String name;
     private String pic;

@@ -4,13 +4,16 @@ import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.admin.model.AdminSignInRes;
 import com.green.attaparunever2.admin.model.AdminUpwPatchReq;
 import com.green.attaparunever2.common.DateTimeUtils;
+import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.config.CookieUtils;
 import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.model.*;
 import jakarta.servlet.http.Cookie;
@@ -43,9 +46,9 @@ public class UserService {
     private final JwtConst jwtConst;
     private final AuthenticationFacade authenticationFacade;
     private final UserEmailVerificationRepository userEmailVerificationRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final CodeRepository codeRepository;
+    private final UserRepository userRepository;
+    private final MyFileUtils myFileUtils;
 
     // 회원가입
     @Transactional
@@ -53,7 +56,7 @@ public class UserService {
         // 인증정보 조회(만약 인증이 만료된 아이디로 가입하려는 경우 인증 정보를 지우고 유저 정보도 지워야 함)
         UserMailVerificationDTO userMailVerificationDTO = userMapper.selUserEmailVerificationByUId(req.getUid());
 
-        if(userMailVerificationDTO != null) {
+        if (userMailVerificationDTO != null) {
             LocalDateTime now = LocalDateTime.now();
 
             // 인증 기간이 만료되었다면 인증, 회원정보 삭제
@@ -67,7 +70,7 @@ public class UserService {
         req.setUpw(BCrypt.hashpw(req.getUpw(), BCrypt.gensalt()));
 
         // 회원 생성
-        int result =  userMapper.insUser(req);
+        int result = userMapper.insUser(req);
 
         /*if(result != 0) {
             // 인증번호 생성
@@ -95,7 +98,7 @@ public class UserService {
     public UserGetRes getUser(UserGetReq p) {
         UserGetRes res = userMapper.selUserByUserId(p.getUserId());
 
-        if(res == null) {
+        if (res == null) {
             throw new CustomException("회원정보를 불러올 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -107,7 +110,7 @@ public class UserService {
     public int delUser(UserDelReq p) {
         int result = userMapper.delUser(p.getUserId());
 
-        if(result == 0) {
+        if (result == 0) {
             throw new CustomException("회원삭제에 실패 했습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -119,7 +122,7 @@ public class UserService {
     public int authToken(AuthTokenReq p) {
         UserMailVerificationDTO userMailVerificationDTO = userMapper.selUserEmailVerificationByUserId(p.getUserId());
 
-        if(userMailVerificationDTO == null) {
+        if (userMailVerificationDTO == null) {
             throw new CustomException("인증 정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
         } else {
             LocalDateTime now = LocalDateTime.now();
@@ -127,7 +130,7 @@ public class UserService {
             if (now.isAfter(DateTimeUtils.convertToLocalDateTime(userMailVerificationDTO.getExpiredDate()))) {
                 throw new CustomException("인증기간이 만료 되었습니다. 재가입 해주세요.", HttpStatus.BAD_REQUEST);
             } else {
-                if(!(userMailVerificationDTO.getToken().equals(p.getToken()))) {
+                if (!(userMailVerificationDTO.getToken().equals(p.getToken()))) {
                     throw new CustomException("인증번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
                 }
             }
@@ -141,7 +144,7 @@ public class UserService {
     public UserSignInRes signIn(UserSignInReq p, HttpServletResponse response) {
         UserSignInRes res = userMapper.selUserByUid(p.getId());
 
-        if(res == null || !BCrypt.checkpw(p.getPw(),res.getUpw())) {
+        if (res == null || !BCrypt.checkpw(p.getPw(), res.getUpw())) {
             throw new CustomException("아이디 혹은 비밀번호를 확인해 주세요.", HttpStatus.BAD_REQUEST);
         } else {
             // 인증 여부 검사
@@ -161,8 +164,10 @@ public class UserService {
             // AT, RT
             JwtUser jwtUser = new JwtUser();
 
+
             jwtUser.setSignedUserId(res.getUserId());
-            jwtUser.setRoles(res.getRoleId());
+            Code code = codeRepository.findByCode(res.getCode());
+            jwtUser.setRoles(code.getName());
 
             String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
             String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
@@ -180,7 +185,7 @@ public class UserService {
         // 이메일이 존재하는지
         UserDTO userDTO = userMapper.selUserByEmailAndName(p);
 
-        if(userDTO == null) {
+        if (userDTO == null) {
             throw new CustomException("이메일이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
         } else {
             // 인증번호 이메일 전송
@@ -201,13 +206,13 @@ public class UserService {
         return accessToken;
     }
 
-    public List<SelUserOrderPastCheckRes> getUserPastOrderCheck(SelUserOrderPastCheckReq p){
+    public List<SelUserOrderPastCheckRes> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> res = userMapper.selUserPastOrderCheck(p);
 
         return res;
     }
 
-    public List<SelUserOrderPastCheckRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p){
+    public List<SelUserOrderPastCheckRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> res = userMapper.selUserActiveOrderCheck(p);
 
         return res;
@@ -215,7 +220,7 @@ public class UserService {
 
     public GetUserOrderVer2Res getUserOrder(GetUserOrderVer2Req p) {
         p.setSignedUserId(authenticationFacade.getSignedUserId());
-        GetUserOrderVer2Res res =  userMapper.getUserOrderVer2(p);
+        GetUserOrderVer2Res res = userMapper.getUserOrderVer2(p);
         List<GetUserOrderMenuListDto> list = userMapper.getUserOrderVer2MenuList(p);
 
         res.setMenuList(list);
@@ -242,7 +247,7 @@ public class UserService {
         return result;
     }
 
-    public long getSignedUserGetOrder(long userId){
+    public long getSignedUserGetOrder(long userId) {
         long result = userMapper.getSignedUserGetOrder(userId);
 
         return result;
@@ -265,7 +270,7 @@ public class UserService {
         UserSignInRes userData = userMapper.selUserByUid(p.getUid());
         int result = 0;
 
-        if(userData != null && userData.getEmail().equals(p.getEmail())) {
+        if (userData != null && userData.getEmail().equals(p.getEmail())) {
             // 일치한다면 렌덤한 문자열을 생성후  DB에 저장
             String newPassword = PasswordGenerator.generateRandomPassword(8);
 
@@ -279,7 +284,7 @@ public class UserService {
 
             result = userMapper.patchUpw(patchReq);
 
-            if(result == 0) {
+            if (result == 0) {
                 throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
             } else {
                 // 변경된 비밀번호 이메일 전송
@@ -294,16 +299,43 @@ public class UserService {
 
     // 회원 정보 수정
     @Transactional
-    public User updateUserInfo(Long userId, String nickName, String phone) {
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setNickName(nickName);
-            user.setPhone(phone);
-            return userRepository.save(user);
-        } else {
+    public User updateUserInfo(UserUpdateInfoReq req, MultipartFile userPic) {
+        req.setUserId(authenticationFacade.getSignedUserId());
+
+        Optional<User> optionalUser = userRepository.findByUserId(req.getUserId());
+
+        if (optionalUser.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-    }
 
+        User user = optionalUser.get();
+        user.setNickName(req.getNickName());
+        user.setPhone(req.getPhone());
+
+        // 프로필 사진 업로드
+        if (userPic != null && !userPic.isEmpty()) {
+            // 기존 프로필 사진
+            String currentPic = user.getUserPic();
+            if (currentPic != null && !currentPic.isEmpty()) {
+                try {
+                    myFileUtils.deleteFile("profile/" + currentPic);
+                } catch (IOException e) {
+                    throw new RuntimeException("기존 프로필 사진 삭제 실패", e);
+                }
+            }
+
+            // 새로운 프로필 사진
+            String folderPath = "profile/";
+            myFileUtils.makeFolders(folderPath);
+            String savedPicName = myFileUtils.makeRandomFileName(userPic);
+
+            try {
+                myFileUtils.transferTo(userPic, folderPath + savedPicName);
+            } catch (IOException e) {
+                throw new RuntimeException("프로필 사진 업로드 실패", e);
+            }
+            user.setUserPic(savedPicName);
+        }
+        return userRepository.save(user);
+    }
 }
