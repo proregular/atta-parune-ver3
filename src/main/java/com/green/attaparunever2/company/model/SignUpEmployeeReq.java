@@ -17,9 +17,9 @@ public class SignUpEmployeeReq {
     @Schema(description = "사용자 이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @NotEmpty(message = "아이디를 입력해주세요.")
-    @Schema(description = "유저 아이디(회사번호 + 사원 번호)", example = "10000001", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String uid;
+    @NotEmpty(message = "사원번호를 입력해주세요.")
+    @Schema(description = "사원번호", example = "0001", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String employeeNum;
 
     @NotEmpty(message = "비밀번호를 입력해주세요.")
     @Schema(description = "사용자 비밀번호", example = "qwer12#$", requiredMode = Schema.RequiredMode.REQUIRED)

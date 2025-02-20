@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/user/company")
+@RequestMapping("company")
 @Tag(name="회사 가입정보", description = "가입한 회사정보관련 API")
 public class CompanyController {
     private final CompanyService companyService;
@@ -33,7 +33,7 @@ public class CompanyController {
                 .build();
     }
 
-    @PostMapping("v3/employee/sign-up")
+    @PostMapping("v3/employee")
     @Operation(summary = "사원 계정 생성")
     public ResultResponse<Integer> postEmployee(@RequestBody SignUpEmployeeReq req) {
         int result = companyService.postEmployee(req);
