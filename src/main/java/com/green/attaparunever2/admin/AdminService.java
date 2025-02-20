@@ -317,4 +317,11 @@ public class AdminService {
 
         return res;
     }
+
+    //게시글 자세히 보기
+    public SelOneSystemPostRes getOneSystemPost(long inquiryId){
+        SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
+
+        return res;
+    }
 }

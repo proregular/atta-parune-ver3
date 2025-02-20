@@ -191,4 +191,17 @@ public class AdminController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("v3/SelOneSystemPost")
+    @Operation(summary = "게시글 자세히 보기")
+    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(long inquiryId){
+        SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
+
+        return ResultResponse.<SelOneSystemPostRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("게시글 자세히 보기 완료")
+                .resultData(res)
+                .build();
+
+    }
 }
