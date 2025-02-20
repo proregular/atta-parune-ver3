@@ -3,6 +3,7 @@ package com.green.attaparunever2.company;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.company.model.CompanyStatusReq;
 import com.green.attaparunever2.company.model.CompanyStatusRes;
+import com.green.attaparunever2.company.model.SignUpEmployeeReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,18 @@ public class CompanyController {
                 .resultData(result)
                 .build();
     }
+
+    @PostMapping("v3/employee/sign-up")
+    @Operation(summary = "사원 계정 생성")
+    public ResultResponse<Integer> postEmployee(@RequestBody SignUpEmployeeReq req) {
+        int result = companyService.postEmployee(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 계정 생성 성공")
+                .resultData(result)
+                .build();
+    }
+
 
 }
