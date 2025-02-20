@@ -117,12 +117,42 @@
     </select>
 
     <select id="selRefund">
-        SELECT A.refund_amount, A.refund_point, A.refund_detail AS refundDetail
-             , A.refund_yn AS refundYn, C.name, A.created_at AS createdAt
+        SELECT A.refund_amount AS refundAmount, A.refund_point AS refundPoint
+             , A.refund_detail AS refundDetail, A.refund_yn AS refundYn
+             , C.name, A.created_at AS createdAt
         FROM refund A
         INNER JOIN `admin` B
         ON A.admin_id = B.admin_id
         INNER JOIN company C
         ON C.company_id = B.division_id;
+    </select>
+    
+    <select id="selCompanyEnrollment">
+        SELECT A.company_id AS companyId, A.company_cd AS companyCd, A.name
+             , A.address, A.ceo_name AS ceoName, A.business_number AS businessNumber
+             , A.current_point AS currentPoint, A.created_at AS createdAt
+          FROM company A
+    </select>
+
+    <select id="selRestaurantEnrollment">
+        SELECT A.restaurant_id AS restaurantId, A.category_id AS categoryId
+             , B.category_name AS categoryName, A.restaurant_name AS restaurantName
+             , A.restaurant_address AS restaurantAddress, A.business_number AS businessNumber
+             , A.operating_hours AS operatingHours
+             , A.restaurant_description AS restaurantDescription, A.`status` AS status
+             , A.max_capacity AS maxCapacity
+             , A.lat, A.lng, A.payment_password AS paymentPassword
+             , A.created_at AS createdAt
+          FROM restaurant A
+         INNER JOIN restaurant_category B
+            ON A.category_id = B.category_id
+    </select>
+    
+    <select id="selOneSystemPost">
+        SELECT A.inquiry_id AS inquiryId, A.inquiry_title AS inquiryTitle
+             , A.inquiry_detail AS inquiryDetail, A.pic
+             , A.post_code AS postCode, A.role_code AS roleCode
+          FROM system_post A
+         WHERE A.inquiry_id = #{inquiryId}
     </select>
 </mapper>

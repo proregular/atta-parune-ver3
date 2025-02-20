@@ -303,4 +303,25 @@ public class AdminService {
 
         return res;
     }
+
+    //회사 입점신청서 보기
+    public List<SelCompanyEnrollmentRes> getCompanyEnrollment(){
+        List<SelCompanyEnrollmentRes> res = adminMapper.selCompanyEnrollment();
+
+        return res;
+    }
+
+    //식당 입점신청서 보기
+    public List<SelRestaurantEnrollmentRes> getRestaurantEnrollment(){
+        List<SelRestaurantEnrollmentRes> res = adminMapper.selRestaurantEnrollment();
+
+        return res;
+    }
+
+    //게시글 자세히 보기
+    public SelOneSystemPostRes getOneSystemPost(long inquiryId){
+        SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
+
+        return res;
+    }
 }
