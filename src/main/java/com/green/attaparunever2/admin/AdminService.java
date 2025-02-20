@@ -303,4 +303,18 @@ public class AdminService {
 
         return res;
     }
+
+    //회사 입점신청서 보기
+    public List<SelCompanyEnrollmentRes> getCompanyEnrollment(){
+        List<SelCompanyEnrollmentRes> res = adminMapper.selCompanyEnrollment();
+
+        return res;
+    }
+
+    //식당 입점신청서 보기
+    public List<SelRestaurantEnrollmentRes> getRestaurantEnrollment(){
+        List<SelRestaurantEnrollmentRes> res = adminMapper.selRestaurantEnrollment();
+
+        return res;
+    }
 }

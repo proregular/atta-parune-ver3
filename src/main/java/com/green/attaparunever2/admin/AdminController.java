@@ -167,4 +167,28 @@ public class AdminController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("v3/getCompanyEnrollment")
+    @Operation(summary = "회사 입점신청서 보기")
+    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
+        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
+
+        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 입점신청서 보기 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/getRestaurantEnrollment")
+    @Operation(summary = "식당 입점신청서 보기")
+    public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
+        List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
+
+        return ResultResponse.<List<SelRestaurantEnrollmentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("식당 입점신청서 보기 완료")
+                .resultData(res)
+                .build();
+    }
 }
