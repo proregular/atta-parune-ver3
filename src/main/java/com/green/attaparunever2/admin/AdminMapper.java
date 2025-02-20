@@ -26,4 +26,6 @@ public interface AdminMapper {
     List<SelRefundRes> selRefund();
     List<SelCompanyEnrollmentRes> selCompanyEnrollment();
     List<SelRestaurantEnrollmentRes> selRestaurantEnrollment();
+    SelOneSystemPostRes selOneSystemPost(long inquiryId);
+
 }
