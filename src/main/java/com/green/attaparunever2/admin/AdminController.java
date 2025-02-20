@@ -155,4 +155,16 @@ public class AdminController {
                 .resultData(result)
                 .build();
     }
+
+    @GetMapping("v3/getRefund")
+    @Operation(summary = "환불 내역 조회")
+    public ResultResponse<List<SelRefundRes>> getRefund(){
+        List<SelRefundRes> res = adminService.getRefund();
+
+        return ResultResponse.<List<SelRefundRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("환불 내역 조회 완료")
+                .resultData(res)
+                .build();
+    }
 }

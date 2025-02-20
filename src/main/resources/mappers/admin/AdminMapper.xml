@@ -115,4 +115,14 @@
           FROM admin A
          WHERE aid = #{aid}
     </select>
+
+    <select id="selRefund">
+        SELECT A.refund_amount, A.refund_point, A.refund_detail AS refundDetail
+             , A.refund_yn AS refundYn, C.name, A.created_at AS createdAt
+        FROM refund A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id;
+    </select>
 </mapper>

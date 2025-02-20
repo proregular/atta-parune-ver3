@@ -296,4 +296,11 @@ public class AdminService {
 
         return result;
     }
+
+    // 환불 금액 보기
+    public List<SelRefundRes> getRefund(){
+        List<SelRefundRes> res = adminMapper.selRefund();
+
+        return res;
+    }
 }
