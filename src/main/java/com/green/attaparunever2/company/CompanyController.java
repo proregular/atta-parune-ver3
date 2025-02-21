@@ -35,7 +35,7 @@ public class CompanyController {
 
     @PostMapping("v3/employee")
     @Operation(summary = "사원 계정 생성")
-    public ResultResponse<Integer> postEmployee(@RequestBody SignUpEmployeeReq req) {
+    public ResultResponse<Integer> postEmployee(@Valid @RequestBody SignUpEmployeeReq req) {
         int result = companyService.postEmployee(req);
 
         return ResultResponse.<Integer>builder()
