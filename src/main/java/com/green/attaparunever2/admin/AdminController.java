@@ -169,13 +169,13 @@ public class AdminController {
     }
 
     @GetMapping("v3/companyEnrollment")
-    @Operation(summary = "회사 입점신청서 보기")
+    @Operation(summary = "회사 제휴신청서 보기")
     public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
         List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
 
         return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
                 .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회사 입점신청서 보기 완료")
+                .resultMsg("회사 제휴신청서 보기 완료")
                 .resultData(res)
                 .build();
     }
@@ -213,6 +213,18 @@ public class AdminController {
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("식당 입점 신청서 등록 완료")
+                .resultData(result)
+                .build();
+    }
+    
+    @PostMapping("v3/CompanyEnrollment")
+    @Operation(summary = "회사 제휴 신청서 등록")
+    public ResultResponse<Integer> postCompanyEnrollment(InsCompanyEnrollmentReq req){
+        int result = adminService.postCompanyEnrollment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 제휴 신청서 등록 완료")
                 .resultData(result)
                 .build();
     }

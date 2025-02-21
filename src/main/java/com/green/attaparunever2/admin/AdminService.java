@@ -12,10 +12,7 @@ import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
-import com.green.attaparunever2.entity.Admin;
-import com.green.attaparunever2.entity.Code;
-import com.green.attaparunever2.entity.Restaurant;
-import com.green.attaparunever2.entity.RestaurantCategory;
+import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.restaurant.RestaurantCategoryRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.user.MailSendService;
@@ -338,19 +335,16 @@ public class AdminService {
     //식당 입점신청서 등록
     @Transactional
     public int postRestaurantEnrollment(InsRestaurantEnrollmentReq req){
-
         Code restaurentCode = codeRepository.findById("00101").orElse(null);
         if(restaurentCode == null) {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        Code AdminCode = codeRepository.findById("00103").orElse(null);
-        if(AdminCode == null) {
+        Code adminCode = codeRepository.findById("00103").orElse(null);
+        if(adminCode == null) {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        Admin admin = new Admin();
-        admin.setCode(restaurentCode);
-        admin.setEmail(req.getEmail());
-        adminRepository.save(admin);
+
+
         RestaurantCategory restaurantCategory = new RestaurantCategory();
         restaurantCategory.setCategoryId(req.getCategoryId());
         Restaurant restaurant = new Restaurant();
@@ -365,19 +359,61 @@ public class AdminService {
         restaurant.setOperatingHours(req.getOperatingHours());
         restaurantRepository.save(restaurant);
 
+        Long divisionId = restaurantRepository.findFirstByLatestRestaurantId();
+
+        Admin admin = new Admin();
+        admin.setDivisionId(divisionId);
+        admin.setCode(restaurentCode);
+        admin.setEmail(req.getEmail());
+        adminRepository.save(admin);
+
         return 1;
     }
 
-//    @Transactional
-//    public String getNextCompanyId(){
-//        String lastCompanyId = companyRepository.findLatestCompanyId();
-//
-//        if (latestCompanyId == null) {
-//            return "0000";
-//        }
-//
-//        int nextCompanyId = Integer.parseInt(lastCompanyId) + 1;
-//
-//        return String.format("%04d", nextCompanyId);
-//    }
+    @Transactional
+    public int postCompanyEnrollment(InsCompanyEnrollmentReq req){
+        Code companyCode = codeRepository.findById("00102").orElse(null);
+        if(companyCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        Code adminCode = codeRepository.findById("00103").orElse(null);
+        if(adminCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        String companyCd = getNextCompanyId();
+        Company company = new Company();
+        company.setBusinessNumber(req.getBusinessNumber());
+        company.setName(req.getName());
+        company.setCeoName(req.getCeoName());
+        company.setAddress(req.getAddress());
+        company.setCompanyCd(companyCd);
+        companyRepository.save(company);
+        Long divisionId = companyRepository.findFirstByLatestCompanyId();
+        Admin admin = new Admin();
+        admin.setDivisionId(divisionId);
+        admin.setCode(companyCode);
+        admin.setEmail(req.getEmail());
+        adminRepository.save(admin);
+
+
+        return 1;
+    }
+
+    @Transactional
+    public String getNextCompanyId(){
+        String lastCompanyCd = companyRepository.findFirstByLatestCompanyCd();
+
+        log.info("aaaaaaaaaaaaaaa : {}" , lastCompanyCd);
+
+        if (lastCompanyCd == null) {
+            return "0000";
+        }
+
+        int nextCompanyId = Integer.parseInt(lastCompanyCd) + 1;
+
+        return String.format("%04d", nextCompanyId);
+    }
+
+
 }
