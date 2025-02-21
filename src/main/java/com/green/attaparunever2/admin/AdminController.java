@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("admin")
@@ -225,6 +227,19 @@ public class AdminController {
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 제휴 신청서 등록 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PutMapping("v3/admin")
+    @Operation(summary = "식당, 회사 회원가입")
+    public ResultResponse<Integer> updAdmin(SignUpAdminReq req){
+        int result = adminService.updAdmin(req);
+
+        log.info("@@@@@@@@@@@@@@@@@req : {}", req);
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회원가입 완료")
                 .resultData(result)
                 .build();
     }
