@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 @ToString(callSuper = true)
 public class Paging {
     @Value("${const.default-page-size}")
-    private int DEFAULT_SIZE = 20;
+    private static int DEFAULT_SIZE = 20;
 
     @Schema(example = "1", description = "Selected Page")
     private Integer page;
