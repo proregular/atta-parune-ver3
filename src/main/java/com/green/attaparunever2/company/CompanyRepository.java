@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    @Query("SELECT c.companyCd FROM Company c ORDER BY c.companyCd DESC")
-    String findLatestCompanyCd();
+    @Query(value = "SELECT company_cd FROM company ORDER BY company_cd DESC LIMIT 1", nativeQuery = true)
+    String findFirstByLatestCompanyCd();
 }
