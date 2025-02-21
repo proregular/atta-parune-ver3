@@ -35,7 +35,7 @@ public class CompanyController {
 
     @PostMapping("v3/employee")
     @Operation(summary = "사원 계정 생성")
-    public ResultResponse<Integer> postEmployee(@Valid @RequestBody SignUpEmployeeReq req) {
+    public ResultResponse<Integer> postEmployee(@RequestBody SignUpEmployeeReq req) {
         int result = companyService.postEmployee(req);
 
         return ResultResponse.<Integer>builder()
@@ -47,7 +47,7 @@ public class CompanyController {
 
     @GetMapping("v3/employee")
     @Operation(summary = "사원 정보 조회")
-    public ResultResponse<List<GetEmployeeRes>> getEmployee(@Valid @ParameterObject GetEmployeeReq req) {
+    public ResultResponse<List<GetEmployeeRes>> getEmployee(@ParameterObject GetEmployeeReq req) {
         List<GetEmployeeRes> list = companyService.getEmployee(req);
 
         return ResultResponse.<List<GetEmployeeRes>>builder()
