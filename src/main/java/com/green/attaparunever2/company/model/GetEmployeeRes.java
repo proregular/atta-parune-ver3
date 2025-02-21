@@ -20,7 +20,7 @@ public class GetEmployeeRes {
     @Schema(description = "사원 이메일", example = "test@gmail.com")
     private String email;
 
-    @Schema(description = "사원 포인트", example = "10,000")
+    @Schema(description = "사원 포인트", example = "10000")
     private int point;
 
     @Schema(description = "사원 상태(0: 활성화, 1: 비활성화)", example = "0")
