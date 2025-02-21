@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -188,14 +189,13 @@ public class UserController {
                 .build();
     }
 
-    //회원 정보 수정
-//    @PutMapping("v3/userInfo/{userId}")
-//    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
-//    public ResponseEntity<User> updateUser(@PathVariable Long userId,
-//                                           @RequestParam String nickName,
-//                                           @RequestParam String phone,
-//                                           @RequestParam(required = false) String userPic) {
-//        User updatedUser = userService.updateUserInfo(userId, nickName, phone, userPic);
-//        return ResponseEntity.ok(updatedUser);
-//    }
+    // 회원 정보 수정
+    @PutMapping("v3/userInfo/{userId}")
+    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
+    public ResponseEntity<User> updateUser(@Valid @RequestBody UserUpdateInfoReq req,
+                                           @RequestParam(required = false) MultipartFile userPic) {
+        log.info("user info: " + req.toString());
+        User updatedUser = userService.updateUserInfo(req, userPic);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

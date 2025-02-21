@@ -44,7 +44,7 @@ public class Restaurant extends UpdatedAt{
     private int maxCapacity;
 
     @Column(nullable = false)
-    private double lat;
+    private double let;
 
     @Column(nullable = false)
     private double lng;
