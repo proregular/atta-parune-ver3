@@ -57,4 +57,15 @@ public class CompanyController {
                 .build();
     }
 
+    @PatchMapping("v3")
+    @Operation(summary = "회사 정보 수정")
+    public ResultResponse<Integer> patchCompany(@RequestBody UpdCompanyReq req) {
+        int result = companyService.patchCompany(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("회사 정보 수정 완료")
+                .resultData(result)
+                .build();
+    }
 }

@@ -1,10 +1,12 @@
 package com.green.attaparunever2.company;
 
+import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.model.*;
 import com.green.attaparunever2.config.jwt.JwtUser;
+import com.green.attaparunever2.entity.Admin;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.Company;
 import com.green.attaparunever2.entity.User;
@@ -39,6 +41,7 @@ public class CompanyService {
     private final UserEmailVerificationRepository userEmailVerificationRepository;
     private final CompanyRepository companyRepository;
     private final CodeRepository codeRepository;
+    private final AdminRepository adminRepository;
 
     //Status API 호출 URL
     private String STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
@@ -185,5 +188,35 @@ public class CompanyService {
         }
 
         return list;
+    }
+
+    @Transactional
+    public int patchCompany(UpdCompanyReq req) {
+        // 회사 확인 절차
+        Company company = companyRepository.findById(req.getCompanyId())
+                .orElseThrow(() -> new CustomException("회사를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 관리자 확인 절차
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 관리자 권한 확인
+        if (!company.getCompanyId().equals(admin.getDivisionId())) {
+            throw new CustomException("이 회사의 관리자 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (req.getName() != null) {
+            company.setName(req.getName());
+        }
+        if (req.getAddress() != null) {
+            company.setAddress(req.getAddress());
+        }
+        if (req.getCeoName() != null) {
+            company.setCeoName(req.getCeoName());
+        }
+
+        companyRepository.save(company);
+
+        return 1;
     }
 }
