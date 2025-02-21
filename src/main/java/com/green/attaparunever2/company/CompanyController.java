@@ -4,6 +4,7 @@ import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.company.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -46,7 +47,7 @@ public class CompanyController {
 
     @GetMapping("v3/employee")
     @Operation(summary = "사원 정보 조회")
-    public ResultResponse<List<GetEmployeeRes>> getEmployee(@ParameterObject GetEmployeeReq req) {
+    public ResultResponse<List<GetEmployeeRes>> getEmployee(@Valid @ParameterObject GetEmployeeReq req) {
         List<GetEmployeeRes> list = companyService.getEmployee(req);
 
         return ResultResponse.<List<GetEmployeeRes>>builder()
