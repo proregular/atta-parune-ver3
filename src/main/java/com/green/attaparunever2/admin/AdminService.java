@@ -343,10 +343,8 @@ public class AdminService {
         if(adminCode == null) {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-        Admin admin = new Admin();
-        admin.setCode(restaurentCode);
-        admin.setEmail(req.getEmail());
-        adminRepository.save(admin);
+
+
         RestaurantCategory restaurantCategory = new RestaurantCategory();
         restaurantCategory.setCategoryId(req.getCategoryId());
         Restaurant restaurant = new Restaurant();
@@ -360,6 +358,14 @@ public class AdminService {
         restaurant.setMaxCapacity(req.getMaxCapacity());
         restaurant.setOperatingHours(req.getOperatingHours());
         restaurantRepository.save(restaurant);
+
+        Long divisionId = restaurantRepository.findFirstByLatestRestaurantId();
+
+        Admin admin = new Admin();
+        admin.setDivisionId(divisionId);
+        admin.setCode(restaurentCode);
+        admin.setEmail(req.getEmail());
+        adminRepository.save(admin);
 
         return 1;
     }
@@ -375,11 +381,6 @@ public class AdminService {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        Admin admin = new Admin();
-        admin.setCode(companyCode);
-        admin.setEmail(req.getEmail());
-        adminRepository.save(admin);
-
         String companyCd = getNextCompanyId();
         Company company = new Company();
         company.setBusinessNumber(req.getBusinessNumber());
@@ -388,6 +389,13 @@ public class AdminService {
         company.setAddress(req.getAddress());
         company.setCompanyCd(companyCd);
         companyRepository.save(company);
+        Long divisionId = companyRepository.findFirstByLatestCompanyId();
+        Admin admin = new Admin();
+        admin.setDivisionId(divisionId);
+        admin.setCode(companyCode);
+        admin.setEmail(req.getEmail());
+        adminRepository.save(admin);
+
 
         return 1;
     }
