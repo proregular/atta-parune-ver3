@@ -6,12 +6,18 @@ import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.admin.model.*;
 import com.green.attaparunever2.common.repository.CodeRepository;
+import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.config.CookieUtils;
 import com.green.attaparunever2.config.constant.JwtConst;
 import com.green.attaparunever2.config.jwt.JwtTokenProvider;
 import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.Admin;
 import com.green.attaparunever2.entity.Code;
+import com.green.attaparunever2.entity.Restaurant;
+import com.green.attaparunever2.entity.RestaurantCategory;
+import com.green.attaparunever2.restaurant.RestaurantCategoryRepository;
+import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
 import com.green.attaparunever2.user.MailSendService;
@@ -41,7 +47,11 @@ public class AdminService {
     private final CookieUtils cookieUtils;
     private final JwtConst jwtConst;
     private final AuthenticationFacade authenticationFacade;
+    private final AdminRepository adminRepository;
     private final CodeRepository codeRepository;
+    private final CompanyRepository companyRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final RestaurantCategoryRepository restaurantCategoryRepository;
 
     // 관리자 회원가입
     @Transactional
@@ -324,4 +334,50 @@ public class AdminService {
 
         return res;
     }
+
+    //식당 입점신청서 등록
+    @Transactional
+    public int postRestaurantEnrollment(InsRestaurantEnrollmentReq req){
+
+        Code restaurentCode = codeRepository.findById("00101").orElse(null);
+        if(restaurentCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        Code AdminCode = codeRepository.findById("00103").orElse(null);
+        if(AdminCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        Admin admin = new Admin();
+        admin.setCode(restaurentCode);
+        admin.setEmail(req.getEmail());
+        adminRepository.save(admin);
+        RestaurantCategory restaurantCategory = new RestaurantCategory();
+        restaurantCategory.setCategoryId(req.getCategoryId());
+        Restaurant restaurant = new Restaurant();
+        restaurant.setCategoryId(restaurantCategory);
+        restaurant.setBusinessNumber(req.getBusinessNumber());
+        restaurant.setRestaurantName(req.getRestaurantName());
+        restaurant.setRestaurantNumber(req.getRestaurantNumber());
+        restaurant.setRestaurantAddress(req.getRestaurantAddress());
+        restaurant.setLet(req.getLet());
+        restaurant.setLng(req.getLng());
+        restaurant.setMaxCapacity(req.getMaxCapacity());
+        restaurant.setOperatingHours(req.getOperatingHours());
+        restaurantRepository.save(restaurant);
+
+        return 1;
+    }
+
+//    @Transactional
+//    public String getNextCompanyId(){
+//        String lastCompanyId = companyRepository.findLatestCompanyId();
+//
+//        if (latestCompanyId == null) {
+//            return "0000";
+//        }
+//
+//        int nextCompanyId = Integer.parseInt(lastCompanyId) + 1;
+//
+//        return String.format("%04d", nextCompanyId);
+//    }
 }

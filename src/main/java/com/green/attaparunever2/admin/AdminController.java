@@ -156,7 +156,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("v3/getRefund")
+    @GetMapping("v3/Refund")
     @Operation(summary = "환불 내역 조회")
     public ResultResponse<List<SelRefundRes>> getRefund(){
         List<SelRefundRes> res = adminService.getRefund();
@@ -168,7 +168,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("v3/getCompanyEnrollment")
+    @GetMapping("v3/companyEnrollment")
     @Operation(summary = "회사 입점신청서 보기")
     public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
         List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
@@ -180,7 +180,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("v3/getRestaurantEnrollment")
+    @GetMapping("v3/restaurantEnrollment")
     @Operation(summary = "식당 입점신청서 보기")
     public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
         List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
@@ -192,7 +192,7 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("v3/SelOneSystemPost")
+    @GetMapping("v3/SystemPost")
     @Operation(summary = "게시글 자세히 보기")
     public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(long inquiryId){
         SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
@@ -203,5 +203,17 @@ public class AdminController {
                 .resultData(res)
                 .build();
 
+    }
+
+    @PostMapping("v3/restaurantEnrollment")
+    @Operation(summary = "식당 입점 신청서 작성")
+    public ResultResponse<Integer> postRestaurantEnrollment(InsRestaurantEnrollmentReq req){
+        int result = adminService.postRestaurantEnrollment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("식당 입점 신청서 등록 완료")
+                .resultData(result)
+                .build();
     }
 }
