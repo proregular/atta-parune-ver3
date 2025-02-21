@@ -5,12 +5,10 @@ import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.model.*;
-import com.green.attaparunever2.entity.Admin;
-import com.green.attaparunever2.entity.Code;
-import com.green.attaparunever2.entity.Company;
-import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.user.UserEmailVerificationRepository;
 import com.green.attaparunever2.user.UserMapper;
+import com.green.attaparunever2.user.UserPointDepositRepository;
 import com.green.attaparunever2.user.UserRepository;
 import com.green.attaparunever2.user.model.UserMailVerificationDTO;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +38,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CodeRepository codeRepository;
     private final AdminRepository adminRepository;
+    private final UserPointDepositRepository userPointDepositRepository;
 
     //Status API 호출 URL
     private String STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
@@ -220,6 +219,45 @@ public class CompanyService {
 
     @Transactional
     public int patchEmployeePointCollect(UpdEmployeePointCollectReq req) {
-        return 0;
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        User user = userRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new CustomException("사원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        Code code = codeRepository.findById("00302").orElse(null);
+
+        // 회사 관리자 권한 확인
+        if (!admin.getDivisionId().equals(user.getCompany().getCompanyId())) {
+            throw new CustomException("이 사원에 대한 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 포인트 업데이트
+        if (req.getPoint() != 0) {
+            // 유저의 포인트 차감
+            int userPoint = user.getPoint() - req.getPoint();
+            if (userPoint < 0) {
+                throw new CustomException("사원의 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
+            }
+            user.setPoint(userPoint);
+            userRepository.save(user);
+
+            // 유저 입금 정보 튜플 생성
+            UserPointDeposit userPointDeposit = new UserPointDeposit();
+            userPointDeposit.setUser(user);
+            userPointDeposit.setAdmin(admin);
+            userPointDeposit.setCode(code);
+            userPointDeposit.setPointAmount(req.getPoint());
+            userPointDepositRepository.save(userPointDeposit);
+
+            // 회사 포인트 추가
+            Company company = user.getCompany();
+            int companyPoint = company.getCurrentPoint() + req.getPoint();
+            company.setCurrentPoint(companyPoint);
+            companyRepository.save(company);
+
+        }
+
+        return 1;
     }
 }
