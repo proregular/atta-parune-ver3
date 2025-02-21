@@ -17,9 +17,6 @@ import com.green.attaparunever2.restaurant.RestaurantCategoryRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
-import com.green.attaparunever2.user.MailSendService;
-import com.green.attaparunever2.user.model.UserGetReq;
-import com.green.attaparunever2.user.model.UserGetRes;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -370,6 +366,7 @@ public class AdminService {
         return 1;
     }
 
+    // 회사 입점신청서 등록
     @Transactional
     public int postCompanyEnrollment(InsCompanyEnrollmentReq req){
         Code companyCode = codeRepository.findById("00102").orElse(null);
@@ -399,7 +396,7 @@ public class AdminService {
 
         return 1;
     }
-
+    // 회사 코드가 자동으로 등록 될 수 있는 메소드
     @Transactional
     public String getNextCompanyId(){
         String lastCompanyCd = companyRepository.findFirstByLatestCompanyCd();
@@ -415,5 +412,22 @@ public class AdminService {
         return String.format("%04d", nextCompanyId);
     }
 
+    //회사, 식당 관리자 회원가입
+    @Transactional
+    public int updAdmin(SignUpAdminReq req){
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("컴퍼니가 존재하지 않습니다", HttpStatus.BAD_REQUEST));
+
+        String hashedPassword = BCrypt.hashpw(req.getApw(), BCrypt.gensalt());
+
+        admin.setAid(req.getAid());
+        admin.setApw(hashedPassword);
+        admin.setName(req.getName());
+        admin.setPhone(req.getPhone());
+
+        adminRepository.save(admin);
+
+        return 1;
+    }
 
 }
