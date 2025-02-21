@@ -354,8 +354,9 @@ public class AdminService {
         restaurant.setMaxCapacity(req.getMaxCapacity());
         restaurant.setOperatingHours(req.getOperatingHours());
         restaurantRepository.save(restaurant);
+        restaurantRepository.flush();
 
-        Long divisionId = restaurantRepository.findFirstByLatestRestaurantId();
+        Long divisionId = restaurant.getRestaurantId();
 
         Admin admin = new Admin();
         admin.setDivisionId(divisionId);
@@ -377,7 +378,7 @@ public class AdminService {
         if(adminCode == null) {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
-
+        //회사 insert
         String companyCd = getNextCompanyId();
         Company company = new Company();
         company.setBusinessNumber(req.getBusinessNumber());
@@ -386,7 +387,9 @@ public class AdminService {
         company.setAddress(req.getAddress());
         company.setCompanyCd(companyCd);
         companyRepository.save(company);
-        Long divisionId = companyRepository.findFirstByLatestCompanyId();
+        companyRepository.flush(); //pk 가져오기
+
+        Long divisionId = company.getCompanyId();
         Admin admin = new Admin();
         admin.setDivisionId(divisionId);
         admin.setCode(companyCode);
