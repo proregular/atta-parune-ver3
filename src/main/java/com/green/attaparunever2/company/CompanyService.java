@@ -260,4 +260,50 @@ public class CompanyService {
 
         return 1;
     }
+
+    @Transactional
+    public int patchEmployee(UpdEmployeeReq req) {
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("관리자 정보가 일치하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        User user = userRepository.findByUserId(req.getUserId())
+                .orElseThrow(() -> new CustomException("사용자 정보가 일치하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        Code code = codeRepository.findById("00302").orElse(null);
+
+
+        if (!admin.getDivisionId().equals(user.getCompany().getCompanyId())) {
+            throw new CustomException("이 사원에 대한 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 유저 포인트 회수
+        if (user.getPoint() > 0) {
+            UserPointDeposit userPointDeposit = new UserPointDeposit();
+            userPointDeposit.setAdmin(admin);
+            userPointDeposit.setUser(user);
+            userPointDeposit.setPointAmount(user.getPoint());
+            userPointDeposit.setCode(code);
+            userPointDepositRepository.save(userPointDeposit);
+        }
+
+        // 유저 상태 변경
+        if (user.getActivation() == 1) {
+            throw new CustomException("이미 비활성화 된 사용자입니다.", HttpStatus.BAD_REQUEST);
+        }
+        user.setActivation(req.getActivation());
+
+        int userPoint = user.getPoint();
+        if (userPoint < 0) {
+            throw new CustomException("사원의 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
+        }
+        user.setPoint(userPoint);
+        userRepository.save(user);
+
+        Company company = user.getCompany();
+        int companyPoint = company.getCurrentPoint() + (user.getPoint() > 0 ? user.getPoint() : 0);
+        company.setCurrentPoint(companyPoint);
+        companyRepository.save(company);
+
+        return 1;
+    }
 }

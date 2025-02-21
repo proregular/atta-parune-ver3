@@ -81,4 +81,15 @@ public class CompanyController {
                 .build();
     }
 
+    @PatchMapping("v3/employee")
+    @Operation(summary = "사원 상태 변경")
+    public ResultResponse<Integer> patchEmployee(@RequestBody UpdEmployeeReq req) {
+        int result = companyService.patchEmployee(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 상태 변경 성공")
+                .resultData(result)
+                .build();
+    }
 }
