@@ -19,6 +19,6 @@ public class UpdCompanyReq {
     @Schema(description = "회사 주소", example = "대구 중구")
     private String address;
 
-    @Schema(description = "엄준식")
+    @Schema(description = "회사 대표명", example = "엄준식")
     private String ceoName;
 }
