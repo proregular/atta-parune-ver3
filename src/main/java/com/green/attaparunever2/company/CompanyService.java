@@ -5,7 +5,6 @@ import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.model.*;
-import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.entity.Admin;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.Company;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -218,5 +216,10 @@ public class CompanyService {
         companyRepository.save(company);
 
         return 1;
+    }
+
+    @Transactional
+    public int patchEmployeePointCollect(UpdEmployeePointCollectReq req) {
+        return 0;
     }
 }
