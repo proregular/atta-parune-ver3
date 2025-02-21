@@ -68,4 +68,17 @@ public class CompanyController {
                 .resultData(result)
                 .build();
     }
+
+    @PatchMapping("v3/employee/point/collect")
+    @Operation(summary = "사원 포인트 회수")
+    public ResultResponse<Integer> patchEmployeePointCollect(@RequestBody UpdEmployeePointCollectReq req) {
+        int result = companyService.patchEmployeePointCollect(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 포인트 회수 성공")
+                .resultData(result)
+                .build();
+    }
+
 }
