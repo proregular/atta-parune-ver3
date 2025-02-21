@@ -190,7 +190,7 @@ public class UserController {
     }
 
     // 회원 정보 수정
-    @PutMapping("v3/userInfo")
+    /*@PutMapping("v3/userInfo")
     @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
     public ResultResponse<User> updateUser(@RequestParam(value = "nickName", required = false) String nickName,
                                            @RequestParam("phone") String phone,
@@ -203,6 +203,22 @@ public class UserController {
         UserUpdateInfoReq req = new UserUpdateInfoReq();
         req.setNickName(nickName);
         req.setPhone(phone);
+
+        User updatedUser = userService.updateUserInfo(req, userPic);
+        return ResultResponse.<User>builder()
+                .statusCode("200")
+                .resultMsg("회원 정보 등록 완료")
+                .resultData(updatedUser)
+                .build();
+    }*/
+
+    @PutMapping("v3/userInfo")
+    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
+    public ResultResponse<User> updateUser(@RequestPart("req") @Valid @ParameterObject UserUpdateInfoReq req,
+                                           @RequestPart("userPic") MultipartFile userPic) {
+        /*UserUpdateInfoReq req = new UserUpdateInfoReq();
+        req.setNickName(nickName);
+        req.setPhone(phone);*/
 
         User updatedUser = userService.updateUserInfo(req, userPic);
         return ResultResponse.<User>builder()
