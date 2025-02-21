@@ -190,12 +190,25 @@ public class UserController {
     }
 
     // 회원 정보 수정
-    @PutMapping("v3/userInfo/{userId}")
+    @PutMapping("v3/userInfo")
     @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
-    public ResponseEntity<User> updateUser(@Valid @RequestBody UserUpdateInfoReq req,
-                                           @RequestParam(required = false) MultipartFile userPic) {
-        log.info("user info: " + req.toString());
+    public ResultResponse<User> updateUser(@RequestParam(value = "nickName", required = false) String nickName,
+                                           @RequestParam("phone") String phone,
+                                           @RequestParam(value = "userPic", required = false) MultipartFile userPic) {
+
+        if (phone == null || phone.trim().isEmpty()) {
+            throw new IllegalArgumentException("핸드폰 번호는 필수입니다.");
+        }
+
+        UserUpdateInfoReq req = new UserUpdateInfoReq();
+        req.setNickName(nickName);
+        req.setPhone(phone);
+
         User updatedUser = userService.updateUserInfo(req, userPic);
-        return ResponseEntity.ok(updatedUser);
+        return ResultResponse.<User>builder()
+                .statusCode("200")
+                .resultMsg("회원 정보 등록 완료")
+                .resultData(updatedUser)
+                .build();
     }
 }

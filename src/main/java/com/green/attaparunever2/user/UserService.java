@@ -298,7 +298,6 @@ public class UserService {
     }
 
     // 회원 정보 수정
-    @Transactional
     public User updateUserInfo(UserUpdateInfoReq req, MultipartFile userPic) {
         req.setUserId(authenticationFacade.getSignedUserId());
 

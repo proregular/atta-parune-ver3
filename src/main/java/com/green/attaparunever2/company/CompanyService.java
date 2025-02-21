@@ -179,7 +179,7 @@ public class CompanyService {
 
     public List<GetEmployeeRes> getEmployee(GetEmployeeReq req) {
         List<GetEmployeeRes> list = companyMapper.selEmployee(req);
-
+        log.info("req: {}", req.toString());
         if (list == null || list.isEmpty()) {
             throw new CustomException("조건에 맞는 사원이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
