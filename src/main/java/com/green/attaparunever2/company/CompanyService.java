@@ -292,17 +292,15 @@ public class CompanyService {
         }
         user.setActivation(req.getActivation());
 
-        int userPoint = user.getPoint();
-        if (userPoint < 0) {
-            throw new CustomException("사원의 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
-        }
-        user.setPoint(userPoint);
-        userRepository.save(user);
-
         Company company = user.getCompany();
         int companyPoint = company.getCurrentPoint() + (user.getPoint() > 0 ? user.getPoint() : 0);
         company.setCurrentPoint(companyPoint);
         companyRepository.save(company);
+
+        int userPoint = 0;
+        user.setPoint(userPoint);
+        userRepository.save(user);
+
 
         return 1;
     }
