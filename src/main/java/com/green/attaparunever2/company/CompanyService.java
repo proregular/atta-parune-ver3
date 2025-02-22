@@ -5,6 +5,8 @@ import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.model.*;
+import com.green.attaparunever2.config.jwt.JwtUser;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.user.UserEmailVerificationRepository;
 import com.green.attaparunever2.user.UserMapper;
@@ -39,6 +41,8 @@ public class CompanyService {
     private final CodeRepository codeRepository;
     private final AdminRepository adminRepository;
     private final UserPointDepositRepository userPointDepositRepository;
+    private final RefundRepository refundRepository;
+    private final AuthenticationFacade authenticationFacade;
 
     //Status API 호출 URL
     private String STATUS_URL = "https://api.odcloud.kr/api/nts-businessman/v1/status";
@@ -301,6 +305,28 @@ public class CompanyService {
         user.setPoint(userPoint);
         userRepository.save(user);
 
+
+        return 1;
+    }
+
+    public int postRefund(InsRefundReq req) {
+        // 관리자 PK 조회
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("관리자 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST));
+
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        Refund refund = new Refund();
+
+        refund.setAdmin(admin);
+        refund.setRefundPoint(req.getRefundPoint());
+        refund.setRefundDetail(req.getRefundDetail());
+        refund.setRefundAmount(req.getRefundAmount());
+        refundRepository.save(refund);
 
         return 1;
     }
