@@ -92,4 +92,16 @@ public class CompanyController {
                 .resultData(result)
                 .build();
     }
+
+    @PostMapping("v3/refund")
+    @Operation(summary = "환불 요청")
+    public ResultResponse<Integer> postRefund(@RequestBody InsRefundReq req) {
+        int result = companyService.postRefund(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("환불 요청 완료")
+                .resultData(result)
+                .build();
+    }
 }

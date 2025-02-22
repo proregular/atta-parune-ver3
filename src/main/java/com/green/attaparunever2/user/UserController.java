@@ -213,7 +213,7 @@ public class UserController {
     }*/
 
     @PutMapping("v3/userInfo")
-    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
+    @Operation(summary = "회원 정보 등록", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
     public ResultResponse<User> updateUser(@RequestPart("req") @Valid @ParameterObject UserUpdateInfoReq req,
                                            @RequestPart("userPic") MultipartFile userPic) {
         /*UserUpdateInfoReq req = new UserUpdateInfoReq();
