@@ -1,4 +1,148 @@
 package com.green.attaparunever2.admin.company;
 
+import com.green.attaparunever2.admin.AdminService;
+import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
+import com.green.attaparunever2.admin.model.SelCompanyEnrollmentRes;
+import com.green.attaparunever2.admin.model.getCompanyPaymentRes;
+import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.company.CompanyService;
+import com.green.attaparunever2.company.model.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("admin/restaurant")
+@Tag(name = "회사 관리자", description = "회사 관리자관련 API")
 public class AdminCompanyController {
+    private final CompanyService companyService;
+    private final AdminService adminService;
+
+    @PatchMapping("v3")
+    @Operation(summary = "회사 정보 수정")
+    public ResultResponse<Integer> patchCompany(@RequestBody UpdCompanyReq req) {
+        int result = companyService.patchCompany(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("회사 정보 수정 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("v3/employee")
+    @Operation(summary = "사원 정보 조회")
+    public ResultResponse<List<GetEmployeeRes>> getEmployee(@ParameterObject GetEmployeeReq req) {
+        List<GetEmployeeRes> list = companyService.getEmployee(req);
+
+        return ResultResponse.<List<GetEmployeeRes>>builder()
+                .statusCode("200")
+                .resultMsg("사원 정보 조회 성공")
+                .resultData(list)
+                .build();
+    }
+
+    @PatchMapping("v3/employee")
+    @Operation(summary = "사원 상태 변경")
+    public ResultResponse<Integer> patchEmployee(@RequestBody UpdEmployeeReq req) {
+        int result = companyService.patchEmployee(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 상태 변경 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("v3/employee")
+    @Operation(summary = "사원 계정 생성")
+    public ResultResponse<Integer> postEmployee(@RequestBody SignUpEmployeeReq req) {
+        int result = companyService.postEmployee(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 계정 생성 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping("v3/employee/point/collect")
+    @Operation(summary = "사원 포인트 회수")
+    public ResultResponse<Integer> patchEmployeePointCollect(@RequestBody UpdEmployeePointCollectReq req) {
+        int result = companyService.patchEmployeePointCollect(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("사원 포인트 회수 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("v3/CompanyEnrollment")
+    @Operation(summary = "회사 제휴 신청서 등록")
+    public ResultResponse<Integer> postCompanyEnrollment(@RequestBody InsCompanyEnrollmentReq req){
+        int result = adminService.postCompanyEnrollment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 제휴 신청서 등록 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("v3/companyEnrollment")
+    @Operation(summary = "회사 제휴신청서 보기")
+    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
+        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
+
+        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 제휴신청서 보기 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/CompanyPayment")
+    @Operation(summary = "회사 포인트 판매 내역 조회")
+    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
+        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+
+        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 포인트 판매 내역조회")
+                .resultData(res)
+                .build();
+    }
+
+    @PostMapping("v3/refund")
+    @Operation(summary = "환불 요청")
+    public ResultResponse<Integer> postRefund(@RequestBody InsRefundReq req) {
+        int result = companyService.postRefund(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("환불 요청 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @DeleteMapping("v3/refund")
+    @Operation(summary = "환불 요청 취소")
+    public ResultResponse<Integer> deleteRefund(@ModelAttribute DelRefundReq req) {
+        int result = companyService.delRefund(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("환불 요청이 취소 되었습니다.")
+                .resultData(result)
+                .build();
+    }
 }
