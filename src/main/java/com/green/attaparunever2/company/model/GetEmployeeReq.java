@@ -15,9 +15,13 @@ public class GetEmployeeReq extends Paging {
     @Schema(description = "회사 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long companyId;
 
-    public GetEmployeeReq(Integer page, Integer size, String searchFilter, Long companyId) {
+    @Schema(description = "관리자 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Long adminId;
+
+    public GetEmployeeReq(Integer page, Integer size, String searchFilter, Long companyId, Long adminId) {
         super(page, size);
         this.searchFilter = searchFilter;
         this.companyId = companyId;
+        this.adminId = adminId;
     }
 }

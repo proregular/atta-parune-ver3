@@ -146,6 +146,12 @@ public class CompanyService {
             throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         // uid 설정
         String companyCd = company.getCompanyCd();
         String uid = companyCd + req.getEmployeeNum();
@@ -183,6 +189,13 @@ public class CompanyService {
 
     public List<GetEmployeeRes> getEmployee(GetEmployeeReq req) {
         List<GetEmployeeRes> list = companyMapper.selEmployee(req);
+
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         log.info("req: {}", req.toString());
         if (list == null || list.isEmpty()) {
             throw new CustomException("조건에 맞는 사원이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);

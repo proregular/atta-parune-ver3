@@ -13,6 +13,10 @@ public class SignUpEmployeeReq {
     @Schema(description = "회사 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private long companyId;
 
+    @NotEmpty(message = "관리자 PK 입력해주세요.")
+    @Schema(description = "관리자 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private long adminId;
+
     @NotEmpty(message = "사용자 이름을 입력해주세요.")
     @Schema(description = "사용자 이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
