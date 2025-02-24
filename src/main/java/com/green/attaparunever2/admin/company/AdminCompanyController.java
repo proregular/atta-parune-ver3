@@ -1,16 +1,20 @@
 package com.green.attaparunever2.admin.company;
 
 import com.green.attaparunever2.admin.AdminService;
+import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
+import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
 import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelCompanyEnrollmentRes;
 import com.green.attaparunever2.admin.model.getCompanyPaymentRes;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.company.CompanyService;
 import com.green.attaparunever2.company.model.*;
+import com.green.attaparunever2.entity.PaymentInfoTmp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Fetch;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +29,7 @@ import java.util.List;
 public class AdminCompanyController {
     private final CompanyService companyService;
     private final AdminService adminService;
+    private final AdminCompanyService adminCompanyService;
 
     @PatchMapping("v3")
     @Operation(summary = "회사 정보 수정")
@@ -145,4 +150,29 @@ public class AdminCompanyController {
                 .resultData(result)
                 .build();
     }
+
+    @PostMapping("/v3/payment/temp")
+    @Operation(summary = "결재전 결재 정보 임시 저장")
+    public ResultResponse<PaymentInfoTmp> postPaymentTemp(@RequestBody AdminCompanyPaymentTempPostReq req) {
+        PaymentInfoTmp result = adminCompanyService.postPaymentTemp(req);
+
+        return ResultResponse.<PaymentInfoTmp>builder()
+                .statusCode("200")
+                .resultMsg("결재 정보 임시 저장을 완료했습니다.")
+                .resultData(result)
+                .build();
+    }
+
+    /*@PatchMapping("/v3/point")
+    @Operation(summary = "포인트 구매")
+    public ResultResponse<Integer> patchPoint(@ModelAttribute AdminCompanyPointPatchReq req) {
+        PaymentInfoTmp result = adminCompanyService.patchPoint(req);
+
+        return ResultResponse.<PaymentInfoTmp>builder()
+                .statusCode("200")
+                .resultMsg("결재에 성공했습니다.")
+                .resultData(result)
+                .build();
+    }*/
+
 }
