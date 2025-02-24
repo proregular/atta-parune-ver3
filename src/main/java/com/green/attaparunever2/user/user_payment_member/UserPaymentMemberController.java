@@ -32,49 +32,6 @@ public class UserPaymentMemberController {
                 .resultData(result)
                 .build();
     }
-    /*
-    @PostMapping("postPayment")
-    @Operation(summary = "결제 등록")
-    public ResultResponse<Integer> postPayment(@ModelAttribute UserPostPaymentReq p) {
-        int result = userPaymentMemberService.postPayment(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("결제 등록 완료.")
-                .resultData(result)
-                .build();
-    }
-     */
-
-//    @GetMapping("getPaymentMember")
-//    @Operation(summary = "결제에 해당하는 인원을 조회한다.")
-//    public ResultResponse<Integer> getPaymentMember(@ModelAttribute UserGetPaymentMemberReq p) {
-//        int result = userPaymentMemberService.getPaymentMember(p.getOrderId());
-//
-//        return ResultResponse.<Integer>builder()
-//                .statusCode(HttpStatus.OK.toString())
-//                .resultMsg("포인트 조회 완료.")
-//                .resultData(result)
-//                .build();
-//    }
-
-    @GetMapping("searchPeople")
-    @Operation(summary = "결제 인원 검색")
-    public ResultResponse<UserPaymentMemberGetRes> getPaymentMemberByName(
-            @ParameterObject @Valid UserPaymentMemberGetReq p,
-            @RequestParam String name) {
-
-        List<PaymentMemberDto> memberList = userPaymentMemberService.getPaymentMemberByName(p, name);
-
-        UserPaymentMemberGetRes res = new UserPaymentMemberGetRes();
-        res.setMemberList(memberList);
-
-        return ResultResponse.<UserPaymentMemberGetRes>builder()
-                .statusCode("200")
-                .resultMsg("결제 인원 검색 완료")
-                .resultData(res)
-                .build();
-    }
 
     @PatchMapping("updAmount")
     @Operation(summary = "승인 요청 금액 수정")

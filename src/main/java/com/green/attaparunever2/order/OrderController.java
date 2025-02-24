@@ -21,59 +21,6 @@ import java.util.List;
 public class OrderController {
     private final OrderService service;
 
-
-//    @PostMapping
-//    @Operation(summary = "주문 등록")
-//    public ResultResponse<Long> postOrder(@Valid @RequestBody OrderPostReq p
-//            , BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResultResponse.<Long>builder()
-//                    .statusCode("400")
-//                    .resultMsg("주문 등록 실패")
-//                    .resultData(0L)
-//                    .build();
-//        }
-//
-//        long result = service.postOrder(p);
-//        return ResultResponse.<Long>builder()
-//                .statusCode("200")
-//                .resultMsg("주문 등록 완료")
-//                .resultData(result)
-//                .build();
-//    }
-
-    @GetMapping
-    @Operation(summary = "주문 조회")
-    public ResultResponse<GetOrderRes> getOrder(@ParameterObject @ModelAttribute OrderGetReq p) {
-        GetOrderRes res = service.getOrder(p);
-        return ResultResponse.<GetOrderRes>builder()
-                .statusCode("200")
-                .resultMsg("주문 조회 완료")
-                .resultData(res)
-                .build();
-    }
-
-//    @PostMapping("/detail")
-//    @Operation(summary = "주문 상세 정보 등록")
-//    public ResultResponse<Long> postOrderDetail(@Valid @RequestBody OrderDetailPostReq p, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResultResponse.<Long>builder()
-//                    .statusCode("400")
-//                    .resultMsg("주문 상세 정보 등록 실패")
-//                    .resultData(0L)
-//                    .build();
-//        }
-//
-//        long orderDetailId = service.postOrderDetail(p);
-//        return ResultResponse.<Long>builder()
-//                .statusCode("200")
-//                .resultMsg("주문 상세 정보 등록 및 식권 생성 완료")
-//                .resultData(orderDetailId)
-//                .build();
-//    }
-
-
-
     @PostMapping("/with-detail")
     @Operation(summary = "주문 정보 등록")
     public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq p, BindingResult bindingResult) {
