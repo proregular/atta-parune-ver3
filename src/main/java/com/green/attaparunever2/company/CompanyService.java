@@ -201,6 +201,12 @@ public class CompanyService {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         // 관리자 권한 확인
         if (!company.getCompanyId().equals(admin.getDivisionId())) {
             throw new CustomException("이 회사의 관리자 권한이 없습니다.", HttpStatus.BAD_REQUEST);
@@ -225,6 +231,12 @@ public class CompanyService {
     public int patchEmployeePointCollect(UpdEmployeePointCollectReq req) {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
 
         User user = userRepository.findByUserId(req.getUserId())
                 .orElseThrow(() -> new CustomException("사원을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
@@ -269,6 +281,12 @@ public class CompanyService {
     public int patchEmployee(UpdEmployeeReq req) {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("관리자 정보가 일치하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
 
         User user = userRepository.findByUserId(req.getUserId())
                 .orElseThrow(() -> new CustomException("사용자 정보가 일치하지 않습니다.", HttpStatus.NOT_FOUND));
@@ -327,6 +345,25 @@ public class CompanyService {
         refund.setRefundDetail(req.getRefundDetail());
         refund.setRefundAmount(req.getRefundAmount());
         refundRepository.save(refund);
+
+        return 1;
+    }
+
+    public int delRefund(DelRefundReq req) {
+        Refund refund = refundRepository.findById(req.getRefundId())
+                .orElseThrow(() -> new CustomException("환불 요청 정보가 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 관리자 권한 조회
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (refund.getRefundYn() != 0) {
+            throw new CustomException("해당 환불 요청이 이미 처리되었습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        refundRepository.delete(refund);
 
         return 1;
     }
