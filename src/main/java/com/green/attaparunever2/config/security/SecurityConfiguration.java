@@ -28,26 +28,25 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable()) //SSR(Server Side Rendering)이 아니다. 보안관련 SSR 이 아니면 보안이슈가 없기 때문에 기능을 끈다.
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(req ->
-                                req.requestMatchers("/api/user/sign-in"
-                                                , "/api/reservation"
-                                                , "/api/user/sign-up"
-                                                , "/api/user/access-token"
-                                                , "/api/admin/sign-in"
-                                                , "/api/admin/sign-up"
-                                                , "/api/admin/access-token"
-                                                ,"api/admin/find-passowrd"
-                                                ,"api/admin/v3/signUpAdmin"
-                                                ,"api/admin/v3/sign-in"
-                                                , "/api/restaurant"
-                                                , "/api/restaurant/main"
-                                                , "/api/restaurant/around"
-                                                , "/api/user/find-id"
-                                                , "/api/user/sign-up"
-                                                , "api/user/find-passowrd"
-                                                , "/api/user/company/status"
+                        req.requestMatchers("/api/user/sign-in"
+                                        , "/api/reservation"
+                                        , "/api/user/sign-up"
+                                        , "/api/user/access-token"
+                                        , "/api/admin/sign-in"
+                                        , "/api/admin/sign-up"
+                                        , "/api/admin/access-token"
+                                        ,"api/admin/find-passowrd"
+                                        , "/api/restaurant"
+                                        , "/api/restaurant/v3/main"
+                                        , "/api/restaurant/v3/around"
+                                        , "/api/user/find-id"
+                                        , "/api/user/sign-up"
+                                        , "api/user/find-passowrd"
+                                        , "/api/user/company/status"
                                         ,"/", "/favicon.ico", "/index.html", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll() // 인증 없이 접근 허용
                                 .requestMatchers("/api/user/**", "/api/restaurant/**").hasAnyRole("USER", "RESTAURANT")
-                                .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT", "ADMIN")
+                                .requestMatchers("/api/admin/**").hasRole("RESTAURANT")
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/api/admin/**", "/api/restaurant/**", "/api/user/**").authenticated()
                                 .anyRequest().permitAll()
                 )
