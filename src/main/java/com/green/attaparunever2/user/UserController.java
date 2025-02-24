@@ -6,6 +6,8 @@ import com.green.attaparunever2.entity.Review;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderPostReq;
+import com.green.attaparunever2.reservation.ReservationService;
+import com.green.attaparunever2.reservation.model.ReservationPostReq;
 import com.green.attaparunever2.user.model.*;
 import com.green.attaparunever2.user.user_payment_member.UserPaymentMemberService;
 import com.green.attaparunever2.user.user_payment_member.model.PostTicketReq;
@@ -36,6 +38,7 @@ public class UserController {
     private final ReviewService reviewService;
     private final OrderService service;
     private final UserPaymentMemberService userPaymentMemberService;
+    private final ReservationService reservationService;
 
     @GetMapping
     @Operation(summary = "회원 정보 조회")
@@ -221,6 +224,18 @@ public class UserController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("티켓생성완료")
                 .resultData(p.getTicketId())
+                .build();
+    }
+
+    @PostMapping("reservation")
+    @Operation(summary = "예약 요청")
+    public ResultResponse<Long> postReservation(@RequestBody ReservationPostReq req) {
+        Long result = reservationService.postReservation(req);
+
+        return ResultResponse.<Long>builder()
+                .statusCode("200")
+                .resultMsg("예약 요청 완료")
+                .resultData(result)
                 .build();
     }
 }
