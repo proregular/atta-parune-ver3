@@ -20,42 +20,6 @@ import java.util.List;
 public class RestaurantController {
     private final RestaurantService restaurantService;
 
-    @PostMapping
-    @Operation(summary = "식당 등록")
-    public ResultResponse<Long> postRestaurant(@RequestBody InsRestaurantReq p){
-        Long result = restaurantService.postRestaurant(p);
-
-        return ResultResponse.<Long>builder()
-                .statusCode("200")
-                .resultMsg("식당 등록 성공")
-                .resultData(result)
-                .build();
-    }
-
-    @GetMapping
-    @Operation(summary = "식당 상세 정보 보기")
-    public ResultResponse<SelRestaurantRes> getRestaurant(@ParameterObject @ModelAttribute SelRestaurantReq p){
-        SelRestaurantRes res = restaurantService.getRestaurant(p);
-
-        return ResultResponse.<SelRestaurantRes>builder()
-                .statusCode("200")
-                .resultMsg("식당 보기 성공")
-                .resultData(res)
-                .build();
-    }
-
-    @GetMapping("around")
-    @Operation(summary = "주변 식당 보기")
-    public ResultResponse<List<SelRestaurantAroundRes>> getRestaurantAround(@ParameterObject @ModelAttribute SelRestaurantAroundReq p){
-        List<SelRestaurantAroundRes> res = restaurantService.getRestaurantAround(p);
-
-        return ResultResponse.<List<SelRestaurantAroundRes>>builder()
-                .statusCode("200")
-                .resultMsg("주변 식당 보기 완료")
-                .resultData(res)
-                .build();
-    }
-
     @PostMapping("holiday")
     @Operation(summary = "휴무일 등록")
     public ResultResponse<Integer> postHoliday(@RequestBody InsHolidayReq p){
@@ -101,30 +65,6 @@ public class RestaurantController {
                 .statusCode("200")
                 .resultMsg("휴무일 변경 완료")
                 .resultData(result)
-                .build();
-    }
-
-//    @GetMapping("main")
-//    @Operation(summary = "메인 화면 식당 조회")
-//    public ResultResponse<List<SelRestaurantMainRes>> getRestaurantMain(@ParameterObject @ModelAttribute SelRestaurantMainReq p){
-//        List<SelRestaurantMainRes> res = restaurantService.getRestaurantMain(p);
-//
-//        return ResultResponse.<List<SelRestaurantMainRes>>builder()
-//                .statusCode("200")
-//                .resultMsg("메인 화면 식당 정보 조회 완료")
-//                .resultData(res)
-//                .build();
-//    }
-
-    @GetMapping("dashboard")
-    @Operation(summary = "식당 매출정보 대시보드 조회")
-    public ResultResponse<SelRestaurantDashBoardRes> getRestaurantDashboard(@ParameterObject @ModelAttribute SelRestaurantDashboardReq p){
-        SelRestaurantDashBoardRes res = restaurantService.getRestaurantDashboard(p);
-
-        return ResultResponse.<SelRestaurantDashBoardRes>builder()
-                .statusCode("200")
-                .resultMsg("식당 매출 정보 대시보드 정보 조회 완료.")
-                .resultData(res)
                 .build();
     }
 

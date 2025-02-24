@@ -31,18 +31,6 @@ public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    @PostMapping("sign-up")
-    @Operation(summary = "회원가입")
-    public ResultResponse<?> signUp(@RequestBody UserSignUpReq req) {
-        int result = userService.signUp(req);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회원가입에 성공하였습니다.")
-                .resultData(result)
-                .build();
-    }
-
     @GetMapping
     @Operation(summary = "회원 정보 조회")
     public ResultResponse<?> getUser(@ModelAttribute UserGetReq req) {
@@ -76,18 +64,6 @@ public class UserController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("로그인 성공")
                 .resultData(userSignInRes)
-                .build();
-    }
-
-    @DeleteMapping
-    @Operation(summary = "사용자 삭제")
-    public ResultResponse<Integer> delUser(@ModelAttribute UserDelReq p) {
-        int result = userService.delUser(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회원 삭제 완료")
-                .resultData(result)
                 .build();
     }
 
@@ -135,18 +111,6 @@ public class UserController {
 
     }
 
-    @GetMapping("order")
-    @Operation(summary = "로그인한 사용자 본인의 진행중인 주문 조회")
-    public ResultResponse<GetUserOrderVer2Res> getUserOrder(@ParameterObject GetUserOrderVer2Req p) {
-        GetUserOrderVer2Res res = userService.getUserOrder(p);
-
-        return ResultResponse.<GetUserOrderVer2Res>builder()
-                .statusCode("200")
-                .resultMsg("주문 조회 완료")
-                .resultData(res)
-                .build();
-    }
-
     @PutMapping("/upw")
     @Operation(summary = "비밀번호 변경")
     public ResultResponse<Integer> patchUpw(@Valid @RequestBody UserUpwPatchReq p) {
@@ -180,6 +144,7 @@ public class UserController {
                 .resultData(res)
                 .build();
     }
+
     @PutMapping("/find-passowrd")
     @Operation(summary = "비밀번호 찾기")
     public ResultResponse<Integer> findPassword(@Valid @RequestBody UserFindPasswordReq p) {
@@ -190,29 +155,6 @@ public class UserController {
                 .resultData(result)
                 .build();
     }
-
-    // 회원 정보 수정
-    /*@PutMapping("v3/userInfo")
-    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
-    public ResultResponse<User> updateUser(@RequestParam(value = "nickName", required = false) String nickName,
-                                           @RequestParam("phone") String phone,
-                                           @RequestParam(value = "userPic", required = false) MultipartFile userPic) {
-
-        if (phone == null || phone.trim().isEmpty()) {
-            throw new IllegalArgumentException("핸드폰 번호는 필수입니다.");
-        }
-
-        UserUpdateInfoReq req = new UserUpdateInfoReq();
-        req.setNickName(nickName);
-        req.setPhone(phone);
-
-        User updatedUser = userService.updateUserInfo(req, userPic);
-        return ResultResponse.<User>builder()
-                .statusCode("200")
-                .resultMsg("회원 정보 등록 완료")
-                .resultData(updatedUser)
-                .build();
-    }*/
 
     @PutMapping("v3/userInfo")
     @Operation(summary = "회원 정보 등록", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
