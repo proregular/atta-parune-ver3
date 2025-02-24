@@ -20,8 +20,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("admin/restaurant")
-@Tag(name = "회사 관리자", description = "회사 관리자관련 API")
+@RequestMapping("admin/company")
+@Tag(name = "관리자 회사", description = "관리자 회사 관련 API")
 public class AdminCompanyController {
     private final CompanyService companyService;
     private final AdminService adminService;
@@ -86,7 +86,7 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @PostMapping("v3/CompanyEnrollment")
+    @PostMapping("v3/enrollment")
     @Operation(summary = "회사 제휴 신청서 등록")
     public ResultResponse<Integer> postCompanyEnrollment(@RequestBody InsCompanyEnrollmentReq req){
         int result = adminService.postCompanyEnrollment(req);
@@ -98,7 +98,7 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @GetMapping("v3/companyEnrollment")
+    @GetMapping("v3/enrollment")
     @Operation(summary = "회사 제휴신청서 보기")
     public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
         List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
@@ -110,7 +110,7 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @GetMapping("v3/CompanyPayment")
+    @GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
     public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
         List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
