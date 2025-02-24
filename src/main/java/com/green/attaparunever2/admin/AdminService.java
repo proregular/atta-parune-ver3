@@ -2,6 +2,7 @@ package com.green.attaparunever2.admin;
 
 import com.green.attaparunever2.admin.model.AdminSignUpReq;
 import com.green.attaparunever2.common.DateTimeUtils;
+import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.admin.model.*;
@@ -26,7 +27,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,6 +48,8 @@ public class AdminService {
     private final CompanyRepository companyRepository;
     private final RestaurantRepository restaurantRepository;
     private final RestaurantCategoryRepository restaurantCategoryRepository;
+    private final MyFileUtils myFileUtils;
+    private final SystemPostRepository systemPostRepository;
 
     // 관리자 회원가입
     @Transactional
@@ -321,13 +326,6 @@ public class AdminService {
         return res;
     }
 
-    //게시글 자세히 보기
-    public SelOneSystemPostRes getOneSystemPost(long inquiryId){
-        SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
-
-        return res;
-    }
-
     //식당 입점신청서 등록
     @Transactional
     public int postRestaurantEnrollment(InsRestaurantEnrollmentReq req){
@@ -367,6 +365,7 @@ public class AdminService {
         return 1;
     }
 
+
     // 회사 입점신청서 등록
     @Transactional
     public int postCompanyEnrollment(InsCompanyEnrollmentReq req){
@@ -399,12 +398,47 @@ public class AdminService {
 
         return 1;
     }
+
+    //게시글 등록하기
+    @Transactional
+    public int postSystemPost(MultipartFile pic, InsSystemInquiryReq req){
+        Code postCode = new Code();
+        postCode.setCode(req.getPostCode());
+        Code roleCode = new Code();
+        roleCode.setCode(req.getRoleCode());
+
+        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
+
+        SystemPost systemPost = new SystemPost();
+        systemPost.setPost(postCode);
+        systemPost.setRole(roleCode);
+        systemPost.setInquiryTitle(req.getInquiryTitle());
+        systemPost.setInquiryDetail(req.getInquiryDetail());
+        systemPost.setPic(savedPicName);
+        systemPost.setId(req.getId());
+        systemPostRepository.save(systemPost);
+        systemPostRepository.flush();
+
+        Long systemId = systemPost.getId();
+        
+        if(pic != null) {
+            String middlePath = String.format("systemPost/%d", systemId);
+            myFileUtils.makeFolders(middlePath);
+            String filePath = String.format("%s/%s", middlePath, savedPicName);
+            try {
+                myFileUtils.transferTo(pic, filePath);
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return 1;
+    }
+
     // 회사 코드가 자동으로 등록 될 수 있는 메소드
     @Transactional
     public String getNextCompanyId(){
         String lastCompanyCd = companyRepository.findFirstByLatestCompanyCd();
-
-        log.info("aaaaaaaaaaaaaaa : {}" , lastCompanyCd);
 
         if (lastCompanyCd == null) {
             return "0000";
@@ -419,7 +453,7 @@ public class AdminService {
     @Transactional
     public int updAdmin(SignUpAdminReq req){
         Admin admin = adminRepository.findById(req.getAdminId())
-                .orElseThrow(() -> new CustomException("컴퍼니가 존재하지 않습니다", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new CustomException("입점신청을 해주세요", HttpStatus.BAD_REQUEST));
 
         String hashedPassword = BCrypt.hashpw(req.getApw(), BCrypt.gensalt());
 
@@ -433,4 +467,11 @@ public class AdminService {
         return 1;
     }
 
+
+    //게시글 자세히 보기
+    public SelOneSystemPostRes getOneSystemPost(long inquiryId){
+        SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
+
+        return res;
+    }
 }

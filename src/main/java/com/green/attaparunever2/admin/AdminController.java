@@ -10,8 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -194,22 +196,9 @@ public class AdminController {
                 .build();
     }
 
-    @GetMapping("v3/SystemPost")
-    @Operation(summary = "게시글 자세히 보기")
-    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(long inquiryId){
-        SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
-
-        return ResultResponse.<SelOneSystemPostRes>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("게시글 자세히 보기 완료")
-                .resultData(res)
-                .build();
-
-    }
-
     @PostMapping("v3/restaurantEnrollment")
     @Operation(summary = "식당 입점 신청서 작성")
-    public ResultResponse<Integer> postRestaurantEnrollment(InsRestaurantEnrollmentReq req){
+    public ResultResponse<Integer> postRestaurantEnrollment(@RequestBody InsRestaurantEnrollmentReq req){
         int result = adminService.postRestaurantEnrollment(req);
 
         return ResultResponse.<Integer>builder()
@@ -221,7 +210,7 @@ public class AdminController {
     
     @PostMapping("v3/CompanyEnrollment")
     @Operation(summary = "회사 제휴 신청서 등록")
-    public ResultResponse<Integer> postCompanyEnrollment(InsCompanyEnrollmentReq req){
+    public ResultResponse<Integer> postCompanyEnrollment(@RequestBody InsCompanyEnrollmentReq req){
         int result = adminService.postCompanyEnrollment(req);
 
         return ResultResponse.<Integer>builder()
@@ -233,14 +222,40 @@ public class AdminController {
 
     @PutMapping("v3/admin")
     @Operation(summary = "식당, 회사 회원가입")
-    public ResultResponse<Integer> updAdmin(SignUpAdminReq req){
+    public ResultResponse<Integer> updAdmin(@RequestBody SignUpAdminReq req){
         int result = adminService.updAdmin(req);
 
-        log.info("@@@@@@@@@@@@@@@@@req : {}", req);
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회원가입 완료")
                 .resultData(result)
                 .build();
+    }
+
+    @PostMapping("v3/systemPost")
+    @Operation(summary = "게시글 등록하기")
+    public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
+                                                , @RequestPart InsSystemInquiryReq req){
+        int result = adminService.postSystemPost(pic, req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("게시글 등록완료")
+                .resultData(result)
+                .build();
+    }
+
+
+    @GetMapping("v3/systemPost")
+    @Operation(summary = "게시글 자세히 보기")
+    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(@ParameterObject @ModelAttribute long inquiryId){
+        SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
+
+        return ResultResponse.<SelOneSystemPostRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("게시글 자세히 보기 완료")
+                .resultData(res)
+                .build();
+
     }
 }
