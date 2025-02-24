@@ -28,4 +28,6 @@ public interface RestaurantMapper {
 
     //2차 기능 개선 코드-----------------------------------------------------------------------------
     List<GetRestaurantMainRes> selRestaurantMainV3(GetRestaurantMainReq p);
+    List<RestaurantAroundGetRes> selRestaurantAroundV3(RestaurantAroundGetReq p);
+    RestaurantDetailGetRes selRestaurantByRestaurantId(long restaurantId);
 }

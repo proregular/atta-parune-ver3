@@ -5,6 +5,7 @@ import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.restaurant.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,30 @@ public class RestaurantController {
         return ResultResponse.<List<GetRestaurantMainRes>>builder()
                 .statusCode("200")
                 .resultMsg("메인 화면 식당 정보 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/around")
+    @Operation(summary = "식당 찾기 탭 식당 리스트 조회")
+    public ResultResponse<List<RestaurantAroundGetRes>> getRestaurantAround(@ParameterObject @ModelAttribute @Valid RestaurantAroundGetReq req){
+        List<RestaurantAroundGetRes> res = restaurantService.getRestaurantAroundV3(req);
+
+        return ResultResponse.<List<RestaurantAroundGetRes>>builder()
+                .statusCode("200")
+                .resultMsg("주변 식당 보기 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/detail")
+    @Operation(summary = "식당 상세 정보 보기")
+    public ResultResponse<RestaurantDetailGetRes> getRestaurantV3(@ParameterObject @ModelAttribute @Valid RestaurantDetailGetReq req){
+        RestaurantDetailGetRes res = restaurantService.getRestaurantDetailV3(req);
+
+        return ResultResponse.<RestaurantDetailGetRes>builder()
+                .statusCode("200")
+                .resultMsg("식당 보기 성공")
                 .resultData(res)
                 .build();
     }

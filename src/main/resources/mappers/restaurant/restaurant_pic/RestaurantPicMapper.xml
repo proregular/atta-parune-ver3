@@ -34,20 +34,20 @@
     </select>
 
     <select id="selRestaurantPic">
-        SELECT restaurant_id AS restaurantId, file_path AS filePath
+        SELECT restaurant_id AS restaurantId, pic_name AS filePath
         FROM restaurant_pic
         WHERE restaurant_id = #{restaurantId}
         LIMIT 1
     </select>
 
     <select id="selRestaurantAroundPic">
-        SELECT restaurant_id AS restaurantId, file_path AS filePath
+        SELECT restaurant_id AS restaurantId, pic_name AS filePath
         FROM restaurant_pic
         WHERE restaurant_id = #{restaurantId}
     </select>
 
     <select id="selRestaurantMainPic">
-        SELECT file_path AS filePath
+        SELECT pic_name AS filePath
         FROM restaurant_pic
         WHERE restaurant_id = #{restaurantId}
         LIMIT 1
