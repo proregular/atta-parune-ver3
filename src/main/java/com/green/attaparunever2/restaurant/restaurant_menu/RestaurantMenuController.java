@@ -66,18 +66,6 @@ public class RestaurantMenuController {
                 .build();
     }
 
-    @PostMapping("/category")
-    @Operation(summary = "메뉴 카테고리 등록")
-    public ResultResponse<Integer> postCategory(@RequestBody PostCategoryReq p) {
-        int result = restaurantMenuService.postCategory(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode("200")
-                .resultMsg("메뉴 카테고리 등록 완료")
-                .resultData(result)
-                .build();
-    }
-
     @PatchMapping("/category")
     @Operation(summary = "메뉴 카테고리 수정")
     public ResultResponse<Integer> updateCategory(@RequestBody UpdCategoryReq p) {
@@ -86,18 +74,6 @@ public class RestaurantMenuController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("메뉴 카테고리 수정 완료")
-                .resultData(result)
-                .build();
-    }
-
-    @DeleteMapping("/category")
-    @Operation(summary = "메뉴 카테고리 삭제")
-    public ResultResponse<Integer> deleteCategory(@RequestBody DelCategoryReq p) {
-        int result = restaurantMenuService.delCategory(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode("200")
-                .resultMsg("메뉴 카테고리 삭제 완료")
                 .resultData(result)
                 .build();
     }

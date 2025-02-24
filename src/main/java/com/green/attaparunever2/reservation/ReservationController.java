@@ -3,6 +3,7 @@ package com.green.attaparunever2.reservation;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.reservation.model.ReservationPostReq;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("reservation")
+@Tag(name = "예약", description = "예약 관리")
 public class ReservationController {
     private final ReservationService reservationService;
 
