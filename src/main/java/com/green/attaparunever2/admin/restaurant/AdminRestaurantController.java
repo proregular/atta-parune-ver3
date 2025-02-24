@@ -91,7 +91,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping("/category")
+    @PatchMapping("/menu/category")
     @Operation(summary = "메뉴 카테고리 수정")
     public ResultResponse<Integer> updateCategory(@RequestBody UpdCategoryReq p) {
         int result = restaurantMenuService.updCategory(p);
