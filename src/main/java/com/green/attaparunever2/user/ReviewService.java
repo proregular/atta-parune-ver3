@@ -84,9 +84,11 @@ public class ReviewService {
 
         // 10. 리뷰 사진 저장
         if (reviewPics != null && !reviewPics.isEmpty()) {
-            int count = 0;
+            if (reviewPics.size() > 3) {
+                throw new IllegalArgumentException("리뷰 사진은 최대 3개까지 등록할 수 있습니다.");
+            }
+
             for (MultipartFile file : reviewPics) {
-                if (count >= 3) break; // 최대 3개의 파일만 저장
                 if (!file.isEmpty()) {
                     // 파일 저장 경로 설정
                     String folderPath = "review_pics/" + order.getOrderId();
@@ -109,8 +111,6 @@ public class ReviewService {
                     reviewPic.setReviewPic(savedFileName);
 
                     reviewPicRepository.save(reviewPic);
-
-                    count++;
                 }
             }
         }
