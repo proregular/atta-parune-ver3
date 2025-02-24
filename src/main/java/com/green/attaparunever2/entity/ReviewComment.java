@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 public class ReviewComment extends UpdatedAt{
     @Id
+    private Long orderId;
+
     @ManyToOne
+    @MapsId
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;
 

@@ -3,6 +3,7 @@ package com.green.attaparunever2.admin.restaurant;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsRestaurantEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelRestaurantEnrollmentRes;
+import com.green.attaparunever2.admin.restaurant.model.InsReviewCommentReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
@@ -40,6 +41,7 @@ public class AdminRestaurantController {
     private final OrderService orderService;
     private final AdminService adminService;
     private final RestaurantPicService restaurantPicService;
+    private final AdminRestaurantService adminRestaurantService;
 
     @PatchMapping
     @Operation(summary = "식당 정보 수정")
@@ -252,6 +254,18 @@ public class AdminRestaurantController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("휴무일 변경 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("review")
+    @Operation(summary = "리뷰 댓글 등록")
+    public ResultResponse<Integer> postReviewComment(@RequestBody InsReviewCommentReq req) {
+        int result = adminRestaurantService.postReviewComment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("리뷰 댓글 등록 성공")
                 .resultData(result)
                 .build();
     }
