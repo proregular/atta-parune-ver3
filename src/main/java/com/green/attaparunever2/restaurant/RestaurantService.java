@@ -255,4 +255,68 @@ public class RestaurantService {
 
         return restaurantList;
     }
+
+    // 식당찾기 화면 식당 리스트 조회
+    public List<RestaurantAroundGetRes> getRestaurantAroundV3(RestaurantAroundGetReq req){
+        // 반경 3km
+        double radiusInKm = 3.0;
+
+        // 반경 min, max lat, lng 구함
+        double[] aroundKmMinMaxList = getBoundingBox(req.getUserLat() , req.getUserLng(), radiusInKm);
+
+        req.setAroundMinLat(aroundKmMinMaxList[0]);
+        req.setAroundMaxLat(aroundKmMinMaxList[1]);
+        req.setAroundMinLng(aroundKmMinMaxList[2]);
+        req.setAroundMaxLng(aroundKmMinMaxList[3]);
+
+        // 식당 리스트 조회
+        List<RestaurantAroundGetRes> restaurantList = restaurantMapper.selRestaurantAroundV3(req);
+
+        for (RestaurantAroundGetRes restaurant : restaurantList) {
+            // 각 식당에 대해 사진 리스트를 가져오기
+            List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
+
+            // 사진 리스트를 해당 식당 객체에 설정
+            restaurant.setRestaurantPicList(picList);
+        }
+
+        return restaurantList;
+    }
+
+    // 특정 경로에 Km 반경 구하는 메소드
+    public double[] getBoundingBox(double lat, double lng, double radiusKm) {
+        final double KM_PER_DEGREE_LAT = 111.32;
+
+        // 위도와 경도 차이 계산
+        double latDiff = radiusKm / KM_PER_DEGREE_LAT;
+        double lngDiff = radiusKm / (KM_PER_DEGREE_LAT * Math.cos(Math.toRadians(lat)));
+
+        return new double[]{
+                lat - latDiff, // minLat
+                lat + latDiff, // maxLat
+                lng - lngDiff, // minLng
+                lng + lngDiff  // maxLng
+        };
+    }
+
+    // 식당 상세 정보 조회
+    public RestaurantDetailGetRes getRestaurantDetailV3(RestaurantDetailGetReq req){
+        // 식당 정보 불러오기
+        RestaurantDetailGetRes res = restaurantMapper.selRestaurantByRestaurantId(req.getRestaurantId());
+        // 식당 사진 불러오기
+        RestaurantPicSel restaurantPicSel = restaurantPicMapper.selRestaurantPic(req.getRestaurantId());
+        res.setRestaurantPics(restaurantPicSel);
+        // 식당 메뉴 카테고리 불러오기
+        List<MenuSelCateList> menuSelCateList = restaurantMenuMapper.selMenuCategoryList(req.getRestaurantId());
+        res.setMenuCateList(menuSelCateList);
+        // 식당 메뉴 불러오기
+        for (MenuSelCateList category : menuSelCateList) {
+            // 4.1 각 카테고리 ID를 사용하여 해당 카테고리의 메뉴를 조회
+            List<MenuSelList> menuList = restaurantMenuMapper.selMenuList(category.getCategoryId());
+
+            // 4.2 카테고리 객체에 메뉴 리스트 설정
+            category.setMenuList(menuList);
+        }
+        return res;
+    }
 }
