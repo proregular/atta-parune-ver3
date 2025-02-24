@@ -53,7 +53,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PostMapping
+    @PostMapping("/menu")
     @Operation(summary = "메뉴 등록")
     public ResultResponse<Integer> postMenu(@RequestPart PostMenuReq p
             , @RequestPart(required = false) MultipartFile pic){
@@ -67,7 +67,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping
+    @PatchMapping("/menu")
     @Operation(summary = "메뉴 정보 수정")
     public ResultResponse<Integer> updateMenu(@RequestBody UpdMenuReq p){
         int result = restaurantMenuService.updRestaurantMenu(p);
@@ -79,7 +79,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/menu")
     @Operation(summary = "메뉴 정보 삭제")
     public ResultResponse<Integer> deleteMenu(@ParameterObject @ModelAttribute DelMenuReq p){
         int result = restaurantMenuService.delMenu(p);
@@ -91,7 +91,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping("/category")
+    @PatchMapping("/menu/category")
     @Operation(summary = "메뉴 카테고리 수정")
     public ResultResponse<Integer> updateCategory(@RequestBody UpdCategoryReq p) {
         int result = restaurantMenuService.updCategory(p);
@@ -181,7 +181,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping("/v3/menu")
+    @PatchMapping("/v3/pic/menu")
     @Operation(summary = "식당 메뉴 사진 수정")
     public ResultResponse<String> updRestaurantMenuPic(@RequestPart MultipartFile pic, @RequestPart UpdRestaurantMenuPicReq p) {
         String result = restaurantPicService.updRestaurantMenuPic(pic, p);
