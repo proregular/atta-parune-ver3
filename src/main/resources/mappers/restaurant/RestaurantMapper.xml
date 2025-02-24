@@ -257,4 +257,50 @@
         AND A.category_id = #{categoryId}
         LIMIT #{startIdx}, #{size}
     </select>
+
+    <!-- 사용자 식당 찾기 화면 식당 리스트 조회 -->
+    <select id="selRestaurantAroundV3">
+        SELECT A.restaurant_name AS restaurantName
+        , A.restaurant_address AS restaurantAddress
+        , A.restaurant_id AS restaurantId
+        , A.lat, A.lng
+        , (
+        SELECT IFNULL(
+        AVG(
+        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
+        ), 40)
+        FROM meal_time B
+        WHERE B.restaurant_id = A.restaurant_id
+        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
+        ) AS mealTimeAvg
+        , (
+        ABS(A.lat - #{userLat}) + ABS(A.lng - #{userLng})
+        ) AS distance
+        FROM restaurant A
+        WHERE `status` = 0
+        <if test=" searchText != null and searchText != '' ">
+            AND A.restaurant_name LIKE '%${searchText}%'
+        </if>
+        AND (A.lat &gt;= #{aroundMinLat} AND A.lat &lt;= #{aroundMaxLat}) AND (A.lng &gt;= #{aroundMinLng} AND A.lng &lt;= #{aroundMaxLng})
+        <if test = " orderFilter != null and orderFilter != '' ">
+            <if test = " orderFilter == 0">
+                ORDER BY A.restaurant_name ASC;
+            </if>
+            <if test = " orderFilter == 1">
+                ORDER BY distance ASC;
+            </if>
+        </if>
+    </select>
+
+    <!-- 사용자 식당 상세화면 정보 조회 -->
+    <select id="selRestaurantByRestaurantId">
+        SELECT category_id AS categoryId, restaurant_id AS restaurantId, restaurant_name AS restaurantName
+        , restaurant_address AS restaurantAddress, restaurant_number AS restaurantNumber
+        , business_number AS businessNumber, operating_hours AS operatingHours
+        , restaurant_description AS restaurantDescription, `status`
+        , max_capacity AS maxCapacity, created_at AS createdAt
+        , lat, lng
+        FROM restaurant
+        WHERE restaurant_id = #{restaurantId};
+    </select>
 </mapper>
