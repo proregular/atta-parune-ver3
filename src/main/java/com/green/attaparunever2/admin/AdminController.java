@@ -258,4 +258,17 @@ public class AdminController {
                 .build();
 
     }
+
+    @PostMapping("v3/announcement")
+    @Operation(summary = "공지사항 등록하기")
+    public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
+                                                , @RequestPart InsAnnouncementReq req){
+        int result = adminService.postAnnouncement(pic, req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("공지사항 등록완료")
+                .resultData(result)
+                .build();
+    }
 }
