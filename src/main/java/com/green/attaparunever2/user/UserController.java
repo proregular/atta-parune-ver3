@@ -2,6 +2,7 @@ package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.entity.Review;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +29,7 @@ import java.util.List;
 @Tag(name="유저", description = "유저 관련 API")
 public class UserController {
     private final UserService userService;
+    private final ReviewService reviewService;
 
     @PostMapping("sign-up")
     @Operation(summary = "회원가입")
@@ -225,6 +227,21 @@ public class UserController {
                 .statusCode("200")
                 .resultMsg("회원 정보 등록 완료")
                 .resultData(updatedUser)
+                .build();
+    }
+
+    @PostMapping("v3/review")
+    @Operation(summary = "리뷰 등록")
+    public ResultResponse<Review> postReview(
+            @RequestPart("reviewRequestDto") @Valid @ParameterObject ReviewRequestDto reviewRequestDto,
+            @RequestPart("reviewPics") List<MultipartFile> reviewPics) throws Exception {
+
+        Review review = reviewService.postReview(reviewRequestDto, reviewPics);
+
+        return ResultResponse.<Review>builder()
+                .statusCode("200")
+                .resultMsg("리뷰 등록 성공")
+                .resultData(review)
                 .build();
     }
 }
