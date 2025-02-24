@@ -26,8 +26,8 @@ public class MealTime extends UpdatedAt{
     private Restaurant restaurantId;
 
     @Column
-    private LocalDateTime startMealTime;
+    private LocalDateTime startMealDate;
 
     @Column
-    private LocalDateTime endMealTime;
+    private LocalDateTime endMealDate;
 }

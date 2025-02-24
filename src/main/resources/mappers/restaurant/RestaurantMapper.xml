@@ -244,13 +244,13 @@
         SELECT restaurant_id AS restaurantId, restaurant_name AS restaurantName
         , restaurant_address AS restaurantAddress
         , (
-            SELECT IFNULL(
-                    AVG(
-                        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
-                    ), 40)
-            FROM meal_time B
-            WHERE B.restaurant_id = A.restaurant_id
-            AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
+        SELECT IFNULL(
+        AVG(
+        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
+        ), 40)
+        FROM meal_time B
+        WHERE B.restaurant_id = A.restaurant_id
+        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
         ) AS mealTimeAvg
         FROM restaurant A
         WHERE A.`status` = 0
