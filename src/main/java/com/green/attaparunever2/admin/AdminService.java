@@ -399,41 +399,7 @@ public class AdminService {
         return 1;
     }
 
-    //게시글 등록하기
-    @Transactional
-    public int postSystemPost(MultipartFile pic, InsSystemInquiryReq req){
-        Code postCode = new Code();
-        postCode.setCode(req.getPostCode());
-        Code roleCode = new Code();
-        roleCode.setCode(req.getRoleCode());
 
-        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
-
-        SystemPost systemPost = new SystemPost();
-        systemPost.setPost(postCode);
-        systemPost.setRole(roleCode);
-        systemPost.setInquiryTitle(req.getInquiryTitle());
-        systemPost.setInquiryDetail(req.getInquiryDetail());
-        systemPost.setPic(savedPicName);
-        systemPost.setId(req.getId());
-        systemPostRepository.save(systemPost);
-        systemPostRepository.flush();
-
-        Long systemId = systemPost.getId();
-        
-        if(pic != null) {
-            String middlePath = String.format("systemPost/%d", systemId);
-            myFileUtils.makeFolders(middlePath);
-            String filePath = String.format("%s/%s", middlePath, savedPicName);
-            try {
-                myFileUtils.transferTo(pic, filePath);
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return 1;
-    }
 
     // 회사 코드가 자동으로 등록 될 수 있는 메소드
     @Transactional
@@ -467,11 +433,86 @@ public class AdminService {
         return 1;
     }
 
+    //게시글 등록하기
+    @Transactional
+    public int postSystemPost(MultipartFile pic, InsSystemInquiryReq req){
+        Code postCode = new Code();
+        postCode.setCode(req.getPostCode());
+        Code roleCode = new Code();
+        roleCode.setCode(req.getRoleCode());
+
+        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
+
+        SystemPost systemPost = new SystemPost();
+        systemPost.setPost(postCode);
+        systemPost.setRole(roleCode);
+        systemPost.setInquiryTitle(req.getInquiryTitle());
+        systemPost.setInquiryDetail(req.getInquiryDetail());
+        systemPost.setPic(savedPicName);
+        systemPost.setId(req.getId());
+        systemPostRepository.save(systemPost);
+        systemPostRepository.flush();
+
+        Long systemId = systemPost.getId();
+
+        if(pic != null) {
+            String middlePath = String.format("systemPost/%d", systemId);
+            myFileUtils.makeFolders(middlePath);
+            String filePath = String.format("%s/%s", middlePath, savedPicName);
+            try {
+                myFileUtils.transferTo(pic, filePath);
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return 1;
+    }
 
     //게시글 자세히 보기
     public SelOneSystemPostRes getOneSystemPost(long inquiryId){
         SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
 
         return res;
+    }
+
+    //공지사항 등록
+    @Transactional
+    public int postAnnouncement(MultipartFile pic, InsAnnouncementReq req){
+        Code postCode = codeRepository.findById("00201").orElse(null);
+        if(postCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        Code roleCode = codeRepository.findById("00103").orElse(null);
+        if(roleCode == null) {
+            throw new CustomException("코드를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
+
+        SystemPost systemPost = new SystemPost();
+        systemPost.setPost(postCode);
+        systemPost.setRole(roleCode);
+        systemPost.setInquiryTitle(req.getInquiryTitle());
+        systemPost.setInquiryDetail(req.getInquiryDetail());
+        systemPost.setId(req.getId());
+        systemPost.setPic(savedPicName);
+        systemPostRepository.save(systemPost);
+        systemPostRepository.flush();
+
+        Long systemId = systemPost.getId();
+
+        if(pic != null) {
+            String middlePath = String.format("systemPost/%d", systemId);
+            myFileUtils.makeFolders(middlePath);
+            String filePath = String.format("%s/%s", middlePath, savedPicName);
+            try {
+                myFileUtils.transferTo(pic, filePath);
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return 1;
     }
 }
