@@ -119,83 +119,31 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review updReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> reviewPics, Long reviewPicIdToDelete) throws IOException {
+    public void delReview(Long orderId) throws IOException {
         Long userId = authenticationFacade.getSignedUserId();
 
-        // 1. 주문 정보 조회
-        Order order = orderRepository.findByOrderId(reviewRequestDto.getOrderId())
+        Order order = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 정보가 존재하지 않습니다."));
 
-        // 2. 사용자는 본인 주문에 대해서만 리뷰를 작성할 수 있음
         if (!order.getUserId().getUserId().equals(userId)) {
-            throw new IllegalArgumentException("본인의 주문에 대해서만 리뷰를 수정할 수 있습니다.");
+            throw new IllegalArgumentException("본인의 주문이 아니므로 리뷰를 삭제할 수 없습니다.");
         }
 
-        // 3. 리뷰 정보 조회
-        Review review = reviewRepository.findByOrderId(order.getOrderId())
+        Review review = reviewRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰 정보가 존재하지 않습니다."));
 
-        // 4. 평점은 1~5점만 가능
-        int rating = reviewRequestDto.getRating();
-        if (rating < 1 || rating > 5) {
-            throw new IllegalArgumentException("평점은 1점에서 5점 사이여야 합니다.");
+        // 해당 리뷰에 연결된 리뷰 사진 삭제
+        List<ReviewPic> reviewPics = reviewPicRepository.findByOrder_OrderId(orderId);
+        for (ReviewPic pic : reviewPics) {
+            // 파일 시스템에서 삭제
+            String filePath = "review_pics/" + orderId + "/" + pic.getReviewPic();
+            myFileUtils.deleteFile(filePath);
+            // DB에서 삭제
+            reviewPicRepository.delete(pic);
         }
 
-        // 5. 리뷰 내용 수정
-        review.setRating(rating);
-        review.setReviewText(reviewRequestDto.getReviewText());
-
-        // 6. 기존 리뷰 사진 삭제
-        if (reviewPicIdToDelete != null) {
-            Optional<ReviewPic> reviewPicToDelete = reviewPicRepository.findByReviewPicId(reviewPicIdToDelete);
-            if (reviewPicToDelete.isPresent()) {
-                // 파일 삭제
-                String filePath = "review_pics/" + order.getOrderId() + "/" + reviewPicToDelete.get().getReviewPic();
-                myFileUtils.deleteFile(filePath);
-
-                reviewPicRepository.deleteByReviewPicId(reviewPicIdToDelete);
-            } else {
-                throw new IllegalArgumentException("삭제할 리뷰 사진이 존재하지 않습니다.");
-            }
-        }
-
-        // 7. 새로운 리뷰 사진 추가
-        int currentPicCount = reviewPicRepository.countByOrder(order);
-        int newPicsCount = reviewPics != null ? reviewPics.size() : 0;
-        int totalPicsCount = currentPicCount + newPicsCount;
-
-        if (totalPicsCount > 3) {
-            throw new IllegalArgumentException("리뷰 사진은 최대 3개까지 등록할 수 있습니다.");
-        }
-
-        if (reviewPics != null && !reviewPics.isEmpty()) {
-            for (MultipartFile file : reviewPics) {
-                if (!file.isEmpty()) {
-                    // 파일 저장 경로 설정
-                    String folderPath = "review_pics/" + order.getOrderId();
-                    myFileUtils.makeFolders(folderPath);
-
-                    // 랜덤 파일명 생성 및 저장
-                    String savedFileName = myFileUtils.makeRandomFileName(file);
-                    String filePath = folderPath + "/" + savedFileName;
-
-                    try {
-                        myFileUtils.transferTo(file, filePath);
-                    } catch (IOException e) {
-                        log.error("파일 저장 실패: {}", e.getMessage());
-                        throw new RuntimeException("파일 저장 실패", e);
-                    }
-
-                    // ReviewPic 엔티티에 추가
-                    ReviewPic reviewPic = new ReviewPic();
-                    reviewPic.setOrder(order);
-                    reviewPic.setReviewPic(savedFileName);
-
-                    reviewPicRepository.save(reviewPic);
-                }
-            }
-        }
-
-        return review;
+        // 리뷰 삭제
+        reviewRepository.delete(review);
     }
+
 }
