@@ -21,7 +21,7 @@ import java.util.List;
 public class UserPaymentMemberController {
     private final UserPaymentMemberService userPaymentMemberService;
 
-    @GetMapping("getPoint")
+    @GetMapping("point")
     @Operation(summary = "남은 포인트 조회")
     public ResultResponse<UserGetPointRes> getPoint(@ModelAttribute UserGetPointReq p) {
         UserGetPointRes result = userPaymentMemberService.getPoint(p.getUserId());
@@ -33,7 +33,7 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @PatchMapping("updAmount")
+    @PatchMapping("point")
     @Operation(summary = "승인 요청 금액 수정")
     public ResultResponse<Integer> updPaymentAmount(UserPaymentAmountPatchReq p) {
         int result = userPaymentMemberService.updPaymentAmount(p);
@@ -71,7 +71,7 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @GetMapping("getPaymentInfo")
+    @GetMapping("my")
     @Operation(summary = "내게 온 결제 승인 요청 정보를 조회한다.")
     public ResultResponse<UserGetPaymentInfoRes> getPaymentInfo(@ParameterObject UserGetPaymentInfoReq p) {
         UserGetPaymentInfoRes result = userPaymentMemberService.getPaymentInfo(p);
@@ -107,7 +107,7 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @GetMapping("userPaymentMember")
+    @GetMapping
     @Operation(summary = "유저 결제 멤버 확인")
     public ResultResponse<List<SelUserPaymentMemberRes>> getUserPaymentMember(long orderId) {
         List<SelUserPaymentMemberRes> resList = userPaymentMemberService.getUserPaymentMember(orderId);
@@ -119,7 +119,7 @@ public class UserPaymentMemberController {
                 .build();
     }
 
-    @GetMapping("userOrderApprovalAccess")
+    @GetMapping("approval-status")
     @Operation(summary = "승인상태확인")
     public ResultResponse<List<SelUserOrderApprovalRes>> getUserOrderApprovalAccess(long orderId) {
         List<SelUserOrderApprovalRes> list = userPaymentMemberService.getUserOrderApprovalAccess(orderId);

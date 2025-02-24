@@ -4,7 +4,11 @@ import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.entity.Review;
 import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.order.OrderService;
+import com.green.attaparunever2.order.model.OrderPostReq;
 import com.green.attaparunever2.user.model.*;
+import com.green.attaparunever2.user.user_payment_member.UserPaymentMemberService;
+import com.green.attaparunever2.user.user_payment_member.model.PostTicketReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +34,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final ReviewService reviewService;
+    private final OrderService service;
+    private final UserPaymentMemberService userPaymentMemberService;
 
     @GetMapping
     @Operation(summary = "회원 정보 조회")
@@ -85,7 +91,7 @@ public class UserController {
         return userService.getAccessToken(req);
     }
 
-    @GetMapping("activeOrderCheck")
+    @GetMapping("order/active")
     @Operation(summary = "진행중인 주문 내역 확인")
     public ResultResponse<List<SelUserOrderPastCheckRes>> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> resList = userService.getUserActiveOrderCheck(p);
@@ -98,7 +104,7 @@ public class UserController {
 
     }
 
-    @GetMapping("pastOrderCheck")
+    @GetMapping("order/past")
     @Operation(summary = "지난 주문 내역 확인")
     public ResultResponse<List<SelUserOrderPastCheckRes>> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> resList = userService.getUserPastOrderCheck(p);
@@ -184,6 +190,37 @@ public class UserController {
                 .statusCode("200")
                 .resultMsg("리뷰 등록 성공")
                 .resultData(review)
+                .build();
+    }
+
+    @PostMapping("/order")
+    @Operation(summary = "주문 정보 등록")
+    public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq p, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultResponse.<Long>builder()
+                    .statusCode("400")
+                    .resultMsg("주문 정보 등록 실패")
+                    .resultData(0L)
+                    .build();
+        }
+
+        service.postOrderWithDetail(p);
+        return ResultResponse.<Long>builder()
+                .statusCode("200")
+                .resultMsg("주문 정보 등록 완료")
+                .resultData(p.getOrderId())
+                .build();
+    }
+
+    @PostMapping("ticket")
+    @Operation(summary = "티켓생성")
+    public ResultResponse<Long> postTicket(@RequestBody PostTicketReq p){
+        userPaymentMemberService.postTicket(p);
+
+        return ResultResponse.<Long>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("티켓생성완료")
+                .resultData(p.getTicketId())
                 .build();
     }
 }
