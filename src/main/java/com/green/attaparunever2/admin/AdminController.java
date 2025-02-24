@@ -25,17 +25,6 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
-    @PostMapping("sign-up")
-    @Operation(summary = "관리자 가입")
-    ResultResponse<Integer> adminSignUp(@RequestBody AdminSignUpReq p){
-        int result = adminService.adminSignUp(p);
-        return ResultResponse.<Integer>builder()
-                .statusCode("200")
-                .resultMsg("관리자가입 완료")
-                .resultData(result)
-                .build();
-    }
-
     @GetMapping
     @Operation(summary = "관리자 정보 조회")
     public ResultResponse<?> getUser(@ModelAttribute AdminGetReq req) {
@@ -60,18 +49,6 @@ public class AdminController {
                 .build();
     }
 
-    @PostMapping("sign-in")
-    @Operation(summary = "로그인")
-    public ResultResponse<?> signIn(@RequestBody AdminSignInReq p, HttpServletResponse response) {
-        AdminSignInRes adminSignInRes = adminService.signIn(p, response);
-
-        return ResultResponse.<AdminSignInRes>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("로그인 성공")
-                .resultData(adminSignInRes)
-                .build();
-    }
-
     @PostMapping("v3/sign-in")
     @Operation(summary = "관리자 로그인")
     public ResultResponse<?> signInAdmin(@RequestBody SignInAdminReq p, HttpServletResponse response) {
@@ -81,18 +58,6 @@ public class AdminController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("로그인 성공")
                 .resultData(res)
-                .build();
-    }
-
-    @DeleteMapping
-    @Operation(summary = "관리자 삭제")
-    public ResultResponse<Integer> delAdmin(@ModelAttribute AdminDelReq p) {
-        int result = adminService.delAdmin(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("관리자 삭제 완료")
-                .resultData(result)
                 .build();
     }
 
@@ -257,5 +222,18 @@ public class AdminController {
                 .resultData(res)
                 .build();
 
+    }
+
+    @PostMapping("v3/announcement")
+    @Operation(summary = "공지사항 등록하기")
+    public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
+                                                , @RequestPart InsAnnouncementReq req){
+        int result = adminService.postAnnouncement(pic, req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("공지사항 등록완료")
+                .resultData(result)
+                .build();
     }
 }

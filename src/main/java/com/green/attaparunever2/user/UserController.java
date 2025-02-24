@@ -2,6 +2,7 @@ package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.admin.model.AdminFindPasswordReq;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.entity.Review;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.user.model.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,18 +29,7 @@ import java.util.List;
 @Tag(name="유저", description = "유저 관련 API")
 public class UserController {
     private final UserService userService;
-
-    @PostMapping("sign-up")
-    @Operation(summary = "회원가입")
-    public ResultResponse<?> signUp(@RequestBody UserSignUpReq req) {
-        int result = userService.signUp(req);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회원가입에 성공하였습니다.")
-                .resultData(result)
-                .build();
-    }
+    private final ReviewService reviewService;
 
     @GetMapping
     @Operation(summary = "회원 정보 조회")
@@ -74,18 +64,6 @@ public class UserController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("로그인 성공")
                 .resultData(userSignInRes)
-                .build();
-    }
-
-    @DeleteMapping
-    @Operation(summary = "사용자 삭제")
-    public ResultResponse<Integer> delUser(@ModelAttribute UserDelReq p) {
-        int result = userService.delUser(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회원 삭제 완료")
-                .resultData(result)
                 .build();
     }
 
@@ -133,18 +111,6 @@ public class UserController {
 
     }
 
-    @GetMapping("order")
-    @Operation(summary = "로그인한 사용자 본인의 진행중인 주문 조회")
-    public ResultResponse<GetUserOrderVer2Res> getUserOrder(@ParameterObject GetUserOrderVer2Req p) {
-        GetUserOrderVer2Res res = userService.getUserOrder(p);
-
-        return ResultResponse.<GetUserOrderVer2Res>builder()
-                .statusCode("200")
-                .resultMsg("주문 조회 완료")
-                .resultData(res)
-                .build();
-    }
-
     @PutMapping("/upw")
     @Operation(summary = "비밀번호 변경")
     public ResultResponse<Integer> patchUpw(@Valid @RequestBody UserUpwPatchReq p) {
@@ -178,6 +144,7 @@ public class UserController {
                 .resultData(res)
                 .build();
     }
+
     @PutMapping("/find-passowrd")
     @Operation(summary = "비밀번호 찾기")
     public ResultResponse<Integer> findPassword(@Valid @RequestBody UserFindPasswordReq p) {
@@ -188,29 +155,6 @@ public class UserController {
                 .resultData(result)
                 .build();
     }
-
-    // 회원 정보 수정
-    /*@PutMapping("v3/userInfo")
-    @Operation(summary = "회원 정보 수정", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
-    public ResultResponse<User> updateUser(@RequestParam(value = "nickName", required = false) String nickName,
-                                           @RequestParam("phone") String phone,
-                                           @RequestParam(value = "userPic", required = false) MultipartFile userPic) {
-
-        if (phone == null || phone.trim().isEmpty()) {
-            throw new IllegalArgumentException("핸드폰 번호는 필수입니다.");
-        }
-
-        UserUpdateInfoReq req = new UserUpdateInfoReq();
-        req.setNickName(nickName);
-        req.setPhone(phone);
-
-        User updatedUser = userService.updateUserInfo(req, userPic);
-        return ResultResponse.<User>builder()
-                .statusCode("200")
-                .resultMsg("회원 정보 등록 완료")
-                .resultData(updatedUser)
-                .build();
-    }*/
 
     @PutMapping("v3/userInfo")
     @Operation(summary = "회원 정보 등록", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
@@ -225,6 +169,21 @@ public class UserController {
                 .statusCode("200")
                 .resultMsg("회원 정보 등록 완료")
                 .resultData(updatedUser)
+                .build();
+    }
+
+    @PostMapping("v3/review")
+    @Operation(summary = "리뷰 등록")
+    public ResultResponse<Review> postReview(
+            @RequestPart("reviewRequestDto") @Valid @ParameterObject ReviewRequestDto reviewRequestDto,
+            @RequestPart("reviewPics") List<MultipartFile> reviewPics) throws Exception {
+
+        Review review = reviewService.postReview(reviewRequestDto, reviewPics);
+
+        return ResultResponse.<Review>builder()
+                .statusCode("200")
+                .resultMsg("리뷰 등록 성공")
+                .resultData(review)
                 .build();
     }
 }

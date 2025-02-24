@@ -26,5 +26,6 @@ public interface RestaurantMapper {
     // 식당 매출 정보 조회
     List<SelRestaurantOrderRes> selRestaurantPointByCreatedAt(SelRestaurantOrderReq req);
 
+    //2차 기능 개선 코드-----------------------------------------------------------------------------
     List<GetRestaurantMainRes> selRestaurantMainV3(GetRestaurantMainReq p);
 }
