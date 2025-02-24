@@ -104,4 +104,16 @@ public class CompanyController {
                 .resultData(result)
                 .build();
     }
+
+    @DeleteMapping("v3/refund")
+    @Operation(summary = "환불 요청 취소")
+    public ResultResponse<Integer> deleteRefund(@ModelAttribute DelRefundReq req) {
+        int result = companyService.delRefund(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("환불 요청이 취소 되었습니다.")
+                .resultData(result)
+                .build();
+    }
 }
