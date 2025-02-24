@@ -42,8 +42,13 @@ public class AdminRestaurantService {
             throw new CustomException("식당에 대한 권한이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
+
         Order order = orderRepository.findById(req.getOrderId())
                 .orElseThrow(() -> new CustomException("주문 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        if (!admin.getDivisionId().equals(order.getRestaurantId().getRestaurantId())) {
+            throw new CustomException("해당 리뷰에 댓글을 작성할 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         ReviewComment reviewComment = new ReviewComment();
         reviewComment.setOrder(order);

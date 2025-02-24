@@ -260,7 +260,7 @@ public class AdminRestaurantController {
 
     @PostMapping("review")
     @Operation(summary = "리뷰 댓글 등록")
-    public ResultResponse<Integer> postReviewComment(InsReviewCommentReq req) {
+    public ResultResponse<Integer> postReviewComment(@RequestBody InsReviewCommentReq req) {
         int result = adminRestaurantService.postReviewComment(req);
 
         return ResultResponse.<Integer>builder()
