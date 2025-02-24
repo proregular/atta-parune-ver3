@@ -75,5 +75,4 @@ public class AdminSystemController {
                 .resultData(res)
                 .build();
     }
-
 }

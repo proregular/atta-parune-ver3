@@ -12,6 +12,7 @@ import com.green.attaparunever2.user.model.*;
 import com.green.attaparunever2.user.user_payment_member.UserPaymentMemberService;
 import com.green.attaparunever2.user.user_payment_member.model.PostTicketReq;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -193,6 +195,18 @@ public class UserController {
                 .statusCode("200")
                 .resultMsg("리뷰 등록 성공")
                 .resultData(review)
+                .build();
+    }
+
+    @DeleteMapping("v3/review")
+    @Operation(summary = "리뷰 삭제")
+    public ResultResponse<?> delReview(
+            @Parameter(description = "삭제할 리뷰의 주문 ID", required = true)
+            @RequestParam Long orderId) throws IOException {
+        reviewService.delReview(orderId);
+        return ResultResponse.builder()
+                .statusCode("200")
+                .resultMsg("리뷰 삭제 성공")
                 .build();
     }
 

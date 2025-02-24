@@ -4,6 +4,7 @@ import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsRestaurantEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelRestaurantEnrollmentRes;
 import com.green.attaparunever2.admin.restaurant.model.InsReviewCommentReq;
+import com.green.attaparunever2.admin.restaurant.model.UpdReviewDelRequestReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
@@ -258,7 +259,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PostMapping("review")
+    @PostMapping("v3/review")
     @Operation(summary = "리뷰 댓글 등록")
     public ResultResponse<Integer> postReviewComment(@RequestBody InsReviewCommentReq req) {
         int result = adminRestaurantService.postReviewComment(req);
@@ -266,6 +267,18 @@ public class AdminRestaurantController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("리뷰 댓글 등록 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping("v3/review/del-request")
+    @Operation(summary = "리뷰 삭제 요청")
+    public ResultResponse<Integer> patchReviewDelRequest(@RequestBody UpdReviewDelRequestReq req) {
+        int result = adminRestaurantService.patchReviewDelRequest(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("리뷰 삭제 요청 성공")
                 .resultData(result)
                 .build();
     }
