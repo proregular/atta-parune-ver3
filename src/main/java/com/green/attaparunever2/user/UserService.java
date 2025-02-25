@@ -238,13 +238,16 @@ public class UserService {
             throw new CustomException("비밀번호는 특수문자와 숫자를 포함한 8자 이상이어야 합니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 비밀번호 해싱
-        String hashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
-        p.setNewUpw(hashedPassWord);
 
-        // 비밀번호 변경
-        int result = userMapper.patchUpw(p);
-        return result;
+        // 비밀번호 해싱
+        String newHashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
+
+        User user = userRepository.findByUserId(p.getUserId())
+                .orElseThrow(() -> new CustomException("유저 Pk을 해주세요", HttpStatus.BAD_REQUEST));
+        user.setUpw(newHashedPassWord);
+        userRepository.save(user);
+
+        return 1;
     }
 
     public long getSignedUserGetOrder(long userId) {
