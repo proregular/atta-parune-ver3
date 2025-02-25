@@ -82,7 +82,7 @@ public class AdminController {
         return adminService.getAccessToken(req);
     }
 
-    @PutMapping("/upw")
+    @PutMapping("v3/upw")
     @Operation(summary = "비밀번호 변경")
     public ResultResponse<Integer> patchUpw(@Valid @RequestBody AdminUpwPatchReq p) {
         int result = adminService.patchUpw(p);
@@ -93,7 +93,7 @@ public class AdminController {
                 .build();
     }
 
-    @PutMapping("/find-password")
+    @PutMapping("v3/find-password")
     @Operation(summary = "비밀번호 찾기")
     public ResultResponse<Integer> findPassword(@Valid @RequestBody AdminFindPasswordReq p) {
         int result = adminService.findPassword(p);
