@@ -5,6 +5,7 @@ import com.green.attaparunever2.admin.model.InsAnnouncementReq;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelRefundRes;
+import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,7 @@ import java.util.List;
 @Tag(name="관리자 시스템", description = "관리자 시스템 관련 API")
 public class AdminSystemController {
     private final AdminService adminService;
+    private final AdminSystemService adminSystemService;
 
     @GetMapping("v3/post")
     @Operation(summary = "게시글 자세히 보기")
@@ -73,6 +75,18 @@ public class AdminSystemController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("환불 내역 조회 완료")
                 .resultData(res)
+                .build();
+    }
+
+    @PatchMapping("v3/coalition")
+    @Operation(summary = "제휴 상태 관리")
+    public ResultResponse<Integer> patchCoalition(@RequestBody UpdCoalitionReq req) {
+        int result = adminSystemService.patchCoalition(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("제휴 상태 변경 성공")
+                .resultData(result)
                 .build();
     }
 }
