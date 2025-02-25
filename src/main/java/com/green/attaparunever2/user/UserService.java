@@ -271,7 +271,6 @@ public class UserService {
     public int findPassword(UserFindPasswordReq p) {
         // 관리자 aid, 이메일 일치여부 확인
         UserSignInRes userData = userMapper.selUserByUid(p.getUid());
-        int result = 0;
 
         if (userData != null && userData.getEmail().equals(p.getEmail())) {
             // 일치한다면 렌덤한 문자열을 생성후  DB에 저장
@@ -288,7 +287,7 @@ public class UserService {
             userRepository.save(user);
             userRepository.flush();
 
-            if (user.getUserId() != null) {
+            if (user.getUpw() != null && !user.getUpw().equals(hashedPassword)) {
                 throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
             } else {
                 // 변경된 비밀번호 이메일 전송
@@ -298,7 +297,7 @@ public class UserService {
             throw new CustomException("아이디 혹은 이메일이 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return result;
+        return 1;
     }
 
     // 회원 정보 수정
