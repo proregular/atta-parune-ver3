@@ -28,7 +28,7 @@
     </delete>
 
     <select id="getFilePathByPicId" resultType="String">
-        SELECT file_path
+        SELECT pic_name
         FROM restaurant_pic
         WHERE pic_id = #{picId}
     </select>

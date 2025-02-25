@@ -3,6 +3,8 @@ package com.green.attaparunever2.restaurant.restaurant_menu;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.RestaurantMenu;
+import com.green.attaparunever2.entity.RestaurantMenuCategory;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import java.util.List;
 public class RestaurantMenuService {
     private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
+    private final RestaurantMenuRepository restaurantMenuRepository;
+    private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
 
     public int postMenu(MultipartFile pic, PostMenuReq p){ // 메뉴 사진 등록 해야함
         InsMenuReq insMenuReq = new InsMenuReq();
@@ -88,11 +92,37 @@ public class RestaurantMenuService {
 
     @Transactional
     public int updRestaurantMenu(UpdMenuReq p) {
-        int result = restaurantMenuMapper.updMenu(p);
-        if (result == 0) {
-            throw new CustomException("메뉴 수정 실패", HttpStatus.BAD_REQUEST);
+        RestaurantMenu restaurantMenu = restaurantMenuRepository.findById(p.getMenuId())
+                .orElseThrow(() -> new CustomException("메뉴를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 카테고리 수정
+        if (p.getCategoryId() != 0) {
+            RestaurantMenuCategory category = restaurantMenuCategoryRepository.findById(p.getCategoryId())
+                    .orElseThrow(() -> new CustomException("카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+            restaurantMenu.setCategoryId(category);
         }
-        return result;
+
+        // 메뉴 이름 수정
+        if (p.getMenuName() != null && !p.getMenuName().isEmpty()) {
+            restaurantMenu.setMenuName(p.getMenuName());
+        }
+
+        // 가격 수정
+        if (p.getPrice() >= 0) {
+            restaurantMenu.setPrice(p.getPrice());
+        }
+
+        // 메뉴 설명 수정
+        if (p.getDetails() != null) {
+            restaurantMenu.setDetail(p.getDetails());
+        }
+
+        // 주문 가능 상태 수정 (1 또는 0으로만 수정)
+        if (p.getAvailable() == 1 || p.getAvailable() == 0) {
+            restaurantMenu.setAvailable(p.getAvailable());
+        }
+
+        return 1;
     }
 
     public int postCategory(PostCategoryReq p) {
