@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Schema(title = "주문 상태 변경")
@@ -20,5 +22,5 @@ public class OrderAccessPatchReq {
     private int reservationStatus; //0:미승인, 1:승인, 2:거부, 3:취소
 
     @JsonIgnore
-    private String createdAt;
+    private LocalDateTime createdAt;
 }
