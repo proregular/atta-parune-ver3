@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
+import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
 import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelCompanyEnrollmentRes;
 import com.green.attaparunever2.admin.model.getCompanyPaymentRes;
@@ -176,5 +177,17 @@ public class AdminCompanyController {
 
         return result;
     }
+
+    /*@PatchMapping("/v3/point/user")
+    @Operation(summary = "사용자에게 포인트 입금")
+    public ResponseEntity<Object> patchPointUser(@RequestBody AdminCompanyUserPointPatchReq req) {
+        ResponseEntity<Object> result = adminCompanyService.patchPointUser(req);
+
+        return ResultResponse.<PaymentInfoTmp>builder()
+                .statusCode("200")
+                .resultMsg("결재 정보 임시 저장을 완료했습니다.")
+                .resultData(result)
+                .build();
+    }*/
 
 }
