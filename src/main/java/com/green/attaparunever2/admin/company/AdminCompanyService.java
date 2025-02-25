@@ -7,14 +7,13 @@ import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
 import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.common.util.PaymentUtils;
 import com.green.attaparunever2.company.CompanyMapper;
 import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
-import com.green.attaparunever2.entity.Admin;
-import com.green.attaparunever2.entity.Company;
-import com.green.attaparunever2.entity.PaymentInfoTmp;
-import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.entity.*;
+import com.green.attaparunever2.user.UserPointDepositRepository;
 import com.green.attaparunever2.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +34,8 @@ public class AdminCompanyService {
     private final AdminRepository adminRepository;
     private final AuthenticationFacade authenticationFacade;
     private final UserRepository userRepository;
+    private final UserPointDepositRepository userPointDepositRepository;
+    private final CodeRepository codeRepository;
 
     // 포인트 구매 결재전 결재 정보 임시 저장
     @Transactional
@@ -95,9 +96,9 @@ public class AdminCompanyService {
         return null;
     }
 
-    /*@Transactional
+    @Transactional
     public void patchPointUser(AdminCompanyUserPointPatchReq req) {
-        Long adminId = authenticationFacade.getSignedUserId();
+        Long adminId = 1L;//authenticationFacade.getSignedUserId();
 
         // 어드민 정보 가져옴
         Admin admin = adminRepository.findById(adminId).orElseThrow();
@@ -110,15 +111,35 @@ public class AdminCompanyService {
         }
 
         // 사용자 정보 가져옴
-        User user = userRepository.findById(req.get)
+        User user = userRepository.findById(req.getUserId()).orElseThrow();
 
         // 사용자에게 포인트 입금
+        int amount = user.getPoint() + 10000;
+
+        user.setPoint(amount);
 
         // 회사 정보 포인트 출금 처리
+        int companyAmount = company.getCurrentPoint() - 10000;
+
+        company.setCurrentPoint(companyAmount);
 
         // 회사 정보 저장
+        companyRepository.save(company);
+
+        // 사용자 포인트 입금 정보 생성
+        UserPointDeposit userPointDeposit = new UserPointDeposit();
+
+        userPointDeposit.setAdmin(admin);
+        userPointDeposit.setUser(user);
+        userPointDeposit.setPointAmount(amount);
+
+        Code code = codeRepository.findById("00301").orElseThrow();
+        userPointDeposit.setCode(code);
+
+        userPointDepositRepository.save(userPointDeposit);
+
 
         // 포인트 3개월 뒤에 환수 딜레이 큐 설정
-
-    }*/
+        // 작업 예정
+    }
 }
