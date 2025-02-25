@@ -198,6 +198,25 @@ public class UserController {
                 .build();
     }
 
+    @GetMapping("v3/review")
+    @Operation(summary = "사용자 리뷰 조회", description = "사용자가 본인이 작성한 리뷰를 조회")
+    public ResultResponse<List<GetReviewRes>> getReview(@Valid @RequestParam Long userId) {
+        try {
+            List<GetReviewRes> list = reviewService.getReview(userId);
+
+            return ResultResponse.<List<GetReviewRes>>builder()
+                    .statusCode("200")
+                    .resultMsg("리뷰 조회가 완료되었습니다.")
+                    .resultData(list)
+                    .build();
+        } catch (RuntimeException e) {
+            return ResultResponse.<List<GetReviewRes>>builder()
+                    .statusCode("400")
+                    .resultMsg(e.getMessage())
+                    .build();
+        }
+    }
+
     @DeleteMapping("v3/review")
     @Operation(summary = "리뷰 삭제")
     public ResultResponse<?> delReview(
