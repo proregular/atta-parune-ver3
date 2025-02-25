@@ -3,6 +3,8 @@ package com.green.attaparunever2.admin.restaurant;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsRestaurantEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelRestaurantEnrollmentRes;
+import com.green.attaparunever2.admin.restaurant.model.DelBlackListReq;
+import com.green.attaparunever2.admin.restaurant.model.InsBlackListReq;
 import com.green.attaparunever2.admin.restaurant.model.InsReviewCommentReq;
 import com.green.attaparunever2.admin.restaurant.model.UpdReviewDelRequestReq;
 import com.green.attaparunever2.common.model.ResultResponse;
@@ -279,6 +281,30 @@ public class AdminRestaurantController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("리뷰 삭제 요청 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("v3/black-list")
+    @Operation(summary = "블랙리스트 등록")
+    public ResultResponse<Integer> postBlackList(@RequestBody InsBlackListReq req) {
+        int result = adminRestaurantService.postBlackList(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("블랙리스트 등록 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @DeleteMapping("v3/black-list")
+    @Operation(summary = "블랙리스트 삭제")
+    public ResultResponse<Integer> delBlackList(@ModelAttribute DelBlackListReq req) {
+        int result = adminRestaurantService.delBlackList(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("블랙리스트 삭제 완료")
                 .resultData(result)
                 .build();
     }
