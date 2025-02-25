@@ -5,6 +5,8 @@ import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.ticket.TicketRepository;
+import com.green.attaparunever2.user.model.GetReviewDto;
+import com.green.attaparunever2.user.model.GetReviewRes;
 import com.green.attaparunever2.user.model.ReviewRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,7 @@ public class ReviewService {
     private final TicketRepository ticketRepository;
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
+    private final ReviewMapper reviewMapper;
 
     @Transactional
     public Review postReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> reviewPics) throws IOException {
@@ -146,4 +150,42 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+
+    @Transactional
+    public List<GetReviewRes> getReview(Long userId) {
+
+        Long signedUserId = authenticationFacade.getSignedUserId();
+
+        if (!userId.equals(signedUserId)) {
+            throw new RuntimeException("본인이 작성한 리뷰만 조회할 수 있습니다.");
+        }
+
+        List<GetReviewDto> reviewDtoList = reviewMapper.getReviewList(userId);
+        if (reviewDtoList.isEmpty()) {
+            throw new RuntimeException("리뷰 데이터를 찾을 수 없습니다.");
+        }
+
+        List<GetReviewRes> reviewResList = new ArrayList<>();
+
+        for (GetReviewDto reviewDto : reviewDtoList) {
+            Long orderId = reviewDto.getOrderId();
+
+            String picName = reviewMapper.getRestaurantPic(orderId); // 식당 사진 1개
+            List<String> menuNames = reviewMapper.getMenuList(orderId); // 주문한 메뉴 리스트
+            List<String> reviewPics = reviewMapper.getReviewPicList(orderId); // 리뷰 사진 리스트
+
+            GetReviewRes reviewRes = new GetReviewRes();
+            reviewRes.setRestaurantName(reviewDto.getRestaurantName());
+            reviewRes.setPicName(picName);
+            reviewRes.setMenuName(menuNames);
+            reviewRes.setRating(reviewDto.getRating());
+            reviewRes.setReviewText(reviewDto.getReviewText());
+            reviewRes.setCreatedAt(reviewDto.getCreatedAt());
+            reviewRes.setReviewPic(reviewPics);
+
+            reviewResList.add(reviewRes);
+        }
+
+        return reviewResList;
+    }
 }
