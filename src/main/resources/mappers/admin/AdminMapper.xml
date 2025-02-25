@@ -53,14 +53,9 @@
     </select>
 
     <select id="selAdminByAdminId">
-        SELECT admin_id AS adminId, role_id AS roleId, aid, apw, name, email, phone
-        , (
-        SELECT restaurant_id
-        FROM restaurant
-        WHERE admin_id = #{adminId}
-        LIMIT 1
-        ) AS restaurantId
-        FROM admin
+        SELECT A.admin_id AS adminId, A.code, A.aid, A.apw, A.name, B.name AS role, A.email, A.phone, A.division_id AS companyId
+        FROM admin INNER JOIN code B
+        ON A.code = B.code
         WHERE admin_id = #{adminId}
     </select>
 
