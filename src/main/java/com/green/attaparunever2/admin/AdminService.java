@@ -249,10 +249,12 @@ public class AdminService {
         }
 
         String hashedPassWord = BCrypt.hashpw(p.getNewUpw(), BCrypt.gensalt());
-        p.setNewUpw(hashedPassWord);
+        Admin admin = adminRepository.findById(p.getAdminId())
+                .orElseThrow(() -> new CustomException("해당 관리자가 없습니다", HttpStatus.BAD_REQUEST));
+        admin.setApw(hashedPassWord);
+        adminRepository.save(admin);
 
-        int result = adminMapper.patchUpw(p);
-        return result;
+        return 1;
     }
 
     // 비밀번호 찾기
@@ -260,7 +262,6 @@ public class AdminService {
     public int findPassword(AdminFindPasswordReq p) {
         // 관리자 aid, 이메일 일치여부 확인
         AdminSignInRes adminData = adminMapper.selAdminByAid(p.getAid());
-        int result = 0;
 
         if(adminData != null && adminData.getEmail().equals(p.getEmail())) {
             // 일치한다면 렌덤한 문자열을 생성후  DB에 저장
@@ -269,14 +270,13 @@ public class AdminService {
             // 비밀번호 암호화
             String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
-            AdminUpwPatchReq patchReq = new AdminUpwPatchReq();
-
-            patchReq.setNewUpw(hashedPassword);
-            patchReq.setAdminId(adminData.getAdminId());
-
-            result = adminMapper.patchUpw(patchReq);
-
-            if(result == 0) {
+            Long adminId = adminRepository.findAdminIdByAidAndEmail(p.getAid(), p.getEmail());
+            Admin admin = adminRepository.findById(adminId)
+                    .orElseThrow(() -> new CustomException("해당 관리자가 존재하지 않습니다", HttpStatus.BAD_REQUEST));
+            admin.setApw(hashedPassword);
+            adminRepository.save(admin);
+            adminRepository.flush();
+            if(admin.getAdminId() != null) {
                 throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
             } else {
                 // 변경된 비밀번호 이메일 전송
@@ -286,7 +286,7 @@ public class AdminService {
             throw new CustomException("아이디 혹은 이메일이 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return result;
+        return 1;
     }
 
     public List<getCompanyPaymentRes> getCompanyPayment(){
