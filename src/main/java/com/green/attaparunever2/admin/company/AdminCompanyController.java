@@ -178,16 +178,16 @@ public class AdminCompanyController {
         return result;
     }
 
-    /*@PatchMapping("/v3/point/user")
+    @PatchMapping("/v3/point/user")
     @Operation(summary = "사용자에게 포인트 입금")
-    public ResponseEntity<Object> patchPointUser(@RequestBody AdminCompanyUserPointPatchReq req) {
-        ResponseEntity<Object> result = adminCompanyService.patchPointUser(req);
+    public ResultResponse<Integer> patchPointUser(@RequestBody AdminCompanyUserPointPatchReq req) {
+        adminCompanyService.patchPointUser(req);
 
-        return ResultResponse.<PaymentInfoTmp>builder()
+        return ResultResponse.<Integer>builder()
                 .statusCode("200")
-                .resultMsg("결재 정보 임시 저장을 완료했습니다.")
-                .resultData(result)
+                .resultMsg("사용자 포인트 입금이 완료되었습니다.")
+                .resultData(1)
                 .build();
-    }*/
+    }
 
 }
