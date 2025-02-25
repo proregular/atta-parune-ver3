@@ -1,5 +1,7 @@
 package com.green.attaparunever2.admin.company;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
@@ -7,16 +9,20 @@ import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelCompanyEnrollmentRes;
 import com.green.attaparunever2.admin.model.getCompanyPaymentRes;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.common.util.PaymentUtils;
 import com.green.attaparunever2.company.CompanyService;
 import com.green.attaparunever2.company.model.*;
 import com.green.attaparunever2.entity.PaymentInfoTmp;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Fetch;
+import org.json.simple.JSONObject;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -163,16 +169,12 @@ public class AdminCompanyController {
                 .build();
     }
 
-    /*@PatchMapping("/v3/point")
+    @PatchMapping("/v3/point")
     @Operation(summary = "포인트 구매")
-    public ResultResponse<Integer> patchPoint(@ModelAttribute AdminCompanyPointPatchReq req) {
-        PaymentInfoTmp result = adminCompanyService.patchPoint(req);
+    public ResponseEntity<Object> patchPoint(HttpServletRequest request, @RequestBody String jsonBody) throws Exception {
+        ResponseEntity<Object> result = adminCompanyService.patchPoint(request, jsonBody);
 
-        return ResultResponse.<PaymentInfoTmp>builder()
-                .statusCode("200")
-                .resultMsg("결재에 성공했습니다.")
-                .resultData(result)
-                .build();
-    }*/
+        return result;
+    }
 
 }
