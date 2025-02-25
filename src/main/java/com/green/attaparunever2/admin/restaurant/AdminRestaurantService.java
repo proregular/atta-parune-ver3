@@ -1,10 +1,7 @@
 package com.green.attaparunever2.admin.restaurant;
 
 import com.green.attaparunever2.admin.AdminRepository;
-import com.green.attaparunever2.admin.restaurant.model.DelBlackListReq;
-import com.green.attaparunever2.admin.restaurant.model.InsBlackListReq;
-import com.green.attaparunever2.admin.restaurant.model.InsReviewCommentReq;
-import com.green.attaparunever2.admin.restaurant.model.UpdReviewDelRequestReq;
+import com.green.attaparunever2.admin.restaurant.model.*;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
@@ -15,6 +12,7 @@ import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -156,6 +154,33 @@ public class AdminRestaurantService {
                 .orElseThrow(() -> new CustomException("블랙리스트 명단에 없는 사용자입니다.", HttpStatus.NOT_FOUND));
 
         blackListRepository.delete(blackList);
+
+        return 1;
+    }
+
+    public int patchPaymentPassword(UpdPaymentPasswordReq req) {
+        // 관리자 로그인 인증
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("관리자 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        Restaurant restaurant = restaurantRepository.findById(req.getRestaurantId())
+                .orElseThrow(() -> new CustomException("식당 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 본인 식당의 관리자가 맞는지 확인 절차
+        if (!admin.getDivisionId().equals(restaurant.getRestaurantId())) {
+            throw new CustomException("해당 식당의 관리자가 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 비밀번호 암호화
+        String hashedPassword = BCrypt.hashpw(req.getPaymentPassword(), BCrypt.gensalt());
+
+        restaurant.setPaymentPassword(hashedPassword);
+        restaurantRepository.save(restaurant);
 
         return 1;
     }
