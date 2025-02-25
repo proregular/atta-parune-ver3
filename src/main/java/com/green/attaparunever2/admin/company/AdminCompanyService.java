@@ -2,12 +2,20 @@ package com.green.attaparunever2.admin.company;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.green.attaparunever2.admin.AdminMapper;
+import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
-import com.green.attaparunever2.admin.model.AdminDelReq;
+import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.util.PaymentUtils;
+import com.green.attaparunever2.company.CompanyMapper;
+import com.green.attaparunever2.company.CompanyRepository;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.Admin;
+import com.green.attaparunever2.entity.Company;
 import com.green.attaparunever2.entity.PaymentInfoTmp;
+import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -15,13 +23,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
 public class AdminCompanyService {
     private final PaymentInfoTmpRepository paymentInfoTmpRepository;
+    private final CompanyRepository companyRepository;
+    private final AdminMapper adminMapper;
     private final PaymentUtils paymentUtils;
+    private final CompanyMapper companyMapper;
+    private final AdminRepository adminRepository;
+    private final AuthenticationFacade authenticationFacade;
+    private final UserRepository userRepository;
 
     // 포인트 구매 결재전 결재 정보 임시 저장
     @Transactional
@@ -81,4 +94,31 @@ public class AdminCompanyService {
 
         return null;
     }
+
+    /*@Transactional
+    public void patchPointUser(AdminCompanyUserPointPatchReq req) {
+        Long adminId = authenticationFacade.getSignedUserId();
+
+        // 어드민 정보 가져옴
+        Admin admin = adminRepository.findById(adminId).orElseThrow();
+
+        Company company = companyRepository.findById(admin.getDivisionId()).orElseThrow();
+
+        // 포인트가 있는지 여부 검사
+        if(company.getCurrentPoint() < 10000) {
+            throw new CustomException("입금할 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 사용자 정보 가져옴
+        User user = userRepository.findById(req.get)
+
+        // 사용자에게 포인트 입금
+
+        // 회사 정보 포인트 출금 처리
+
+        // 회사 정보 저장
+
+        // 포인트 3개월 뒤에 환수 딜레이 큐 설정
+
+    }*/
 }
