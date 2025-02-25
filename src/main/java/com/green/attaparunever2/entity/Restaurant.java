@@ -49,7 +49,7 @@ public class Restaurant extends UpdatedAt{
     @Column(nullable = false)
     private double lng;
 
-    @Column(length = 6)
+    @Column(length = 100)
     private String paymentPassword;
 
 }

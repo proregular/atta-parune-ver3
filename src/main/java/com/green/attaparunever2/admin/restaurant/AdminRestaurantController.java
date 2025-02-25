@@ -3,10 +3,7 @@ package com.green.attaparunever2.admin.restaurant;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsRestaurantEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelRestaurantEnrollmentRes;
-import com.green.attaparunever2.admin.restaurant.model.DelBlackListReq;
-import com.green.attaparunever2.admin.restaurant.model.InsBlackListReq;
-import com.green.attaparunever2.admin.restaurant.model.InsReviewCommentReq;
-import com.green.attaparunever2.admin.restaurant.model.UpdReviewDelRequestReq;
+import com.green.attaparunever2.admin.restaurant.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
@@ -305,6 +302,18 @@ public class AdminRestaurantController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("블랙리스트 삭제 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping("v3/password")
+    @Operation(summary = "간편결제 비밀번호 수정")
+    public ResultResponse<Integer> patchPaymentPassword(@Valid @RequestBody UpdPaymentPasswordReq req) {
+        int result = adminRestaurantService.patchPaymentPassword(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("간편결제 비밀번호 수정 완료")
                 .resultData(result)
                 .build();
     }
