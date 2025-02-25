@@ -268,7 +268,9 @@ public class UserPaymentMemberService {
     }
 
     public int deletePaymentMember(UserPaymentMemberDelReq p) {
-        return userPaymentMemberMapper.deletePaymentMember(p);
+        int result = userPaymentMemberRepository.deleteByOrderIdAndUserId(p.getOrderId(), p.getUserId());
+
+        return result;
     }
 
 
