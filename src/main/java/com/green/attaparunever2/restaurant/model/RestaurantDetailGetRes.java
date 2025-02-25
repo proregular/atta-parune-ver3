@@ -41,4 +41,8 @@ public class RestaurantDetailGetRes {
     private RestaurantPicSel restaurantPics;
     @Schema(description = "메뉴 카테고리 리스트")
     private List<MenuSelCateList> menuCateList;
+    @Schema(description = "평균 별점")
+    private double ratingAvg;
+    @Schema(description = "리뷰 개수")
+    private double reviewCnt;
 }
