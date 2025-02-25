@@ -6,6 +6,7 @@ import com.green.attaparunever2.admin.AdminMapper;
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
 import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
+import com.green.attaparunever2.common.delayed.DelayedTaskScheduler;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.common.util.PaymentUtils;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 public class AdminCompanyService {
@@ -36,6 +39,7 @@ public class AdminCompanyService {
     private final UserRepository userRepository;
     private final UserPointDepositRepository userPointDepositRepository;
     private final CodeRepository codeRepository;
+    DelayedTaskScheduler scheduler = new DelayedTaskScheduler();
 
     // 포인트 구매 결재전 결재 정보 임시 저장
     @Transactional
@@ -106,7 +110,7 @@ public class AdminCompanyService {
         Company company = companyRepository.findById(admin.getDivisionId()).orElseThrow();
 
         // 포인트가 있는지 여부 검사
-        if(company.getCurrentPoint() < 10000) {
+        if(company.getCurrentPoint() < req.getPointAmount()) {
             throw new CustomException("입금할 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -114,12 +118,10 @@ public class AdminCompanyService {
         User user = userRepository.findById(req.getUserId()).orElseThrow();
 
         // 사용자에게 포인트 입금
-        int amount = user.getPoint() + 10000;
-
-        user.setPoint(amount);
+        user.setPoint(user.getPoint() + req.getPointAmount());
 
         // 회사 정보 포인트 출금 처리
-        int companyAmount = company.getCurrentPoint() - 10000;
+        int companyAmount = company.getCurrentPoint() - req.getPointAmount();
 
         company.setCurrentPoint(companyAmount);
 
@@ -131,15 +133,50 @@ public class AdminCompanyService {
 
         userPointDeposit.setAdmin(admin);
         userPointDeposit.setUser(user);
-        userPointDeposit.setPointAmount(amount);
+        userPointDeposit.setPointAmount(req.getPointAmount());
 
         Code code = codeRepository.findById("00301").orElseThrow();
         userPointDeposit.setCode(code);
 
         userPointDepositRepository.save(userPointDeposit);
-
-
+        
+        long createdDepositId = userPointDeposit.getDepositId();
         // 포인트 3개월 뒤에 환수 딜레이 큐 설정
-        // 작업 예정
+        // 30분 후 실행할 작업 추가
+        scheduler.schedule(() -> {
+            UserPointDeposit createdUserPointDeposit = userPointDepositRepository.findById(createdDepositId).orElseThrow();
+            
+            // 사용자 포인트 마이너스
+            User refundUser = userRepository.findById(req.getUserId()).orElseThrow();
+
+            refundUser.setPoint(refundUser.getPoint() - createdUserPointDeposit.getPointAmount());
+
+            userRepository.save(refundUser);
+
+            // 회사 포인트 플러스
+            Company refundCompany = companyRepository.findById(admin.getDivisionId()).orElseThrow();
+
+            // 회사 정보 포인트 출금 처리
+            refundCompany.setCurrentPoint(refundCompany.getCurrentPoint() + createdUserPointDeposit.getPointAmount());
+
+            // 회사 정보 저장
+            companyRepository.save(refundCompany);
+            
+            // 사용자 포인트 회수 정보 생성
+            UserPointDeposit refundUserPointDeposit = new UserPointDeposit();
+            
+            refundUserPointDeposit.setAdmin(admin);
+            refundUserPointDeposit.setUser(refundUser);
+            refundUserPointDeposit.setPointAmount(createdUserPointDeposit.getPointAmount());
+
+            Code refundCode = codeRepository.findById("00302").orElseThrow();
+            refundUserPointDeposit.setCode(refundCode);
+
+            userPointDepositRepository.save(refundUserPointDeposit);
+            
+            System.out.println("30초 뒤 실행됨!");
+                    
+        }, 30, TimeUnit.SECONDS);
+
     }
 }
