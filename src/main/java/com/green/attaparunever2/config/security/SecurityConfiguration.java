@@ -35,19 +35,18 @@ public class SecurityConfiguration {
                                         , "/api/admin/v3/sign-in"
                                         , "/api/admin/v3/sign-up"
                                         , "/api/admin/access-token"
-                                        ,"api/admin/find-passowrd"
+                                        ,"api/admin/find-password"
                                         , "/api/restaurant"
                                         , "/api/restaurant/v3/main"
                                         , "/api/restaurant/v3/around"
                                         , "/api/restaurant/v3/detail"
                                         , "/api/user/find-id"
                                         , "/api/user/sign-up"
-                                        , "api/user/find-passowrd"
+                                        , "api/user/find-password"
                                         , "/api/user/company/status"
                                         ,"/", "/favicon.ico", "/index.html", "/static/**", "/assets/**", "/css/**", "/js/**").permitAll() // 인증 없이 접근 허용
                                 .requestMatchers("/api/user/**", "/api/restaurant/**").hasAnyRole("USER", "RESTAURANT")
-                                .requestMatchers("/api/admin/**").hasRole("RESTAURANT")
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "RESTAURANT", "COMPANY")
                                 .requestMatchers("/api/admin/**", "/api/restaurant/**", "/api/user/**").authenticated()
                                 .anyRequest().permitAll()
                 )
