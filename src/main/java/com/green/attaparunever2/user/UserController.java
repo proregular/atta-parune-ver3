@@ -156,7 +156,7 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/find-passowrd")
+    @PutMapping("/find-password")
     @Operation(summary = "비밀번호 찾기")
     public ResultResponse<Integer> findPassword(@Valid @RequestBody UserFindPasswordReq p) {
         int result = userService.findPassword(p);

@@ -280,14 +280,15 @@ public class UserService {
             // 비밀번호 암호화
             String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
-            UserUpwPatchReq patchReq = new UserUpwPatchReq();
+            Long userId = userRepository.findUserIdByUidAndEmail(p.getUid(), p.getEmail());
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CustomException("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-            patchReq.setNewUpw(hashedPassword);
-            patchReq.setUserId(userData.getUserId());
+            user.setUpw(hashedPassword);
+            userRepository.save(user);
+            userRepository.flush();
 
-            result = userMapper.patchUpw(patchReq);
-
-            if (result == 0) {
+            if (user.getUserId() != null) {
                 throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
             } else {
                 // 변경된 비밀번호 이메일 전송
