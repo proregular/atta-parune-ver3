@@ -2,6 +2,10 @@ package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
+import com.green.attaparunever2.entity.Order;
+import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.entity.UserPaymentMember;
+import com.green.attaparunever2.entity.UserPaymentMemberIds;
 import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.model.OrderSelDto;
 import com.green.attaparunever2.order.ticket.TicketMapper;
@@ -42,6 +46,7 @@ public class UserPaymentMemberService {
     private final ReservationMapper reservationMapper;
     private final TicketScheduler ticketScheduler;
     private final AuthenticationFacade authenticationFacade;
+    private final UserPaymentMemberRepository userPaymentMemberRepository;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -228,8 +233,13 @@ public class UserPaymentMemberService {
 
     @Transactional
     public int updPaymentAmount(UserPaymentAmountPatchReq p) {
-        int result = userPaymentMemberMapper.updPaymentAmount(p);
-        if(result > 0) {
+        UserPaymentMemberIds ids = new UserPaymentMemberIds(p.getOrderId(), p.getUserId());
+        UserPaymentMember userPaymentMember = userPaymentMemberRepository.findById(ids)
+                .orElseThrow(() -> new CustomException("해당 결제가 존재하지 않습니다", HttpStatus.BAD_REQUEST));
+        userPaymentMember.setPoint(p.getPoint());
+        userPaymentMemberRepository.save(userPaymentMember);
+        userPaymentMemberRepository.flush();
+        if(userPaymentMember.getUserPaymentMemberIds().getUserId() != 0 && userPaymentMember.getUserPaymentMemberIds().getOrderId() != 0) {
             OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
 
             UserGetRes user = userMapper.selUserByUserId(orderSelDto.getUserId());
@@ -254,7 +264,7 @@ public class UserPaymentMemberService {
             }
         }
 
-        return result;
+        return 1;
     }
 
     public int deletePaymentMember(UserPaymentMemberDelReq p) {
@@ -317,12 +327,32 @@ public class UserPaymentMemberService {
             }
         }
 
+        long result = 0;
         // userId와 point를 결합하여 새로운 리스트 생성
         List<PostPaymentUserIdAndPoint> paymentMembers = new ArrayList<>();
+
         for (int i = 0; i < req.getUserId().size(); i++) {
             // Long -> long, Integer -> int로 변환하여 PostPaymentUserIdAndPoint 객체 생성
-
             int status = orderSelDto.getUserId() == req.getUserId().get(i).longValue() ? 1: 0;
+
+            UserPaymentMemberIds ids = new UserPaymentMemberIds(req.getOrderId(), req.getUserId().get(i));
+
+            Order order = new Order();
+            order.setOrderId(req.getOrderId());
+
+            User user = new User();
+            user.setUserId(req.getUserId().get(i));
+
+            UserPaymentMember userPaymentMember = new UserPaymentMember();
+            userPaymentMember.setUserPaymentMemberIds(ids);
+            userPaymentMember.setUser(user);
+            userPaymentMember.setOrder(order);
+            userPaymentMember.setPoint(req.getPoint().get(i));
+            userPaymentMember.setApprovalStatus(status);
+            userPaymentMemberRepository.save(userPaymentMember);
+            userPaymentMemberRepository.flush();
+
+            result = ids.getUserId();
             log.info("asdasdasdasd: {}", status);
             paymentMembers.add(new PostPaymentUserIdAndPoint(
                     req.getOrderId(),
@@ -333,8 +363,6 @@ public class UserPaymentMemberService {
 
         }
 
-        // 변환된 리스트를 매퍼로 전달
-        int result = userPaymentMemberMapper.postPaymentMember(paymentMembers);
 
         // 저장에 성공하면 사용자에게 승인 요청을 보냄
         if(result >= 1) {
@@ -364,6 +392,6 @@ public class UserPaymentMemberService {
                 }
             }
         }
-        return result;
+        return 1;
     }
 }

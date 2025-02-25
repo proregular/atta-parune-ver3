@@ -122,7 +122,7 @@ public class UserController {
 
     }
 
-    @PutMapping("/upw")
+    @PutMapping("v3/upw")
     @Operation(summary = "비밀번호 변경")
     public ResultResponse<Integer> patchUpw(@Valid @RequestBody UserUpwPatchReq p) {
         int res = userService.patchUpw(p);

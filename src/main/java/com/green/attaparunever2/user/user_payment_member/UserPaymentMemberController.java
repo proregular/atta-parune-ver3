@@ -34,7 +34,7 @@ public class UserPaymentMemberController {
     }
 
     @PatchMapping("point")
-    @Operation(summary = "승인 요청 금액 수정")
+    @Operation(summary = "v3/승인 요청 금액 수정")
     public ResultResponse<Integer> updPaymentAmount(UserPaymentAmountPatchReq p) {
         int result = userPaymentMemberService.updPaymentAmount(p);
         if (result == 0) {
@@ -96,7 +96,7 @@ public class UserPaymentMemberController {
     }
 
     @PostMapping
-    @Operation(summary = "결제 승인 요청")
+    @Operation(summary = "v3/결제 승인 요청")
     public ResultResponse<Integer> postPaymentMember(@RequestBody UserPostPaymentMemberReq p) {
         int result = userPaymentMemberService.postPaymentMember(p);
 
