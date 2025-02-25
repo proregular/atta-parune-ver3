@@ -24,6 +24,7 @@ import java.util.List;
 public class RestaurantPicService {
     private final RestaurantPicMapper restaurantPicMapper;
     private final MyFileUtils myFileUtils;
+    private final RestaurantPicRepository restaurantPicRepository;
 
     @Transactional
     public InsRestaurantRes postRestaurantPic(List<MultipartFile> filePath, long restaurantId){
@@ -123,7 +124,7 @@ public class RestaurantPicService {
         }
 
         // 3. 데이터베이스에서 사진 정보 삭제
-        int deleteResult = restaurantPicMapper.deleteRestaurantPics(restaurantId, picIds);
+        int deleteResult = restaurantPicRepository.deleteRestaurantPics(restaurantId, picIds);
         if (deleteResult == 0) {
             throw new CustomException("데이터베이스에서 사진 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
