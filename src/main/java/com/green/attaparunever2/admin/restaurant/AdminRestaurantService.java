@@ -277,5 +277,4 @@ public class AdminRestaurantService {
         // 메뉴 삭제
         restaurantMenuRepository.deleteById(menuId);
     }
-
 }
