@@ -23,10 +23,6 @@ public class SignUpAdminReq {
     @Schema(description = "비밀번호", example = "asd", requiredMode = Schema.RequiredMode.REQUIRED)
     private String apw;
 
-    @NotEmpty(message = "활성화/비활성화를 선택해주세요")
-    @Schema(description = "활성화, 비활성화", example = "0", requiredMode = Schema.RequiredMode.REQUIRED)
-    private int coalitionState;
-
     @NotEmpty(message = "이름을 입력해주세요")
     @Schema(description = "이름", example = "홍길동", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;

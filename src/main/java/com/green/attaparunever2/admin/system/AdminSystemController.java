@@ -123,4 +123,16 @@ public class AdminSystemController {
                 .resultData(result)
                 .build();
     }
+
+    @DeleteMapping("v3/systemPost")
+    @Operation(summary = "시스템 문의 답변 삭제")
+    public ResultResponse<Integer> delSystemPostComment(DelSystemPostCommentReq req){
+        int result = adminSystemService.delSystemPostComment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("시스템 문의답변 삭제 완료")
+                .resultData(result)
+                .build();
+    }
 }
