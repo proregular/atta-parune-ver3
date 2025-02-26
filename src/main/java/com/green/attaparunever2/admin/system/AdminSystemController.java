@@ -29,19 +29,6 @@ public class AdminSystemController {
     private final AdminService adminService;
     private final AdminSystemService adminSystemService;
 
-    @GetMapping("v3/post")
-    @Operation(summary = "게시글 자세히 보기")
-    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(@ParameterObject @ModelAttribute long inquiryId){
-        SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
-
-        return ResultResponse.<SelOneSystemPostRes>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("게시글 자세히 보기 완료")
-                .resultData(res)
-                .build();
-
-    }
-
     @PostMapping("v3/announcement")
     @Operation(summary = "공지사항 등록하기")
     public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
@@ -51,19 +38,6 @@ public class AdminSystemController {
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("공지사항 등록완료")
-                .resultData(result)
-                .build();
-    }
-
-    @PostMapping("v3/post")
-    @Operation(summary = "게시글 등록하기")
-    public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
-            , @RequestPart InsSystemInquiryReq req){
-        int result = adminService.postSystemPost(pic, req);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("게시글 등록완료")
                 .resultData(result)
                 .build();
     }
