@@ -58,4 +58,19 @@ public class RestaurantController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("v3/review")
+    @Operation(summary = "식당 리뷰 및 별점별 리뷰 개수 조회")
+    public ResultResponse<ReviewResponseDto> getReviewResponse(@Valid @RequestParam long restaurantId) {
+
+        ReviewResponseDto res = restaurantService.getRestaurantReview(restaurantId);
+
+        return ResultResponse.<ReviewResponseDto>builder()
+                .statusCode("200")
+                .resultMsg("식당 리뷰 조회가 완료되었습니다.")
+                .resultData(res)
+                .build();
+    }
+
+
 }

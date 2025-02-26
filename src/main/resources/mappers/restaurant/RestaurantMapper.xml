@@ -26,7 +26,7 @@
              , max_capacity AS maxCapacity, created_at AS createdAt
              , lat, lng
           FROM restaurant
-         WHERE restaurant_id = #{restaurantId};
+         WHERE restaurant_id = #{restaurantId}
     </select>
 
     <select id="selRestaurantAround">
@@ -300,7 +300,19 @@
         , restaurant_description AS restaurantDescription, `status`
         , max_capacity AS maxCapacity, created_at AS createdAt
         , lat, lng
+        , (
+        SELECT IFNULL(AVG(rating), 0)
+        FROM review B INNER JOIN `order` C
+        ON b.order_id = C.order_id
+        AND c.restaurant_id = #{restaurantId}
+        ) AS ratingAvg
+        , (
+        SELECT COUNT(*)
+        FROM review B INNER JOIN `order` C
+        ON b.order_id = C.order_id
+        AND c.restaurant_id = #{restaurantId}
+        ) AS reviewCnt
         FROM restaurant
-        WHERE restaurant_id = #{restaurantId};
+        WHERE restaurant_id = #{restaurantId}
     </select>
 </mapper>

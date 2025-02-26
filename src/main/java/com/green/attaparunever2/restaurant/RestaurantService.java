@@ -14,6 +14,7 @@ import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicAro
 import com.green.attaparunever2.restaurant.restaurant_pic.model.RestaurantPicSel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -303,6 +304,7 @@ public class RestaurantService {
     public RestaurantDetailGetRes getRestaurantDetailV3(RestaurantDetailGetReq req){
         // 식당 정보 불러오기
         RestaurantDetailGetRes res = restaurantMapper.selRestaurantByRestaurantId(req.getRestaurantId());
+
         // 식당 사진 불러오기
         RestaurantPicSel restaurantPicSel = restaurantPicMapper.selRestaurantPic(req.getRestaurantId());
         res.setRestaurantPics(restaurantPicSel);
@@ -317,6 +319,28 @@ public class RestaurantService {
             // 4.2 카테고리 객체에 메뉴 리스트 설정
             category.setMenuList(menuList);
         }
+
         return res;
     }
+
+    // 식당 리뷰 및 별점 개수 조회
+    public ReviewResponseDto getRestaurantReview(long restaurantId) {
+
+        List<ReviewDto> reviews = restaurantMapper.getReview(restaurantId);
+
+        for (ReviewDto review : reviews) {
+            long orderId = review.getOrderId();
+            review.setReviewPic(restaurantMapper.getReviewPic(orderId));
+            review.setMenuName(restaurantMapper.getMenuName(orderId));
+        }
+
+        List<RatingCountDto> ratingCounts = restaurantMapper.getCountByRating(restaurantId);
+
+        ReviewResponseDto response = new ReviewResponseDto();
+        response.setReviews(reviews);
+        response.setRatingCounts(ratingCounts);
+        return response;
+    }
+
+
 }

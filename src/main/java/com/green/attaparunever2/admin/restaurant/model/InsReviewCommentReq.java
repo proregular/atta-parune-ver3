@@ -18,3 +18,4 @@ public class InsReviewCommentReq {
     @Schema(description = "댓글 내용", example = "감사합니다.", requiredMode = Schema.RequiredMode.REQUIRED)
     private String commentText;
 }
+
