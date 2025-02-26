@@ -162,6 +162,7 @@ public class AdminCompanyController {
     @PostMapping("/v3/payment/temp")
     @Operation(summary = "결재전 결재 정보 임시 저장")
     public ResultResponse<PaymentInfoTmp> postPaymentTemp(@RequestBody AdminCompanyPaymentTempPostReq req) {
+        log.info("온값: {}", req);
         PaymentInfoTmp result = adminCompanyService.postPaymentTemp(req);
 
         return ResultResponse.<PaymentInfoTmp>builder()
