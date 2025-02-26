@@ -15,7 +15,4 @@ public class InsRefundReq {
 
     @Schema(description = "환불 사유", example = "회사 폐업", requiredMode = Schema.RequiredMode.REQUIRED)
     private String refundDetail;
-
-    @Schema(description = "환불 금액", example = "100000", requiredMode = Schema.RequiredMode.REQUIRED)
-    private int refundAmount;
 }

@@ -345,6 +345,15 @@ public class CompanyService {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("관리자 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST));
 
+        // 회사 조회
+        Company company = companyRepository.findById(admin.getDivisionId())
+                .orElseThrow(() -> new CustomException("회사 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST));
+
+        // 회사 포인트 비교
+        if (company.getCurrentPoint() < req.getRefundPoint()) {
+            throw new CustomException("환불하려는 포인트보다 보유중인 포인트가 더 적습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         // 관리자 권한 조회
         Long signedAdminId = authenticationFacade.getSignedUserId();
         if (!signedAdminId.equals(req.getAdminId())) {
@@ -356,7 +365,7 @@ public class CompanyService {
         refund.setAdmin(admin);
         refund.setRefundPoint(req.getRefundPoint());
         refund.setRefundDetail(req.getRefundDetail());
-        refund.setRefundAmount(req.getRefundAmount());
+        refund.setRefundAmount(req.getRefundPoint() - ((int)(req.getRefundPoint() * 0.1)));
         refundRepository.save(refund);
 
         return 1;
