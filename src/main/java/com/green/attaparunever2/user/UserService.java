@@ -340,4 +340,37 @@ public class UserService {
         }
         return userRepository.save(user);
     }
+
+    // 2차 기능 개선--------------------------------------------------------------------------------
+    // 사용자 메인 페이지 알림
+    public List<UserAlertDto> getUserAlertV3(long userId) {
+        List<UserAlertDto> reservationList = userMapper.selUserReservationAlertByUserId(userId);
+        List<UserAlertDto> paymentList = userMapper.selUserPaymentAlertByUserId(userId);
+
+        reservationList.addAll(paymentList);
+
+        return reservationList;
+    }
+
+    //함께 결재할 인원 리스트
+    public List<CompanyUserGetRes> getCompanyUser(CompanyUserGetReq req) {
+        // 시큐리티 context 에서 사용자 PK를 가져온다.
+        long userId = authenticationFacade.getSignedUserId();
+        log.info("userId: {}", userId);
+        req.setUserId(userId);
+        return userMapper.selCompanyUserByUserId(req);
+    }
+
+    // 회원정보 조회
+    public UserGetRes getUserV3(UserGetReq p) {
+        long userId = authenticationFacade.getSignedUserId();
+
+        UserGetRes res = userMapper.selUserByUserIdV3(userId);
+
+        if(res == null) {
+            throw new CustomException("회원정보가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        return res;
+    }
 }
