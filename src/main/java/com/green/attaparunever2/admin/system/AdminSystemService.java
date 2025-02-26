@@ -1,6 +1,7 @@
 package com.green.attaparunever2.admin.system;
 
 import com.green.attaparunever2.admin.AdminRepository;
+import com.green.attaparunever2.admin.system.model.UpdAdmin;
 import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
 import com.green.attaparunever2.admin.system.model.UpdRefundReq;
 import com.green.attaparunever2.common.excprion.CustomException;
@@ -43,6 +44,7 @@ public class AdminSystemService {
         return 1;
     }
 
+    //환불 상태 처리
     public int patchRefund(UpdRefundReq req) {
         Refund refund = refundRepository.findById(req.getRefundId())
                 .orElseThrow(() -> new CustomException("해당 환불이 없습니다.", HttpStatus.BAD_REQUEST));
@@ -63,6 +65,17 @@ public class AdminSystemService {
         refundRepository.save(refund);
 
 
+
+        return 1;
+    }
+
+    //입점신청서 승인 및 거절
+    public int patchEnrollmentState(UpdAdmin req){
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("해당 관라자가 없습니다", HttpStatus.BAD_REQUEST));
+
+        admin.setCoalitionState(req.getCoalitionState());
+        adminRepository.save(admin);
 
         return 1;
     }
