@@ -441,6 +441,12 @@ public class AdminService {
         Code roleCode = new Code();
         roleCode.setCode(req.getRoleCode());
 
+        // 작성자 권한 조회
+        Long signedUserId = authenticationFacade.getSignedUserId();
+        if (!signedUserId.equals(req.getId())) {
+            throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
 
         SystemPost systemPost = new SystemPost();

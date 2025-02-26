@@ -47,7 +47,7 @@ public class SystemService {
         systemPost.setPic(savedPicName);
         systemPostRepository.save(systemPost);
 
-        if(pic.isEmpty() && systemPost.getPic().isEmpty()) {
+        if ((pic == null || pic.isEmpty()) && (systemPost.getPic() == null || systemPost.getPic().isEmpty())) {
             return 0;
         }
 
