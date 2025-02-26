@@ -57,6 +57,20 @@ public class AdminRestaurantController {
     }
 
 
+
+
+    @PatchMapping("/menu")
+    @Operation(summary = "메뉴 정보 수정")
+    public ResultResponse<Integer> updateMenu(@RequestBody UpdMenuReq p){
+        int result = restaurantMenuService.updRestaurantMenu(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("메뉴 수정 완료")
+                .resultData(result)
+                .build();
+    }
+
     @PostMapping("v3/menu")
     @Operation(summary = "메뉴 등록")
     public ResultResponse<RestaurantMenu> postMenu(@RequestPart PostMenuReq p,
@@ -68,18 +82,6 @@ public class AdminRestaurantController {
                 .statusCode("200")
                 .resultMsg("메뉴 등록 성공")
                 .resultData(savedMenu)
-                .build();
-    }
-
-    @PatchMapping("/menu")
-    @Operation(summary = "메뉴 정보 수정")
-    public ResultResponse<Integer> updateMenu(@RequestBody UpdMenuReq p){
-        int result = restaurantMenuService.updRestaurantMenu(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode("200")
-                .resultMsg("메뉴 수정 완료")
-                .resultData(result)
                 .build();
     }
 
@@ -95,6 +97,8 @@ public class AdminRestaurantController {
                 .resultData("메뉴 삭제가 완료되었습니다.")
                 .build();
     }
+
+
 
     @PatchMapping("v3/menu/category")
     @Operation(summary = "메뉴 카테고리 수정")
