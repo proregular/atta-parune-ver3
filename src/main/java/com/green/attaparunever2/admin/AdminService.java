@@ -453,7 +453,7 @@ public class AdminService {
         systemPostRepository.save(systemPost);
         systemPostRepository.flush();
 
-        Long systemId = systemPost.getId();
+        Long systemId = systemPost.getInquiryId();
 
         if(pic != null) {
             String middlePath = String.format("systemPost/%d", systemId);
