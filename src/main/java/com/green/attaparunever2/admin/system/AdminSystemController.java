@@ -5,10 +5,7 @@ import com.green.attaparunever2.admin.model.InsAnnouncementReq;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelRefundRes;
-import com.green.attaparunever2.admin.system.model.InsSystemPostCommentReq;
-import com.green.attaparunever2.admin.system.model.UpdAdmin;
-import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
-import com.green.attaparunever2.admin.system.model.UpdRefundReq;
+import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -100,6 +97,18 @@ public class AdminSystemController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("시스템 문의 답변 등록 완료")
                 .resultData(result)
+                .build();
+    }
+    
+    @GetMapping("v3/systemPostComment")
+    @Operation(summary = "시스템 문의 답변 조회")
+    public ResultResponse<List<SelSystemPostCommentRes>> getSystemPostComment(SelSystemPostCommentReq req){
+        List<SelSystemPostCommentRes> res = adminSystemService.getSystemPostComment(req);
+        
+        return ResultResponse.<List<SelSystemPostCommentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("시스템 문의 답변 조회 완료")
+                .resultData(res)
                 .build();
     }
 }

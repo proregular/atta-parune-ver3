@@ -2,10 +2,7 @@ package com.green.attaparunever2.admin.system;
 
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.SystemPostRepository;
-import com.green.attaparunever2.admin.system.model.InsSystemPostCommentReq;
-import com.green.attaparunever2.admin.system.model.UpdAdmin;
-import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
-import com.green.attaparunever2.admin.system.model.UpdRefundReq;
+import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
@@ -15,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -26,6 +25,7 @@ public class AdminSystemService {
     private final CompanyRepository companyRepository;
     private final SystemPostCommentRepository systemPostCommentRepository;
     private final SystemPostRepository systemPostRepository;
+    private final AdminSystemMapper adminSystemMapper;
 
     public int patchCoalition(UpdCoalitionReq req) {
         // 관리자 로그인 인증
@@ -101,5 +101,11 @@ public class AdminSystemService {
         systemPostCommentRepository.save(systemPostComment);
 
         return 1;
+    }
+
+    public List<SelSystemPostCommentRes> getSystemPostComment(SelSystemPostCommentReq req){
+        List<SelSystemPostCommentRes> res = adminSystemMapper.selSystemPostComment(req);
+
+        return res;
     }
 }
