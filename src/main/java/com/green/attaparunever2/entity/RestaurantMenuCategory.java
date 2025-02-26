@@ -17,7 +17,7 @@ public class RestaurantMenuCategory extends UpdatedAt {
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurantId;
+    private Restaurant restaurant;
 
     @Column(name = "category_name",length = 50, nullable = false)
     private String categoryName;
