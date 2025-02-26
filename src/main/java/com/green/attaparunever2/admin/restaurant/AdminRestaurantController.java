@@ -5,6 +5,7 @@ import com.green.attaparunever2.admin.model.InsRestaurantEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelRestaurantEnrollmentRes;
 import com.green.attaparunever2.admin.restaurant.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.entity.RestaurantMenu;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
 import com.green.attaparunever2.order.model.OrderListSelReq;
@@ -55,17 +56,31 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PostMapping("/menu")
+//    @PostMapping("/menu")
+//    @Operation(summary = "메뉴 등록")
+//    public ResultResponse<Integer> postMenu(@RequestPart PostMenuReq p
+//            , @RequestPart(required = false) MultipartFile pic){
+//
+//        int result = restaurantMenuService.postMenu(pic, p);
+//
+//        return ResultResponse.<Integer>builder()
+//                .statusCode("200")
+//                .resultMsg("메뉴 등록 성공")
+//                .resultData(result)
+//                .build();
+//    }
+
+    @PostMapping("v3/menu")
     @Operation(summary = "메뉴 등록")
-    public ResultResponse<Integer> postMenu(@RequestPart PostMenuReq p
-            , @RequestPart(required = false) MultipartFile pic){
+    public ResultResponse<RestaurantMenu> postMenu(@RequestPart PostMenuReq p,
+                                                   @RequestPart(required = false) MultipartFile pic) {
 
-        int result = restaurantMenuService.postMenu(pic, p);
+        RestaurantMenu savedMenu = adminRestaurantService.postMenu(pic, p);
 
-        return ResultResponse.<Integer>builder()
+        return ResultResponse.<RestaurantMenu>builder()
                 .statusCode("200")
                 .resultMsg("메뉴 등록 성공")
-                .resultData(result)
+                .resultData(savedMenu)
                 .build();
     }
 
@@ -81,17 +96,17 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @DeleteMapping("/menu")
-    @Operation(summary = "메뉴 정보 삭제")
-    public ResultResponse<Integer> deleteMenu(@ParameterObject @ModelAttribute DelMenuReq p){
-        int result = restaurantMenuService.delMenu(p);
-
-        return ResultResponse.<Integer>builder()
-                .statusCode("200")
-                .resultMsg("메뉴 삭제 완료")
-                .resultData(result)
-                .build();
-    }
+//    @DeleteMapping("/menu")
+//    @Operation(summary = "메뉴 정보 삭제")
+//    public ResultResponse<Integer> deleteMenu(@ParameterObject @ModelAttribute DelMenuReq p){
+//        int result = restaurantMenuService.delMenu(p);
+//
+//        return ResultResponse.<Integer>builder()
+//                .statusCode("200")
+//                .resultMsg("메뉴 삭제 완료")
+//                .resultData(result)
+//                .build();
+//    }
 
     @PatchMapping("v3/menu/category")
     @Operation(summary = "메뉴 카테고리 수정")

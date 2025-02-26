@@ -3,8 +3,10 @@ package com.green.attaparunever2.restaurant.restaurant_menu;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.Restaurant;
 import com.green.attaparunever2.entity.RestaurantMenu;
 import com.green.attaparunever2.entity.RestaurantMenuCategory;
+import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.*;
 import lombok.RequiredArgsConstructor;
@@ -23,72 +25,9 @@ public class RestaurantMenuService {
     private final MyFileUtils myFileUtils;
     private final RestaurantMenuRepository restaurantMenuRepository;
     private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public int postMenu(MultipartFile pic, PostMenuReq p){ // 메뉴 사진 등록 해야함
-        InsMenuReq insMenuReq = new InsMenuReq();
-        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
-        p.setMenuPic(savedPicName);
 
-        MenuCategorySelDto dto = restaurantMenuMapper.selMenuCategoryByRestaurantIdAndCategoryName(p);
-
-        // 해당 메뉴 카테고리가 존재 한다면
-        if(dto != null) {
-            insMenuReq.setCategoryId(dto.getCategoryId());
-        } else {
-            // 카테고리 생성
-            PostCategoryReq postCategoryReq = new PostCategoryReq();
-            postCategoryReq.setRestaurantId(p.getRestaurantId());
-            postCategoryReq.setCategoryName(p.getCategoryName());
-
-            restaurantMenuMapper.postCategory(postCategoryReq);
-            insMenuReq.setCategoryId(postCategoryReq.getCategoryId());
-        }
-
-        insMenuReq.setMenuName(p.getMenuName());
-        insMenuReq.setAvailable(p.getAvailable());
-        insMenuReq.setDetails(p.getDetails());
-        insMenuReq.setPrice(p.getPrice());
-        insMenuReq.setMenuPic(savedPicName);
-
-        int result = restaurantMenuMapper.insMenu(insMenuReq);
-
-        long menuId = insMenuReq.getMenuId();
-        if(pic != null) {
-            String middlePath = String.format("menu/%d", menuId);
-            myFileUtils.makeFolders(middlePath);
-            String filePath = String.format("%s/%s", middlePath, savedPicName);
-            try {
-                myFileUtils.transferTo(pic, filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    public List<SelMenuRes> getMenu(SelMenuReq p){
-        List<SelMenuRes> res = restaurantMenuMapper.selMenu(p);
-
-        return res;
-    }
-
-    public int delMenu(DelMenuReq p){
-        int result = restaurantMenuMapper.delMenu(p);
-
-        if(result != 0) {
-            int count = restaurantMenuMapper.selCategoryMenuCount(p.getCategoryId());
-
-            if(count <= 0) {
-                DelCategoryReq req = new DelCategoryReq();
-                req.setCategoryId(p.getCategoryId());
-                result = restaurantMenuMapper.delCategory(req);
-            }
-
-        }
-
-        return result;
-    }
 
     @Transactional
     public int updRestaurantMenu(UpdMenuReq p) {

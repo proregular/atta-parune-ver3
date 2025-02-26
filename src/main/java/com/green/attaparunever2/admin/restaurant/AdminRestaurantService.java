@@ -2,12 +2,16 @@ package com.green.attaparunever2.admin.restaurant;
 
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.restaurant.model.*;
+import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuCategoryRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -30,6 +37,9 @@ public class AdminRestaurantService {
     private final ReviewRepository reviewRepository;
     private final BlackListRepository blackListRepository;
     private final UserRepository userRepository;
+    private final MyFileUtils myFileUtils;
+    private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
+    private final RestaurantMenuRepository restaurantMenuRepository;
 
     public int postReviewComment(InsReviewCommentReq req) {
         // 식당 관리자 권한 인증
@@ -183,5 +193,64 @@ public class AdminRestaurantService {
         restaurantRepository.save(restaurant);
 
         return 1;
+    }
+
+
+    // 식당 메뉴 등록
+    @Transactional
+    public RestaurantMenu postMenu(MultipartFile pic, PostMenuReq p) {
+        // 파일 이름 생성
+        String savedPicName = null;
+        if (pic != null) {
+            try {
+                savedPicName = myFileUtils.makeRandomFileName(pic);
+            } catch (Exception e) {
+                throw new RuntimeException("파일 이름 생성 실패", e);
+            }
+        }
+        p.setMenuPic(savedPicName);
+
+        // 식당 정보 가져오기
+        Restaurant restaurant = restaurantRepository.findById(p.getRestaurantId())
+                .orElseThrow(() -> new RuntimeException("해당 ID의 식당을 찾을 수 없습니다. restaurantId: " + p.getRestaurantId()));
+
+        // 카테고리 조회 또는 생성
+        if (p.getCategoryName() == null || p.getCategoryName().trim().isEmpty()) {
+            throw new IllegalArgumentException("카테고리 이름이 필요합니다.");
+        }
+
+        RestaurantMenuCategory category = restaurantMenuCategoryRepository
+                .findByRestaurantAndCategoryName(restaurant, p.getCategoryName())
+                .orElseGet(() -> {
+                    RestaurantMenuCategory newCategory = new RestaurantMenuCategory();
+                    newCategory.setRestaurant(restaurant);
+                    newCategory.setCategoryName(p.getCategoryName());
+                    return restaurantMenuCategoryRepository.save(newCategory);
+                });
+
+        // 메뉴 엔티티 생성 후 저장
+        RestaurantMenu menu = new RestaurantMenu();
+        menu.setCategoryId(category);
+        menu.setMenuName(p.getMenuName());
+        menu.setAvailable(p.getAvailable());
+        menu.setDetail(p.getDetails());
+        menu.setPrice(p.getPrice());
+        menu.setMenuPic(savedPicName);
+
+        RestaurantMenu savedMenu = restaurantMenuRepository.save(menu);
+
+        // 파일 저장
+        if (pic != null) {
+            String middlePath = String.format("menu/%d", savedMenu.getMenuId());
+            myFileUtils.makeFolders(middlePath);
+            String filePath = String.format("%s/%s", middlePath, savedPicName);
+            try {
+                myFileUtils.transferTo(pic, filePath);
+            } catch (IOException e) {
+                throw new RuntimeException("파일 저장 실패", e);
+            }
+        }
+
+        return savedMenu;
     }
 }
