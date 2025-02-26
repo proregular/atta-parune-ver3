@@ -5,7 +5,9 @@ import com.green.attaparunever2.admin.model.InsAnnouncementReq;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelRefundRes;
+import com.green.attaparunever2.admin.system.model.UpdAdmin;
 import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
+import com.green.attaparunever2.admin.system.model.UpdRefundReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -86,6 +88,30 @@ public class AdminSystemController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("제휴 상태 변경 성공")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping("v3/refund")
+    @Operation(summary = "환불 요청 처리")
+    public ResultResponse<Integer> patchRefund(@RequestBody UpdRefundReq req) {
+        int result = adminSystemService.patchRefund(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("환불 요청 처리 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PatchMapping("v3/EnrollmentState")
+    @Operation(summary = "입점신청서 승인 및 거절")
+    public ResultResponse<Integer> patchEnrollmentState(UpdAdmin req){
+        int result = adminSystemService.patchEnrollmentState(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("입점신청서 상태 변경 완료")
                 .resultData(result)
                 .build();
     }
