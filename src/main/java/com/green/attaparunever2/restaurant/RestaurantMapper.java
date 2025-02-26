@@ -30,4 +30,16 @@ public interface RestaurantMapper {
     List<GetRestaurantMainRes> selRestaurantMainV3(GetRestaurantMainReq p);
     List<RestaurantAroundGetRes> selRestaurantAroundV3(RestaurantAroundGetReq p);
     RestaurantDetailGetRes selRestaurantByRestaurantId(long restaurantId);
+
+    // 식당 리뷰 조회
+    List<ReviewDto> getReview(long restaurantId);
+
+    List<String> getReviewPic(long orderId);
+
+    // 주문한 메뉴 이름 조회
+    List<String> getMenuName(long orderId);
+
+    // 별점별 리뷰 개수 조회
+    List<RatingCountDto> getCountByRating(long restaurantId);
+
 }
