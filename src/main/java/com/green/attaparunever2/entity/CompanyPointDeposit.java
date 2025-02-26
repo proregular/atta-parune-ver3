@@ -20,6 +20,9 @@ public class CompanyPointDeposit extends CreatedAt{
     private Admin adminId;
 
     @Column(nullable = false)
+    private String paymentKey;
+
+    @Column(nullable = false)
     private int pointAmount;
 
     @Column(nullable = false)
