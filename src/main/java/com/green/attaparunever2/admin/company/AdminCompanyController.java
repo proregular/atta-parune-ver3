@@ -171,7 +171,7 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @PatchMapping("/v3/point")
+    @PostMapping("/v3/point")
     @Operation(summary = "포인트 구매")
     public ResultResponse<ResponseEntity> patchPoint(HttpServletRequest request, @RequestBody String jsonBody) throws Exception {
         ResponseEntity result = adminCompanyService.patchPoint(request, jsonBody);
