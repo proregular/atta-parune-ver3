@@ -470,8 +470,20 @@ public class AdminService {
     }
 
     //게시글 자세히 보기
-    public SelOneSystemPostRes getOneSystemPost(long inquiryId){
-        SelOneSystemPostRes res = adminMapper.selOneSystemPost(inquiryId);
+    public SelOneSystemPostRes getOneSystemPost(SystemPostDetailGetReq req){
+        // 게시글 정보 조회
+        SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
+                .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        // 시스템 관리자 확인
+        Admin admin = adminRepository.findById(req.getId())
+                .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
+
+//        if (!systemPost.getId().equals(req.getId()) || ) {
+//
+//        }
+
+        SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
 
         return res;
     }

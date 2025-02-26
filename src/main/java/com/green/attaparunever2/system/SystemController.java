@@ -3,6 +3,7 @@ package com.green.attaparunever2.system;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
+import com.green.attaparunever2.admin.model.SystemPostDetailGetReq;
 import com.green.attaparunever2.common.model.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,8 +36,8 @@ public class SystemController {
 
     @GetMapping("v3/post")
     @Operation(summary = "게시글 자세히 보기")
-    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(@ParameterObject @ModelAttribute long inquiryId){
-        SelOneSystemPostRes res = adminService.getOneSystemPost(inquiryId);
+    public ResultResponse<SelOneSystemPostRes> getSelOneSystemPost(@ParameterObject @ModelAttribute SystemPostDetailGetReq req){
+        SelOneSystemPostRes res = adminService.getOneSystemPost(req);
 
         return ResultResponse.<SelOneSystemPostRes>builder()
                 .statusCode(HttpStatus.OK.toString())
