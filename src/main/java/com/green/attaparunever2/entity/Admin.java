@@ -33,7 +33,7 @@ public class Admin extends UpdatedAt{
     private String name;
 
     @Column
-    private int coalitionState;
+    private Integer coalitionState;
 
     @Column(length = 100, nullable = false, unique = true)
     private String email;

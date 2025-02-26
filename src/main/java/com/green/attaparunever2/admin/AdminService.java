@@ -421,6 +421,10 @@ public class AdminService {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("입점신청을 해주세요", HttpStatus.BAD_REQUEST));
 
+        if(admin.getCoalitionState() == null){
+            throw new CustomException("승인이 되지 않았습니다", HttpStatus.BAD_REQUEST);
+        }
+
         String hashedPassword = BCrypt.hashpw(req.getApw(), BCrypt.gensalt());
 
         admin.setAid(req.getAid());
