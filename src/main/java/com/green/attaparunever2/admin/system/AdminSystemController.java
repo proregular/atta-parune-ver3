@@ -111,4 +111,16 @@ public class AdminSystemController {
                 .resultData(res)
                 .build();
     }
+
+    @PatchMapping("v3/systemPostComment")
+    @Operation(summary = "시스템 문의 답변 수정")
+    public ResultResponse<Integer> patchSystemPostComment(UpdSystemPostCommentReq req){
+        int result = adminSystemService.patchSystemPostComment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("시스템 문의 답변 수정 완료")
+                .resultData(result)
+                .build();
+    }
 }
