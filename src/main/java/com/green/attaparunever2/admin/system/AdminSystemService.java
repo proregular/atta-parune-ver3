@@ -103,9 +103,29 @@ public class AdminSystemService {
         return 1;
     }
 
+    //시스템 문의 답변 조회
     public List<SelSystemPostCommentRes> getSystemPostComment(SelSystemPostCommentReq req){
         List<SelSystemPostCommentRes> res = adminSystemMapper.selSystemPostComment(req);
 
         return res;
     }
+
+    //시스템 문의 답변 수정
+    public int patchSystemPostComment(UpdSystemPostCommentReq req){
+        SystemPostComment systemPostComment = systemPostCommentRepository.findById(req.getInquiryCommentId())
+                .orElseThrow(() -> new CustomException("해당 문의답변이 없습니다", HttpStatus.BAD_REQUEST));
+
+        Admin admin = adminRepository.findById(systemPostComment.getAdmin().getAdminId())
+                .orElseThrow(() -> new CustomException("해당 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if(!admin.getCode().getCode().equals("00103")){
+            throw new CustomException("시스템 관리자가 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
+        systemPostComment.setCommentDetail(req.getCommentDetail());
+        systemPostCommentRepository.save(systemPostComment);
+
+        return 1;
+    }
+
 }
