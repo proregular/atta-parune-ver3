@@ -1,6 +1,8 @@
 package com.green.attaparunever2.admin.system;
 
 import com.green.attaparunever2.admin.AdminRepository;
+import com.green.attaparunever2.admin.SystemPostRepository;
+import com.green.attaparunever2.admin.system.model.InsSystemPostCommentReq;
 import com.green.attaparunever2.admin.system.model.UpdAdmin;
 import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
 import com.green.attaparunever2.admin.system.model.UpdRefundReq;
@@ -8,9 +10,7 @@ import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
-import com.green.attaparunever2.entity.Admin;
-import com.green.attaparunever2.entity.Company;
-import com.green.attaparunever2.entity.Refund;
+import com.green.attaparunever2.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,8 @@ public class AdminSystemService {
     private final AuthenticationFacade authenticationFacade;
     private final RefundRepository refundRepository;
     private final CompanyRepository companyRepository;
+    private final SystemPostCommentRepository systemPostCommentRepository;
+    private final SystemPostRepository systemPostRepository;
 
     public int patchCoalition(UpdCoalitionReq req) {
         // 관리자 로그인 인증
@@ -76,6 +78,27 @@ public class AdminSystemService {
 
         admin.setCoalitionState(req.getCoalitionState());
         adminRepository.save(admin);
+
+        return 1;
+    }
+
+    //시스템 문의 답변
+    public int postSystemPostComment(InsSystemPostCommentReq req){
+        SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
+                .orElseThrow(() -> new CustomException("해당 게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("해당 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if(!admin.getCode().getCode().equals("00103")){
+            throw new CustomException("시스템 관리자가 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
+        SystemPostComment systemPostComment = new SystemPostComment();
+        systemPostComment.setSystemPost(systemPost);
+        systemPostComment.setAdmin(admin);
+        systemPostComment.setCommentDetail(req.getCommentDetail());
+        systemPostCommentRepository.save(systemPostComment);
 
         return 1;
     }

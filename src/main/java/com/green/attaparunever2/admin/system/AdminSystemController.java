@@ -5,6 +5,7 @@ import com.green.attaparunever2.admin.model.InsAnnouncementReq;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelRefundRes;
+import com.green.attaparunever2.admin.system.model.InsSystemPostCommentReq;
 import com.green.attaparunever2.admin.system.model.UpdAdmin;
 import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
 import com.green.attaparunever2.admin.system.model.UpdRefundReq;
@@ -78,7 +79,7 @@ public class AdminSystemController {
                 .build();
     }
 
-    @PatchMapping("v3/EnrollmentState")
+    @PatchMapping("v3/enrollmentState")
     @Operation(summary = "입점신청서 승인 및 거절")
     public ResultResponse<Integer> patchEnrollmentState(UpdAdmin req){
         int result = adminSystemService.patchEnrollmentState(req);
@@ -86,6 +87,18 @@ public class AdminSystemController {
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("입점신청서 상태 변경 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("v3/systemPostComment")
+    @Operation(summary = "시스템 문의 답변 등록")
+    public ResultResponse<Integer> postSystemPostComment(InsSystemPostCommentReq req){
+        int result = adminSystemService.postSystemPostComment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("시스템 문의 답변 등록 완료")
                 .resultData(result)
                 .build();
     }
