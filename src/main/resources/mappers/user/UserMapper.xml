@@ -161,7 +161,7 @@
     </select>
 
 
-    <select id="getUserOrderVer2MenuList">
+    <!-- <select id="getUserOrderVer2MenuList">
         SELECT
         B.order_detail_id AS orderDetailId,
         A.menu_id AS menuId,
@@ -176,7 +176,7 @@
         INNER JOIN restaurant_category F ON E.category_id = F.category_id
         WHERE C.user_id = #{signedUserId}
         GROUP BY B.order_detail_id
-    </select>
+    </select> -->
 
     <update id="patchUpw">
         UPDATE user
@@ -259,7 +259,98 @@
         AND A.user_id = #{userId}
     </select>
 
+    <!-- 2차 개선 코드 -->
 
+    <!-- 결재 사용자 추가화면 사용자 리스트 조회 -->
+    <select id="selCompanyUserByUserId">
+        SELECT B.`name`, B.uid, B.user_id AS userId
+        FROM user A INNER JOIN user B
+        ON A.company_id = B.company_id
+        WHERE A.user_id = #{userId}
+        <if test="searchText != null and searchText != ''">
+            AND B.name LIKE '%${searchText}%'
+        </if>
+        ORDER BY B.`name` ASC
+        LIMIT #{size} OFFSET #{startIdx}
+    </select>
+
+    <!-- 사용자 정보 조회 -->
+    <select id="selUserByUserIdV3">
+        SELECT A.user_id AS userId
+        , B.name AS companyName
+        , A.company_id AS companyId
+        , A.role_id AS roleId
+        , A.nick_name AS nickName
+        , A.uid, A.upw, A.name, A.pic
+        , A.email, A.phone, A.point
+        FROM user A INNER JOIN company B
+        ON A.company_id = B.company_id
+        WHERE A.user_id = #{userId}
+    </select>
+
+    <!-- 지난 주문 내역 : 식권사용이 완료된 -->
+    <select id="selOrderPastByUserIdV3">
+        SELECT A.restaurant_id AS restaurantId, B.restaurant_name AS restaurantName
+        , A.created_at AS orderDate, A.reservation_yn AS reservationYn
+        , (
+        SELECT COUNT(*)
+        FROM review X
+        WHERE A.order_id = X.order_id
+        ) AS review_yn
+        FROM `order` A
+        INNER JOIN restaurant B
+        ON A.restaurant_id = B.restaurant_id
+        INNER JOIN ticket C
+        ON A.order_id = C.order_id
+        AND C.ticket_status = 1
+        WHERE A.user_id = #{userId}
+    </select>
+
+    <!-- 진행 중인 주문 내역 -->
+    <select id="getUserOrderPresentVer2">
+        SELECT
+        A.restaurant_name AS restaurantName,
+        F.order_id AS orderId,
+        B.category_name AS categoryName,
+        E.created_at AS createdAt,
+        G.reservation_people_count AS reservationPeopleCount,
+        G.reservation_time AS reservationTime,
+        H.name AS userName,
+        H.phone AS userPhone,
+        SUM(E.menu_count * D.price) AS menuTotalPrice,
+        F.reservation_yn AS reservationYn
+        FROM restaurant A
+        INNER JOIN restaurant_category B ON A.category_id = B.category_id
+        INNER JOIN restaurant_menu_category C ON A.restaurant_id = C.restaurant_id
+        INNER JOIN restaurant_menu D ON C.category_id = D.category_id
+        INNER JOIN order_detail E ON D.menu_id = E.menu_id
+        INNER JOIN `order` F ON E.order_id = F.order_id
+        INNER JOIN reservation G ON F.order_id = G.order_id
+        INNER JOIN user H ON F.user_id = H.user_id
+        INNER JOIN ticket I ON I.order_id = F.order_id
+        WHERE H.user_id = #{signedUserId}
+        AND F.reservation_yn = 1
+        AND F.reservation_status = 1
+        AND ticket_status = 0
+        GROUP BY F.order_id
+    </select>
+
+    <select id="getUserOrderVer2MenuList">
+        SELECT
+        B.order_detail_id AS orderDetailId,
+        A.menu_id AS menuId,
+        A.menu_name AS menuName,
+        B.menu_count AS menuCount,
+        (A.price * B.menu_count) AS menuPrice
+        FROM restaurant_menu A
+        INNER JOIN order_detail B ON A.menu_id = B.menu_id
+        INNER JOIN `order` C ON C.order_id = B.order_id
+        INNER JOIN restaurant_menu_category D ON A.category_id = D.category_id
+        INNER JOIN restaurant E ON E.restaurant_id = D.restaurant_id
+        INNER JOIN restaurant_category F ON E.category_id = F.category_id
+        WHERE C.user_id = #{signedUserId}
+        GROUP BY B.order_detail_id
+    </select>
 
 
 </mapper>

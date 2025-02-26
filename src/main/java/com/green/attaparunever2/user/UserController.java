@@ -271,4 +271,42 @@ public class UserController {
                 .resultData(result)
                 .build();
     }
+
+    //2차 기능 개선---------------------------------------------------------------------------------
+    @GetMapping("v3/alert")
+    @Operation(summary = "사용자 알람 데이터")
+    public ResultResponse<List<UserAlertDto>> getUserAlertV3(@Valid @RequestParam long userId) {
+        List<UserAlertDto> res = userService.getUserAlertV3(userId);
+        return ResultResponse.<List<UserAlertDto>>builder()
+                .statusCode("200")
+                .resultMsg("알람 조회가 완료되었습니다.")
+                .resultData(res)
+                .build();
+    }
+
+    //2차 기능 개선---------------------------------------------------------------------------------
+    @GetMapping("v3/company/user")
+    @Operation(summary = "함께 결재할 인원 조회")
+    public ResultResponse<List<CompanyUserGetRes>> getCompanyUser(@ParameterObject @ModelAttribute @Valid CompanyUserGetReq req) {
+
+        List<CompanyUserGetRes> resList = userService.getCompanyUser(req);
+
+        return ResultResponse.<List<CompanyUserGetRes>>builder()
+                .statusCode("200")
+                .resultMsg("결제 인원 검색 완료")
+                .resultData(resList)
+                .build();
+    }
+
+    @GetMapping("v3")
+    @Operation(summary = "회원 정보 조회")
+    public ResultResponse<?> getUserV3(@ParameterObject @ModelAttribute UserGetReq req) {
+        UserGetRes result = userService.getUserV3(req);
+
+        return ResultResponse.<UserGetRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회원 정보 조회 성공")
+                .resultData(result)
+                .build();
+    }
 }

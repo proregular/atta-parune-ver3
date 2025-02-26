@@ -206,5 +206,4 @@ public class AdminCompanyController {
                 .resultData(resList)
                 .build();
     }
-
 }
