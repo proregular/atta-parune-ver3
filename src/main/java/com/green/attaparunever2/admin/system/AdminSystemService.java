@@ -2,9 +2,11 @@ package com.green.attaparunever2.admin.system;
 
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.system.model.UpdCoalitionReq;
+import com.green.attaparunever2.admin.system.model.UpdRefundReq;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.Admin;
+import com.green.attaparunever2.entity.Refund;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,14 @@ public class AdminSystemService {
         admin.setCoalitionState(1 - admin.getCoalitionState());
 
         adminRepository.save(admin);
+
+        return 1;
+    }
+
+    public int patchRefund(UpdRefundReq req) {
+
+
+
 
         return 1;
     }
