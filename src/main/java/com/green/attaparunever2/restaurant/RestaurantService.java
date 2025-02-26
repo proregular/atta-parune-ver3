@@ -3,6 +3,8 @@ package com.green.attaparunever2.restaurant;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.Holiday;
+import com.green.attaparunever2.entity.Restaurant;
 import com.green.attaparunever2.order.OrderMapper;
 import com.green.attaparunever2.order.model.OrderDetailDto;
 import com.green.attaparunever2.restaurant.model.*;
@@ -37,6 +39,8 @@ public class RestaurantService {
     private final RestaurantMenuMapper restaurantMenuMapper;
     private final MyFileUtils myFileUtils;
     private final OrderMapper orderMapper;
+    private final RestaurantRepository restaurantRepository;
+    private final HolidayRepository holidayRepository;
 
     public long postRestaurant(InsRestaurantReq p){
         int result = restaurantMapper.insRestaurant(p);
@@ -126,9 +130,15 @@ public class RestaurantService {
 
 
     public int postHoliday(InsHolidayReq p){
-        int result = restaurantMapper.insHoliday(p);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(p.getRestaurantId());
 
-        return result;
+        Holiday holiday = new Holiday();
+        holiday.setRestaurantId(restaurant);
+        holiday.setCloseDay(p.getClosedDays());
+        holidayRepository.save(holiday);
+
+        return 1;
     }
 
     public List<SelHolidayRes> getHoliday(SelHolidayReq p){
@@ -139,20 +149,43 @@ public class RestaurantService {
 
     @Transactional
     public int patchRestaurant(UpdRestaurantReq req) {
-        int result = restaurantMapper.updRestaurant(req);
-        if (result == 0) {
-            throw new CustomException("식당 수정에 실패했습니다.", HttpStatus.BAD_REQUEST);
+        Restaurant restaurant = restaurantRepository.findById(req.getRestaurantId())
+                .orElseThrow(() -> new CustomException("식당 Pk을 해주세요", HttpStatus.BAD_REQUEST));
+
+        if(req.getRestaurantName() != null && req.getRestaurantName() != ""){
+            restaurant.setRestaurantName(req.getRestaurantName());
         }
-        return result;
+        if(req.getRestaurantAddress() != null && req.getRestaurantAddress() != ""){
+            restaurant.setRestaurantAddress(req.getRestaurantAddress());
+        }
+        if(req.getRestaurantNumber() != null && req.getRestaurantNumber() != ""){
+            restaurant.setRestaurantNumber(req.getRestaurantNumber());
+        }
+        if (req.getOperatingHours() != null && req.getOperatingHours() != ""){
+            restaurant.setOperatingHours(req.getOperatingHours());
+        }
+        if(req.getRestaurantDescription() != null && req.getRestaurantDescription() != ""){
+            restaurant.setRestaurantDescription(req.getRestaurantDescription());
+        }
+        if(req.getStatus() != null && req.getStatus() != 0){
+            restaurant.setStatus(req.getStatus());
+        }
+        if(req.getMaxCapacity() != null && req.getMaxCapacity() != 0){
+            restaurant.setMaxCapacity(req.getMaxCapacity());
+        }
+
+        restaurantRepository.save(restaurant);
+        return 1;
     }
 
     public int patchHoliday(UpdHolidayReq req) {
-        int result = restaurantMapper.updHoliday(req);
+        Holiday holiday = holidayRepository.findById(req.getHolidayId())
+                .orElseThrow(() -> new CustomException("식당 Pk을 해주세요", HttpStatus.BAD_REQUEST));
 
-        if (result == 0) {
-            throw new CustomException("휴무일 수정에 실패했습니다.", HttpStatus.BAD_REQUEST);
-        }
-        return result;
+        holiday.setCloseDay(req.getClosedDays());
+        holidayRepository.save(holiday);
+
+        return 1;
     }
 
     public List<SelRestaurantMainRes> getRestaurantMain(SelRestaurantMainReq p){

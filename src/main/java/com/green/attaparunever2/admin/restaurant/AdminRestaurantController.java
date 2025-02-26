@@ -44,7 +44,7 @@ public class AdminRestaurantController {
     private final AdminRestaurantService adminRestaurantService;
 
     @PatchMapping
-    @Operation(summary = "식당 정보 수정")
+    @Operation(summary = "v3/식당 정보 수정")
     public ResultResponse<Integer> updateRestaurant(@RequestBody UpdRestaurantReq req){
         int result = restaurantService.patchRestaurant(req);
 
@@ -93,7 +93,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping("/menu/category")
+    @PatchMapping("v3/menu/category")
     @Operation(summary = "메뉴 카테고리 수정")
     public ResultResponse<Integer> updateCategory(@RequestBody UpdCategoryReq p) {
         int result = restaurantMenuService.updCategory(p);
@@ -195,7 +195,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PostMapping("/v3/pic")
+    @PostMapping("v3/pic")
     @Operation(summary = "식당 사진 등록")
     public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> filePath, @RequestParam long restaurantId) {
         InsRestaurantRes res = restaurantPicService.postRestaurantPic(filePath, restaurantId);
@@ -234,7 +234,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PostMapping("holiday")
+    @PostMapping("v3/holiday")
     @Operation(summary = "휴무일 등록")
     public ResultResponse<Integer> postHoliday(@RequestBody InsHolidayReq p){
         int result = restaurantService.postHoliday(p);
@@ -246,7 +246,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @PatchMapping("holiday")
+    @PatchMapping("v3/holiday")
     @Operation(summary = "휴무일 변경")
     public ResultResponse<Integer> updateHoliday(@RequestBody UpdHolidayReq req){
         int result = restaurantService.patchHoliday(req);
