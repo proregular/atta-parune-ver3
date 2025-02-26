@@ -479,9 +479,10 @@ public class AdminService {
         Admin admin = adminRepository.findById(req.getId())
                 .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
 
-//        if (!systemPost.getId().equals(req.getId()) || ) {
-//
-//        }
+        // 게시글 조회 권한 확인
+        if (!systemPost.getId().equals(req.getId()) || !admin.getCode().getCode().equals("00103")) {
+            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
 
