@@ -19,7 +19,7 @@ public class SystemPostComment extends UpdatedAt{
     @JoinColumn(name = "inquiryId", nullable = false)
     private SystemPost systemPost;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "admin_id", nullable = false)
     private Admin admin;
 
