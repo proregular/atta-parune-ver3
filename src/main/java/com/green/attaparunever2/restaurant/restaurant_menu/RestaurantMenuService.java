@@ -131,8 +131,12 @@ public class RestaurantMenuService {
     }
 
     public int updCategory(UpdCategoryReq p) {
-        int result = restaurantMenuMapper.updCategory(p);
-        return result;
+        RestaurantMenuCategory restaurantMenuCategory = restaurantMenuCategoryRepository.findById(p.getCategoryId())
+                .orElseThrow(() -> new CustomException("해당 메뉴 카테고리가 없습니다", HttpStatus.BAD_REQUEST));
+
+        restaurantMenuCategory.setCategoryName(p.getCategoryName());
+        restaurantMenuCategoryRepository.save(restaurantMenuCategory);
+        return 1;
     }
 
     public int delCategory(DelCategoryReq p) {

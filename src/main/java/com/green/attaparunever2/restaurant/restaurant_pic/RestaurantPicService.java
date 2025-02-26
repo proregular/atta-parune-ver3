@@ -2,9 +2,13 @@ package com.green.attaparunever2.restaurant.restaurant_pic;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.Restaurant;
+import com.green.attaparunever2.entity.RestaurantMenu;
+import com.green.attaparunever2.entity.RestaurantPic;
 import com.green.attaparunever2.restaurant.model.InsRestaurantReq;
 import com.green.attaparunever2.restaurant.model.InsRestaurantRes;
 import com.green.attaparunever2.restaurant.model.RestaurantPicDto;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
 import com.green.attaparunever2.restaurant.restaurant_pic.model.UpdRestaurantMenuPicReq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +29,33 @@ public class RestaurantPicService {
     private final RestaurantPicMapper restaurantPicMapper;
     private final MyFileUtils myFileUtils;
     private final RestaurantPicRepository restaurantPicRepository;
+    private final RestaurantMenuRepository restaurantMenuRepository;
 
     @Transactional
-    public InsRestaurantRes postRestaurantPic(List<MultipartFile> filePath, long restaurantId){
-
+    public InsRestaurantRes postRestaurantPic(List<MultipartFile> pic, long restaurantId){
         //파일 등록
         long resId = restaurantId;
 
         String middlePath = String.format("restaurant/%d", resId);
         myFileUtils.makeFolders(middlePath);
 
-        List<String> picNameList = new ArrayList<>(filePath.size());
-        for(MultipartFile pic : filePath) {
+        List<String> picNameList = new ArrayList<>(pic.size());
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantId);
+
+
+        for(MultipartFile pics : pic) {
+            RestaurantPic restaurantPic = new RestaurantPic();
+            restaurantPic.setRestaurantId(restaurant);
             //각 파일 랜덤파일명 만들기
-            String savedPicName = myFileUtils.makeRandomFileName(pic);
+            String savedPicName = myFileUtils.makeRandomFileName(pics);
+            restaurantPic.setPicName(savedPicName);
+            restaurantPicRepository.save(restaurantPic);
             picNameList.add(savedPicName);
             String picPath = String.format("%s/%s", middlePath, savedPicName);
             try {
-                myFileUtils.transferTo(pic, picPath);
+                myFileUtils.transferTo(pics, picPath);
             } catch (IOException e) {
                 //폴더 삭제 처리
                 String delFolderPath = String.format("%s/%s", myFileUtils.getUploadPath(), middlePath);
@@ -50,11 +63,7 @@ public class RestaurantPicService {
                 throw new CustomException("식당 등록에 실패했습니다.", HttpStatus.BAD_REQUEST);
             }
         }
-        RestaurantPicDto restaurantPicDto = new RestaurantPicDto();
-        restaurantPicDto.setRestaurantId(resId);
-        restaurantPicDto.setFilePath(picNameList);
 
-        int resultPics = restaurantPicMapper.insRestaurantPic(restaurantPicDto);
 
         return InsRestaurantRes.builder()
                 .restaurantId(resId)
@@ -75,12 +84,14 @@ public class RestaurantPicService {
         myFileUtils.deleteFolder(deletePath, false);
 
         // DB에 튜플 수정
-        p.setPicName(savedPicName); // 파일 이름을 설정
-        int result = restaurantPicMapper.updRestaurantMenuPic(p);
-        if (result == 0) {
-            throw new CustomException("메뉴 수정 실패", HttpStatus.BAD_REQUEST);
-        }
+        RestaurantMenu restaurantMenu = restaurantMenuRepository.findById(p.getMenuId())
+                .orElseThrow(() -> new CustomException("해당 메뉴가 없습니다", HttpStatus.BAD_REQUEST));
+        restaurantMenu.setMenuPic(savedPicName);
+        restaurantMenuRepository.save(restaurantMenu);
 
+        if(pic.isEmpty() && restaurantMenu.getMenuPic().isEmpty()) {
+            return null;
+        }
         // 파일 이동
         String filePath = String.format("menu/%d/%s", p.getMenuId(), savedPicName);
         try {
