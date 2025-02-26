@@ -253,4 +253,29 @@ public class AdminRestaurantService {
 
         return savedMenu;
     }
+
+    // 식당 메뉴 삭제
+    @Transactional
+    public void deleteMenu(Long menuId) {
+        // 메뉴 존재 여부 확인
+        RestaurantMenu menu = restaurantMenuRepository.findById(menuId)
+                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다. menuId: " + menuId));
+
+        // 메뉴 사진 파일 삭제
+        String menuPic = menu.getMenuPic();
+        if (menuPic != null && !menuPic.isEmpty()) {
+            String middlePath = String.format("menu/%d", menuId);
+            String filePath = String.format("%s/%s", middlePath, menuPic);
+
+            try {
+                myFileUtils.deleteFile(filePath);
+            } catch (IOException e) {
+                throw new RuntimeException("파일 삭제 실패", e);
+            }
+        }
+
+        // 메뉴 삭제
+        restaurantMenuRepository.deleteById(menuId);
+    }
+
 }
