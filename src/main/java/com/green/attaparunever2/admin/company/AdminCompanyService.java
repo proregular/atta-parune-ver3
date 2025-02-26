@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminMapper;
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
+import com.green.attaparunever2.admin.company.model.AdminCompanyPointHistory;
 import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
+import com.green.attaparunever2.admin.model.AdminGetReq;
+import com.green.attaparunever2.admin.model.AdminGetRes;
 import com.green.attaparunever2.common.delayed.DelayedTaskScheduler;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
@@ -24,11 +27,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class AdminCompanyService {
+    private final static double POINT_PERCENTAGE = 0.05;  // 포인트 추가 입금 퍼센트(5%)
+
     private final PaymentInfoTmpRepository paymentInfoTmpRepository;
     private final CompanyRepository companyRepository;
     private final AdminMapper adminMapper;
@@ -39,7 +45,9 @@ public class AdminCompanyService {
     private final UserRepository userRepository;
     private final UserPointDepositRepository userPointDepositRepository;
     private final CodeRepository codeRepository;
-    DelayedTaskScheduler scheduler = new DelayedTaskScheduler();
+    private final CompanyPointDepositRepository companyPointDepositRepository;
+    private final DelayedTaskScheduler scheduler;
+    private final AdminCompanyMapper adminCompanyMapper;
 
     // 포인트 구매 결재전 결재 정보 임시 저장
     @Transactional
@@ -52,14 +60,14 @@ public class AdminCompanyService {
         return paymentInfoTmpRepository.save(paymentInfoTmp);
     }
 
-    // 포인트 구매
+    // 회사 포인트 구매
     @Transactional
-    public ResponseEntity<Object> patchPoint(HttpServletRequest request, String jsonBody) throws Exception {
+    public ResponseEntity patchPoint(HttpServletRequest request, String jsonBody) throws Exception {
         // JSON 문자열을 자바 객체로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonBody);  // JsonNode로 변환
 
-        long adminId = jsonNode.get("adminId").asLong();
+        long adminId = 1L; //authenticationFacade.getSignedUserId();
         String paymentKey = jsonNode.get("paymentKey").asText();
         int amount = jsonNode.get("amount").asInt();
         String orderId = jsonNode.get("orderId").asText();
@@ -92,14 +100,29 @@ public class AdminCompanyService {
         // 04. 결재가 성공적으로 완료된 경우 결재 정보 DB 저장 ----------------------
         if(statusCode == 200) {
             // 결재정보 DB 저장
-            // 미구현
-        } else {
-            return ResponseEntity.status(statusCode).body(response);
+            CompanyPointDeposit companyPointDeposit = new CompanyPointDeposit();
+
+            Admin admin = adminRepository.findById(adminId).orElseThrow();
+
+            companyPointDeposit.setAdminId(admin);
+            companyPointDeposit.setCashAmount(amount);
+            companyPointDeposit.setPointAmount((int)(amount * POINT_PERCENTAGE));
+            companyPointDeposit.setPaymentKey(paymentKey);
+
+            companyPointDepositRepository.save(companyPointDeposit);
+
+            // 포인트 회사에 입금 처리
+            Company company = companyRepository.findById(admin.getDivisionId()).orElseThrow();
+
+            company.setCurrentPoint(company.getCurrentPoint() + companyPointDeposit.getPointAmount());
+
+            companyRepository.save(company);
         }
 
-        return null;
+        return ResponseEntity.status(statusCode).body(response);
     }
 
+    // 회사 >> 사용자 포인트 입금
     @Transactional
     public void patchPointUser(AdminCompanyUserPointPatchReq req) {
         Long adminId = 1L;//authenticationFacade.getSignedUserId();
@@ -141,8 +164,8 @@ public class AdminCompanyService {
         userPointDepositRepository.save(userPointDeposit);
         
         long createdDepositId = userPointDeposit.getDepositId();
+
         // 포인트 3개월 뒤에 환수 딜레이 큐 설정
-        // 30분 후 실행할 작업 추가
         scheduler.schedule(() -> {
             UserPointDeposit createdUserPointDeposit = userPointDepositRepository.findById(createdDepositId).orElseThrow();
             
@@ -173,10 +196,16 @@ public class AdminCompanyService {
             refundUserPointDeposit.setCode(refundCode);
 
             userPointDepositRepository.save(refundUserPointDeposit);
-            
-            System.out.println("30초 뒤 실행됨!");
-                    
-        }, 30, TimeUnit.SECONDS);
+        }, 90, TimeUnit.DAYS);
 
+    }
+
+    // 관리자 정보 조회
+    public List<AdminCompanyPointHistory> getCompanyPointHistoryByAdminId() {
+        Long adminId = 1L;//authenticationFacade.getSignedUserId();
+
+        List<AdminCompanyPointHistory> resList = adminCompanyMapper.selCompanyPointHistoryByAdminId(adminId);
+
+        return resList;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
+import com.green.attaparunever2.admin.company.model.AdminCompanyPointHistory;
 import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
 import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
 import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
@@ -172,10 +173,14 @@ public class AdminCompanyController {
 
     @PatchMapping("/v3/point")
     @Operation(summary = "포인트 구매")
-    public ResponseEntity<Object> patchPoint(HttpServletRequest request, @RequestBody String jsonBody) throws Exception {
-        ResponseEntity<Object> result = adminCompanyService.patchPoint(request, jsonBody);
+    public ResultResponse<ResponseEntity> patchPoint(HttpServletRequest request, @RequestBody String jsonBody) throws Exception {
+        ResponseEntity result = adminCompanyService.patchPoint(request, jsonBody);
 
-        return result;
+        return ResultResponse.<ResponseEntity>builder()
+                .statusCode("200")
+                .resultMsg("결재 정보 임시 저장을 완료했습니다.")
+                .resultData(result)
+                .build();
     }
 
     @PatchMapping("/v3/point/user")
@@ -187,6 +192,18 @@ public class AdminCompanyController {
                 .statusCode("200")
                 .resultMsg("사용자 포인트 입금이 완료되었습니다.")
                 .resultData(1)
+                .build();
+    }
+
+    @GetMapping("/v3/point/history")
+    @Operation(summary = "회사 포인트 입출금 이력")
+    public ResultResponse<List<AdminCompanyPointHistory>> patchPointUser() {
+        List<AdminCompanyPointHistory> resList = adminCompanyService.getCompanyPointHistoryByAdminId();
+
+        return ResultResponse.<List<AdminCompanyPointHistory>>builder()
+                .statusCode("200")
+                .resultMsg("회사 포인트 입출금 이력 조회를 완료했습니다.")
+                .resultData(resList)
                 .build();
     }
 

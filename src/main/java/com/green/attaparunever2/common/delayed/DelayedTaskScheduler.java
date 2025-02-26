@@ -1,8 +1,11 @@
 package com.green.attaparunever2.common.delayed;
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class DelayedTaskScheduler {
     private final DelayQueue<DelayedTask> queue = new DelayQueue<>();
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
