@@ -56,6 +56,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
+
     @PostMapping("v3/menu")
     @Operation(summary = "메뉴 등록")
     public ResultResponse<RestaurantMenu> postMenu(@RequestPart PostMenuReq p,
@@ -81,6 +82,7 @@ public class AdminRestaurantController {
                 .resultData(result)
                 .build();
     }
+
 
     @DeleteMapping("v3/menu")
     @Operation(summary = "메뉴 정보 삭제")
