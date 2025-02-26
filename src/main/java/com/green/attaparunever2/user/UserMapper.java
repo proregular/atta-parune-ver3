@@ -25,4 +25,6 @@ public interface UserMapper {
 
     List<UserAlertDto> selUserReservationAlertByUserId(long userId);
     List<UserAlertDto> selUserPaymentAlertByUserId(long userId);
+    List<CompanyUserGetRes> selCompanyUserByUserId(CompanyUserGetReq req);
+    UserGetRes selUserByUserIdV3(long userId);
 }
