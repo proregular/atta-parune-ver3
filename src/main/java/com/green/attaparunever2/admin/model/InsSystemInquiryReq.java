@@ -4,6 +4,7 @@ package com.green.attaparunever2.admin.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,7 +28,7 @@ public class InsSystemInquiryReq {
     @NotEmpty(message = "권한 코드를 입력해주세요")
     @Schema(description = "권한코드", example = "00104", requiredMode = Schema.RequiredMode.REQUIRED)
     private String roleCode;
-    @NotEmpty(message = "권한 PK를 입력해주세요")
+    @NotNull(message = "권한 PK를 입력해주세요")
     @Schema(description = "권한 PK(adminId, userId)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 }

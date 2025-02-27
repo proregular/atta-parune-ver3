@@ -27,5 +27,6 @@ public interface AdminMapper {
     List<SelCompanyEnrollmentRes> selCompanyEnrollment();
     List<SelRestaurantEnrollmentRes> selRestaurantEnrollment();
     SelOneSystemPostRes selOneSystemPost(SystemPostDetailGetReq req);
-
+    List<SelSystemPostRes> selSystemBoard();
+    List<SelSystemPostRes> selSystemPost(int startIdx, Integer size);
 }
