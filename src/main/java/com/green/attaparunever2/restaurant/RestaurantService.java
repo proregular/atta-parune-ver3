@@ -290,6 +290,27 @@ public class RestaurantService {
         return restaurantList;
     }
 
+    // 메인 화면 추천 식당 리스트 조회
+    public List<GetRestaurantMainLimit3Res> getRestaurantMainLimit3(GetRestaurantMainLimit3Req req){
+        // filterType 랜덤 설정 (0 또는 1)
+        Random random = new Random();
+        req.setFilterType(random.nextInt(2)); // 0 또는 1을 랜덤으로 설정
+
+        // 식당 정보 불러오기
+        List<GetRestaurantMainLimit3Res> restaurantList = restaurantMapper.selRestaurantMainV3Limit3(req);
+
+        // 식당 사진 불러오기
+        for (GetRestaurantMainLimit3Res restaurant : restaurantList) {
+            List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
+
+            if(!picList.isEmpty()) {
+                restaurant.setRestaurantPic(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
+            }
+        }
+
+        return restaurantList;
+    }
+
     // 식당찾기 화면 식당 리스트 조회
     public List<RestaurantAroundGetRes> getRestaurantAroundV3(RestaurantAroundGetReq req){
         // 반경 3km

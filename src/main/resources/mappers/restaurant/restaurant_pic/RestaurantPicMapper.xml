@@ -5,7 +5,7 @@
 <mapper namespace="com.green.attaparunever2.restaurant.restaurant_pic.RestaurantPicMapper">
     <insert id="insRestaurantPic">
         INSERT INTO restaurant_pic
-        ( restaurant_id, file_path )
+        ( restaurant_id, pic_name )
         VALUES
         <foreach collection="filePath" item="pic" separator=",">
             ( #{restaurantId}, #{pic} )
