@@ -7,6 +7,8 @@ import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelRefundRes;
 import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.common.repository.CodeRepository;
+import com.green.attaparunever2.entity.Code;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -132,6 +134,18 @@ public class AdminSystemController {
         return ResultResponse.<Integer>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("시스템 문의답변 삭제 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @PostMapping("v3/settlement-day")
+    @Operation(summary = "정산일자 변경")
+    public ResultResponse<Integer> postSettlementDay(@RequestBody SettlementDayPostReq req) {
+       int result = adminSystemService.postSettlementDay(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("스케줄이 변경되었습니다.")
                 .resultData(result)
                 .build();
     }

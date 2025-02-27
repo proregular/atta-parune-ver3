@@ -103,10 +103,10 @@
         ON A.order_id = B.order_id
         INNER JOIN ticket C
         ON A.order_id = C.order_id
-        AND C.ticket_status = 0
         INNER JOIN user D
         ON A.user_id = D.user_id
         WHERE A.restaurant_id = #{restaurantId}
+            AND C.ticket_status = 0
     </select>
 
     <!-- 주문의 메뉴 조회 -->

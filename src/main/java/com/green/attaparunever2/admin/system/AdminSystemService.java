@@ -4,6 +4,7 @@ import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.SystemPostRepository;
 import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +28,10 @@ public class AdminSystemService {
     private final SystemPostCommentRepository systemPostCommentRepository;
     private final SystemPostRepository systemPostRepository;
     private final AdminSystemMapper adminSystemMapper;
+    private final CollectionScheduleService collectionScheduleService;
+    private final CodeRepository codeRepository;
+    private final SettlementListRepository settlementListRepository;
+    private final SettlementDayRepository settlementDayRepository;
 
     public int patchCoalition(UpdCoalitionReq req) {
         // 관리자 로그인 인증
@@ -141,6 +147,30 @@ public class AdminSystemService {
         }
 
         systemPostCommentRepository.delete(systemPostComment);
+
+        return 1;
+    }
+
+    @Transactional
+    public int postSettlementDay(SettlementDayPostReq req) {
+        Code codeEntity = codeRepository.findById(req.getCode()).orElseThrow();
+
+        // 기존에 정산일자 행이 존재하는지 여부
+        List<SettlementDay> prevSettlementDay = settlementDayRepository.findAll();
+
+        SettlementDay settlementDay;
+
+        if(prevSettlementDay.size() == 0) { // 없으면 삽입
+            settlementDay = new SettlementDay();
+            settlementDay.setCode(codeEntity);
+        } else { // 있으면 수정
+            settlementDay = prevSettlementDay.get(0);
+            settlementDay.setCode(codeEntity);
+        }
+
+        settlementDayRepository.save(settlementDay);
+
+        collectionScheduleService.scheduleTaskForDay(codeEntity.getName());
 
         return 1;
     }
