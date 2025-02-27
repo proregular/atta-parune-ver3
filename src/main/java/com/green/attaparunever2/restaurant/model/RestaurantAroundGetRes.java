@@ -16,7 +16,9 @@ public class RestaurantAroundGetRes {
     @Schema(description = "식당 주소")
     private String restaurantAddress;
     @Schema(description = "식당 평균 식사 시간")
-    private int mealTimeAvg;
+    private double avgRestaurant;
+    @Schema(title = "식당 평균 별점")
+    private double avgRating;
     @Schema(description = "식당 위도")
     private double lat;
     @Schema(description = "식당 경도")
