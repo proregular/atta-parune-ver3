@@ -289,34 +289,50 @@
 
     <!-- 사용자 식당 찾기 화면 식당 리스트 조회 -->
     <select id="selRestaurantAroundV3">
-        SELECT A.restaurant_name AS restaurantName
-        , A.restaurant_address AS restaurantAddress
-        , A.restaurant_id AS restaurantId
-        , A.lat, A.lng
-        , (
-        SELECT IFNULL(
-        AVG(
-        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
-        ), 40)
-        FROM meal_time B
-        WHERE B.restaurant_id = A.restaurant_id
-        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
-        ) AS mealTimeAvg
-        , (
-        ABS(A.lat - #{userLat}) + ABS(A.lng - #{userLng})
-        ) AS distance
-        FROM restaurant A
+        SELECT F.restaurant_name AS restaurantName
+        , F.restaurant_address AS restaurantAddress
+        , F.restaurant_id AS restaurantId
+        , F.lat, F.lng
+        , (6371 * ACOS(COS(RADIANS(40)) * COS(RADIANS(F.lat)) * COS(RADIANS(F.lng) - RADIANS(127)) + SIN(RADIANS(40)) *
+        SIN(RADIANS(F.lat)))) AS DISTANCE,
+        IFNULL((
+        SELECT AVG(ABS(TIMESTAMPDIFF(MINUTE, B.reservation_time, C.use_date)))
+        FROM `order` A
+        INNER JOIN reservation B
+        ON A.order_id = B.order_id
+        INNER JOIN ticket C
+        ON B.order_id = C.order_id
+        WHERE A.restaurant_id = F.restaurant_id
+        GROUP BY A.restaurant_id
+        ), 40) AS avgRestaurant
+        ,
+        IFNULL((
+        SELECT AVG(G.rating)
+        FROM review G INNER JOIN `order` H
+        ON G.order_id = H.order_id
+        AND H.restaurant_id = F.restaurant_id
+        ), 0) AS avgRating
+        FROM restaurant F
         WHERE `status` = 0
-        <if test=" searchText != null and searchText != '' ">
-            AND A.restaurant_name LIKE '%${searchText}%'
+        <if test=" searchFilter != null and searchFilter != '' ">
+            AND F.restaurant_name LIKE '%${searchFilter}%'
         </if>
-        AND (A.lat &gt;= #{aroundMinLat} AND A.lat &lt;= #{aroundMaxLat}) AND (A.lng &gt;= #{aroundMinLng} AND A.lng &lt;= #{aroundMaxLng})
-        <if test = " orderFilter != null and orderFilter != '' ">
-            <if test = " orderFilter == 0">
-                ORDER BY A.restaurant_name ASC;
+        AND lat &gt; #{sysMinLat}
+        AND lat &lt; #{sysMaxLat}
+        AND lng &gt; #{sysMinLng}
+        AND lng &lt; #{sysMaxLng}
+        <if test=" orderFilter != null and orderFilter != '' ">
+            <if test=" orderFilter == 0">
+                ORDER BY F.restaurant_name ASC
             </if>
-            <if test = " orderFilter == 1">
-                ORDER BY distance ASC;
+            <if test=" orderFilter == 1">
+                ORDER BY distance ASC
+            </if>
+            <if test=" orderFilter == 2">
+                ORDER BY avgRestaurant ASC
+            </if>
+            <if test=" orderFilter == 3">
+                ORDER BY avgRating DESC
             </if>
         </if>
     </select>

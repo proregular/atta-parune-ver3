@@ -58,15 +58,15 @@ public class CollectionScheduleService {
 
         // 요일에 따른 Cron 표현식 생성 (예: 화요일은 TUE, 월요일은 MON)
         Map<DayOfWeek, String> dayToCron = new HashMap<>();
-        dayToCron.put(DayOfWeek.MONDAY, "0 0 13 ? * MON");
-        dayToCron.put(DayOfWeek.TUESDAY, "0 0 13 ? * TUE");
-        dayToCron.put(DayOfWeek.WEDNESDAY, "0 0 13 ? * WED");
-        dayToCron.put(DayOfWeek.THURSDAY, "0 55 12 ? * THU");
-        dayToCron.put(DayOfWeek.FRIDAY, "0 0 13 ? * FRI");
-        dayToCron.put(DayOfWeek.SATURDAY, "0 0 13 ? * SAT");
-        dayToCron.put(DayOfWeek.SUNDAY, "0 0 13 ? * SUN");
+        dayToCron.put(DayOfWeek.MONDAY, "0 0 17 ? * MON");
+        dayToCron.put(DayOfWeek.TUESDAY, "0 0 17 ? * TUE");
+        dayToCron.put(DayOfWeek.WEDNESDAY, "0 0 17 ? * WED");
+        dayToCron.put(DayOfWeek.THURSDAY, "0 0 17 ? * THU");
+        dayToCron.put(DayOfWeek.FRIDAY, "0 0 17 ? * FRI");
+        dayToCron.put(DayOfWeek.SATURDAY, "0 0 17 ? * SAT");
+        dayToCron.put(DayOfWeek.SUNDAY, "0 0 17 ? * SUN");
 
-        return dayToCron.getOrDefault(dayOfWeek, "0 0 9 ? * MON");
+        return dayToCron.getOrDefault(dayOfWeek, "0 0 17 ? * MON");
     }
 
     // 입금 처리 로직

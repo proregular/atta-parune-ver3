@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Slf4j
@@ -319,10 +320,10 @@ public class RestaurantService {
         // 반경 min, max lat, lng 구함
         double[] aroundKmMinMaxList = getBoundingBox(req.getUserLat() , req.getUserLng(), radiusInKm);
 
-        req.setAroundMinLat(aroundKmMinMaxList[0]);
-        req.setAroundMaxLat(aroundKmMinMaxList[1]);
-        req.setAroundMinLng(aroundKmMinMaxList[2]);
-        req.setAroundMaxLng(aroundKmMinMaxList[3]);
+        req.setSysMinLat(aroundKmMinMaxList[0]);
+        req.setSysMaxLat(aroundKmMinMaxList[1]);
+        req.setSysMinLng(aroundKmMinMaxList[2]);
+        req.setSysMaxLng(aroundKmMinMaxList[3]);
 
         // 식당 리스트 조회
         List<RestaurantAroundGetRes> restaurantList = restaurantMapper.selRestaurantAroundV3(req);
@@ -334,7 +335,6 @@ public class RestaurantService {
             // 사진 리스트를 해당 식당 객체에 설정
             restaurant.setRestaurantPicList(picList);
         }
-
         return restaurantList;
     }
 
