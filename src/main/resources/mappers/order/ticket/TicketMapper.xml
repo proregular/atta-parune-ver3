@@ -111,4 +111,16 @@
         FROM ticket
         WHERE ticket_id = #{ticketId}
     </select>
+
+    <!-- 정산 되지 않은 티켓 리스트 조회 -->
+    <select id="selTicketNotInSettlementList">
+        SELECT A.ticket_id AS ticketId, A.created_at AS createdAt, A.expired_date AS expiredDate
+        , A.use_date AS useDate, A.order_id AS orderId
+        FROM ticket A
+        WHERE A.ticket_id NOT IN(
+            SELECT B.ticket_id
+            FROM settlement_list B
+        )
+        AND A.ticket_status = 1
+    </select>
 </mapper>
