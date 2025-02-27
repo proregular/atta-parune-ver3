@@ -1,8 +1,7 @@
 package com.green.attaparunever2.admin.company.dashboard;
 
 
-import com.green.attaparunever2.admin.company.dashboard.model.SelRecentAmountReq;
-import com.green.attaparunever2.admin.company.dashboard.model.SelRecentAmountRes;
+import com.green.attaparunever2.admin.company.dashboard.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,4 +19,17 @@ public class DashboardService {
 
         return res;
     }
+
+    public SelTransactionRes getTransaction(SelTransactionReq req){
+        SelTransactionRes res = dashboardMapper.selTransaction(req);
+
+        return res;
+    }
+
+    public List<SelMySystemPostRes> getMySystemPost(SelMySystemPostReq req){
+        List<SelMySystemPostRes> res = dashboardMapper.selMySystemPost(req);
+
+        return res;
+    }
+
 }
