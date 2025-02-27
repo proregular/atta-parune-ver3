@@ -28,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -305,64 +302,66 @@ public class UserPaymentMemberService {
     public int postPaymentMember(UserPostPaymentMemberReq req) {
         OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(req.getOrderId());
 
-        // userId와 point 리스트의 길이가 일치하지 않으면 예외 처리
-        if (req.getUserId().size() != req.getPoint().size()) {
-            throw new CustomException("사용자 수와 금액 수가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        List<PaymentMember> paymentMembers = req.getData();
+
+        // userId와 point 값 체크: 모든 PaymentMember 객체에서 point가 존재하는지 확인
+        for (PaymentMember paymentMember : paymentMembers) {
+            if (paymentMember.getPoint() == null || paymentMember.getUserId() == null) {
+                throw new CustomException("userId와 point의 수가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            }
         }
 
-        List<Long> userIds = req.getUserId();
-
-        // user 테이블에서 각 userId의 포인트 조회
         List<UserGetPointRes> userPoints = new ArrayList<>();
-        for (Long userId : userIds) {
-            userPoints.add(userPaymentMemberMapper.getPoint(userId)); // user 테이블에서 포인트 조회
+
+        // 각 userId의 포인트 조회
+        for (PaymentMember paymentMember : paymentMembers) {
+            userPoints.add(userPaymentMemberMapper.getPoint(paymentMember.getUserId()));
         }
 
-        // userId별로 user 테이블의 포인트와 비교하여 초과하면 예외 처리
-        for (int i = 0; i < userIds.size(); i++) {
-            Long userId = userIds.get(i);
-            int requestedPoint = req.getPoint().get(i); // 요청된 포인트 (user_payment_member 테이블에 저장될 포인트)
-            int userTablePoint = userPoints.get(i).getPoint(); // user 테이블에서 조회한 포인트
-            // 요청된 포인트가 user 테이블의 포인트를 초과하면 예외 처리
+        // orderId와 userId가 같은 튜플이 이미 존재하는지 확인
+        for (PaymentMember paymentMember : paymentMembers) {
+            int existingCount = userPaymentMemberMapper.selUserPaymentMemberCount(req.getOrderId(), paymentMember.getUserId());
+
+            if (existingCount > 0) {
+                // 이미 같은 값의 userId 튜플이 존재하는 경우 예외 처리
+                throw new CustomException("이미 승인 요청을 보냈습니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // 포인트 초과 시 예외 처리
+        for (int i = 0; i < paymentMembers.size(); i++) {
+            PaymentMember paymentMember = paymentMembers.get(i);
+            int requestedPoint = paymentMember.getPoint();
+            int userTablePoint = userPoints.get(i).getPoint();
+
             if (requestedPoint > userTablePoint) {
                 throw new CustomException("현재 보유 금액보다 결제 금액이 큽니다.", HttpStatus.BAD_REQUEST);
             }
         }
 
         long result = 0;
-        // userId와 point를 결합하여 새로운 리스트 생성
-        List<PostPaymentUserIdAndPoint> paymentMembers = new ArrayList<>();
+        // 결제 승인 요청을 위한 데이터 처리
+        for (PaymentMember paymentMember : paymentMembers) {
+            int status = orderSelDto.getUserId() == paymentMember.getUserId() ? 1 : 0;
 
-        for (int i = 0; i < req.getUserId().size(); i++) {
-            // Long -> long, Integer -> int로 변환하여 PostPaymentUserIdAndPoint 객체 생성
-            int status = orderSelDto.getUserId() == req.getUserId().get(i).longValue() ? 1: 0;
-
-            UserPaymentMemberIds ids = new UserPaymentMemberIds(req.getOrderId(), req.getUserId().get(i));
-
+            UserPaymentMemberIds ids = new UserPaymentMemberIds(req.getOrderId(), paymentMember.getUserId());
             Order order = new Order();
             order.setOrderId(req.getOrderId());
 
             User user = new User();
-            user.setUserId(req.getUserId().get(i));
+            user.setUserId(paymentMember.getUserId());
 
             UserPaymentMember userPaymentMember = new UserPaymentMember();
             userPaymentMember.setUserPaymentMemberIds(ids);
             userPaymentMember.setUser(user);
             userPaymentMember.setOrder(order);
-            userPaymentMember.setPoint(req.getPoint().get(i));
+            userPaymentMember.setPoint(paymentMember.getPoint());
             userPaymentMember.setApprovalStatus(status);
+
             userPaymentMemberRepository.save(userPaymentMember);
             userPaymentMemberRepository.flush();
 
             result = ids.getUserId();
-            log.info("asdasdasdasd: {}", status);
-            paymentMembers.add(new PostPaymentUserIdAndPoint(
-                    req.getOrderId(),
-                    req.getUserId().get(i).longValue(),  // Long -> long
-                    req.getPoint().get(i).intValue(),     // Integer -> int
-                    status
-            ));
-
         }
 
 
