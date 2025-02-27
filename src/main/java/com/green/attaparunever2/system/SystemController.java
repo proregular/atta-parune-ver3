@@ -3,7 +3,9 @@ package com.green.attaparunever2.system;
 import com.green.attaparunever2.admin.AdminService;
 import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
+import com.green.attaparunever2.admin.model.SelSystemPostRes;
 import com.green.attaparunever2.admin.model.SystemPostDetailGetReq;
+import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.system.model.UpdSystemPostReq;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +15,8 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,6 +60,34 @@ public class SystemController {
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
                 .resultMsg("게시글 수정 완료")
+                .resultData(result)
+                .build();
+    }
+
+    @GetMapping("v3/post")
+    @Operation(summary = "게시글 조회하기")
+    public ResultResponse<List<SelSystemPostRes>> getSystemPost(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
+
+        Paging paging = new Paging(page, size);
+
+        List<SelSystemPostRes> res = adminService.getSystemPost(paging);
+
+        return ResultResponse.<List<SelSystemPostRes>>builder()
+                .statusCode("200")
+                .resultMsg("게시글 조회가 완료되었습니다.")
+                .resultData(res)
+                .build();
+    }
+
+    @DeleteMapping("v3/post")
+    @Operation(summary = "게시글 삭제하기")
+    public ResultResponse<Integer> deleteSystemPost(@RequestParam Long inquiryId) throws IllegalAccessException {
+        int result = adminService.deleteSystemPost(inquiryId);
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("게시글이 삭제되었습니다.")
                 .resultData(result)
                 .build();
     }

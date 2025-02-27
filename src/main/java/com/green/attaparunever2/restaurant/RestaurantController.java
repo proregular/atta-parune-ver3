@@ -35,6 +35,18 @@ public class RestaurantController {
                 .build();
     }
 
+    @GetMapping("v3/main/recommend")
+    @Operation(summary = "메인 화면 추천 식당 조회")
+    public ResultResponse<List<GetRestaurantMainLimit3Res>> getRestaurantMainLimit3(@ParameterObject @ModelAttribute GetRestaurantMainLimit3Req req){
+        List<GetRestaurantMainLimit3Res> res = restaurantService.getRestaurantMainLimit3(req);
+
+        return ResultResponse.<List<GetRestaurantMainLimit3Res>>builder()
+                .statusCode("200")
+                .resultMsg("메인 화면 추천 식당 정보 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
     @GetMapping("v3/around")
     @Operation(summary = "식당 찾기 탭 식당 리스트 조회")
     public ResultResponse<List<RestaurantAroundGetRes>> getRestaurantAround(@ParameterObject @ModelAttribute @Valid RestaurantAroundGetReq req){
