@@ -167,5 +167,12 @@
         ON A.user_id = B.user_id
         WHERE A.order_id = #{orderId};
     </select>
+    
+    <select id="selUserPaymentMemberCount">
+        SELECT COUNT(*)
+        FROM user_payment_member
+        WHERE order_id = #{orderId}
+        AND user_id = #{userId}
+    </select>
 
 </mapper>

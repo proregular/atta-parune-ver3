@@ -12,10 +12,9 @@ public class UserGetRes {
     private long userId;
     private long companyId;
     private String companyName;
-    private String roleId;
     private String uid;
     private String name;
-    private String pic;
+    private String usePic;
     private String email;
     private String phone;
     private int point;
