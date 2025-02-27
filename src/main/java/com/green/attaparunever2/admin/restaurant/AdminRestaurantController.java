@@ -332,4 +332,16 @@ public class AdminRestaurantController {
                 .resultData(res)
                 .build();
     }
+
+    @DeleteMapping("reviewComment")
+    @Operation(summary = "리뷰 댓글 삭제")
+    public ResultResponse<Integer> delReviewComment(@ModelAttribute DelReviewCommentReq req) {
+        int result = adminRestaurantService.delReviewComment(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 댓글 삭제 완료")
+                .resultData(result)
+                .build();
+    }
 }

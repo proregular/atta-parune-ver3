@@ -277,4 +277,22 @@ public class AdminRestaurantService {
         // 메뉴 삭제
         restaurantMenuRepository.deleteById(menuId);
     }
+
+    //리뷰 댓글 삭제
+    @Transactional
+    public int delReviewComment(DelReviewCommentReq req) {
+        Order order = orderRepository.findById(req.getOrderId())
+                .orElseThrow(() -> new CustomException("해당 주문이 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if(!order.getRestaurantId().getRestaurantId().equals(req.getRestaurantId())) {
+            throw new CustomException("해당 식당이 아닙니다", HttpStatus.BAD_REQUEST);
+        }
+
+        ReviewComment reviewComment = reviewCommentRepository.findById(req.getOrderId())
+                .orElseThrow(() -> new CustomException("해당 리뷰 코멘트가 없습니다", HttpStatus.BAD_REQUEST));
+
+        reviewCommentRepository.delete(reviewComment);
+
+        return 1;
+    }
 }
