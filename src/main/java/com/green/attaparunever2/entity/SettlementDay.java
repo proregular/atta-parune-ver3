@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @ToString
-public class SettlementDay extends UpdatedAt{
+public class SettlementDay extends UpdatedAt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
     @Column(name = "settlement_day_id")
