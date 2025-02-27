@@ -1,11 +1,13 @@
 package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.common.MyFileUtils;
+import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.user.model.GetReviewDto;
+import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRes;
 import com.green.attaparunever2.user.model.ReviewRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -152,18 +154,15 @@ public class ReviewService {
 
 
     @Transactional
-    public List<GetReviewRes> getReview(Long userId) {
+    public List<GetReviewRes> getReview(GetReviewReq p)  {
 
         Long signedUserId = authenticationFacade.getSignedUserId();
 
-        if (!userId.equals(signedUserId)) {
+        if (!p.getUserId().equals(signedUserId)) {
             throw new RuntimeException("본인이 작성한 리뷰만 조회할 수 있습니다.");
         }
 
-        List<GetReviewDto> reviewDtoList = reviewMapper.getReviewList(userId);
-        if (reviewDtoList.isEmpty()) {
-            throw new RuntimeException("리뷰 데이터를 찾을 수 없습니다.");
-        }
+        List<GetReviewDto> reviewDtoList = reviewMapper.getReviewList(p);
 
         List<GetReviewRes> reviewResList = new ArrayList<>();
 

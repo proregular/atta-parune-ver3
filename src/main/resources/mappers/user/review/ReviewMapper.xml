@@ -14,6 +14,37 @@
         JOIN `order` B ON A.order_id = B.order_id
         JOIN restaurant C ON B.restaurant_id = C.restaurant_id
         WHERE B.user_id = #{userId}
+        <if test="startDate != null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            AND DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+
+        <if test="startDate != null and endDate == null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            )
+        </if>
+
+        <if test="startDate == null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+        ORDER BY A.created_at DESC
+        LIMIT #{size} OFFSET #{startIdx}
     </select>
 
     <select id="getRestaurantPic">
