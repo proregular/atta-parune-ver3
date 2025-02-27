@@ -12,10 +12,10 @@ import java.util.List;
 public class UserPostPaymentMemberReq {
     @Schema(title = "주문 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private long orderId;
-    @Schema(title = "사용자 PK", example = "[1, 2, 3]", requiredMode = Schema.RequiredMode.REQUIRED)
-    private List<Long> userId;
-    @Schema(title = "승인 포인트", example = "[10000, 20000, 30000]")
-    private List<Integer> point;
+
+    @Schema(title = "결제 승인 사용자 리스트", requiredMode = Schema.RequiredMode.REQUIRED)
+    private List<PaymentMember> data;  // 사용자와 포인트를 포함하는 객체 리스트
+
     @JsonIgnore
     @Schema(title = "승인 여부", description = "0:미승인, 1:승인, 2:거부")
     private List<Integer> approvalStatus;

@@ -6,6 +6,7 @@ import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.admin.model.*;
+import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.config.CookieUtils;
@@ -31,7 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -451,6 +454,29 @@ public class AdminService {
             throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
         }
 
+        // 추가) 권한 검증
+        Set<String> validPostCodes = Set.of("00201", "00202", "00203", "00204");
+
+        if (!validPostCodes.contains(req.getPostCode())) {
+            throw new CustomException("유효하지 않은 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        switch (req.getPostCode()) {
+            case "00201": // 공지사항
+                if (!"00103".equals(req.getRoleCode())) {
+                    throw new CustomException("공지사항 등록은 관리자만 가능합니다.", HttpStatus.FORBIDDEN);
+                }
+                break;
+            case "00202": // 문의사항
+            case "00203": // 불편사항
+                if ("00103".equals(req.getRoleCode())) { // ROLE_ADMIN은 불가
+                    throw new CustomException("관리자는 문의사항 또는 불편사항을 등록할 수 없습니다.", HttpStatus.FORBIDDEN);
+                }
+                break;
+            case "00204": // 자주 묻는 질문
+                break;
+        }
+
         String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
 
         SystemPost systemPost = new SystemPost();
@@ -472,7 +498,7 @@ public class AdminService {
             try {
                 myFileUtils.transferTo(pic, filePath);
             }catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException("파일 저장 실패", e);
             }
         }
 
@@ -536,6 +562,46 @@ public class AdminService {
             }
         }
 
+        return 1;
+    }
+
+
+    // 게시글 조회
+    @Transactional
+    public List<SelSystemPostRes> getSystemPost(Paging paging) {
+
+        Paging adjustedPaging = new Paging(paging.getPage(), 10);
+
+        List<SelSystemPostRes> resultPosts = new ArrayList<>();
+
+        if (adjustedPaging.getPage() == 1) {
+            List<SelSystemPostRes> noticePosts = adminMapper.selSystemBoard();
+            resultPosts.addAll(noticePosts);
+
+            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), 7);
+            resultPosts.addAll(additionalPosts);
+        } else {
+            resultPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), adjustedPaging.getSize());
+        }
+
+        return resultPosts;
+        }
+
+    // 게시글 삭제
+    @Transactional
+    public int deleteSystemPost(Long inquiryId) throws IllegalAccessException {
+        Long signedUserId = authenticationFacade.getSignedUserId();
+
+        SystemPost post = systemPostRepository.findById(inquiryId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. ID: " + inquiryId));
+
+        // 본인이 작성한 게시글만 삭제 가능
+        if (!post.getId().equals(signedUserId)) {
+            throw new IllegalAccessException("본인이 작성한 게시글만 삭제할 수 있습니다.");
+        }
+
+        // 게시글 삭제
+        systemPostRepository.delete(post);
         return 1;
     }
 }

@@ -24,4 +24,6 @@ public interface UserPaymentMemberMapper {
     int updPaymentAmount(UserPaymentAmountPatchReq p);
     int deletePaymentMember(UserPaymentMemberDelReq p);
     List<PaymentMemberDto> getPaymentMemberByName(long companyId, String name, Integer size, int startIdx);
+
+    int selUserPaymentMemberCount(long orderId, long userId);
 }

@@ -10,5 +10,5 @@ import java.util.List;
 public class RestaurantPicDto {
     private long restaurantId;
     private long picId;
-    private List<String> filePath /*picName*/;
+    private String picName /*picName*/;
 }

@@ -16,8 +16,14 @@ public class GetRestaurantMainReq extends Paging {
     @Min(value = 1, message = "존재하지 않는 기준 입니다.")
     private long categoryId;
 
-    public GetRestaurantMainReq(Integer page, Integer size, long categoryId) {
+    @Min(value = 0, message = "filterType은 0 이상이어야 합니다.")
+    @Max(value = 1, message = "filterType은 1 이하이어야 합니다.")
+    @Schema(description = "정렬 필터(null: 기본순, 0: 평균 별점 순, 1: 리뷰 순")
+    private Integer filterType;
+
+    public GetRestaurantMainReq(Integer page, Integer size, long categoryId, Integer filterType) {
         super(page, size);
         this.categoryId = categoryId;
+        this.filterType = filterType;
     }
 }
