@@ -241,20 +241,27 @@
 
     <!-- 사용자 메인 화면 식당 조회 -->
     <select id="selRestaurantMainV3">
-        SELECT restaurant_id AS restaurantId, restaurant_name AS restaurantName
-        , restaurant_address AS restaurantAddress
-        , (
-        SELECT IFNULL(
-        AVG(
-        ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))
-        ), 40)
+        SELECT A.restaurant_id AS restaurantId
+        , A.restaurant_name AS restaurantName
+        , A.restaurant_address AS restaurantAddress
+        , (SELECT IFNULL(AVG(ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))), 40)
         FROM meal_time B
         WHERE B.restaurant_id = A.restaurant_id
-        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60
-        ) AS mealTimeAvg
+        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS mealTimeAvg
         FROM restaurant A
+        LEFT JOIN `order` O
+        ON A.restaurant_id = O.restaurant_id
+        LEFT JOIN review R
+        ON O.order_id = R.order_id
         WHERE A.`status` = 0
         AND A.category_id = #{categoryId}
+        GROUP BY A.restaurant_id
+        ORDER BY
+        CASE
+        WHEN #{filterType} = 0 THEN IFNULL(AVG(R.rating), 0)
+        WHEN #{filterType} = 1 THEN IFNULL(COUNT(R.order_id), 0)
+        ELSE A.restaurant_id
+        END ASC
         LIMIT #{startIdx}, #{size}
     </select>
 
