@@ -32,4 +32,42 @@
         ORDER BY E.createdAt DESC
         LIMIT 15
     </select>
+
+    <select id="selTransaction">
+        SELECT current_point AS currentPoint,(
+        SELECT SUM(point_amount)
+        FROM user_point_deposit A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id
+        WHERE company_id = #{companyId}
+        AND DATE_FORMAT(A.created_at, '%Y-%m') = #{date}
+        GROUP BY A.admin_id
+        ) AS allowPoint,(
+        SELECT SUM(point_amount)
+        FROM company_point_deposit A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id
+        WHERE company_id = #{companyId}
+        GROUP BY A.admin_id
+        AND DATE_FORMAT(A.created_at, '%Y-%m') = #{date}
+        ) AS buyPoint
+        FROM company
+        WHERE company_id = #{companyId}
+    </select>
+
+    <select id="selMySystemPost">
+        SELECT A.inquiry_id AS inquiryId, A.inquiry_title AS inquiryTitle
+             , A.inquiry_detail AS inquiryDetail , A.post_code AS postCode
+             , B.admin_id AS adminId, B.name, IF(C.inquiry_id IS NOT NULL, 1, 0) AS commentState
+          FROM system_post A
+         INNER JOIN `admin` B
+            ON A.id = B.admin_id
+          LEFT JOIN system_post_comment C
+            ON A.inquiry_id = C.inquiry_id
+         WHERE B.admin_id = #{adminId}
+    </select>
 </mapper>
