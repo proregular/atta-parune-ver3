@@ -344,4 +344,16 @@ public class AdminRestaurantController {
                 .resultData(result)
                 .build();
     }
+
+    @GetMapping("v3/black-list")
+    @Operation(summary = "블랙리스트 조회")
+    public ResultResponse<List<SelBlackListRes>> getBlackList(@ModelAttribute SelBlackListReq req) {
+        List<SelBlackListRes> res = adminRestaurantService.getBlackList(req);
+
+        return ResultResponse.<List<SelBlackListRes>>builder()
+                .statusCode("200")
+                .resultMsg("블랙리스트 조회 완료")
+                .resultData(res)
+                .build();
+    }
 }

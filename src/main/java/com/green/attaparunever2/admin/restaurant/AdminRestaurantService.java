@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,7 @@ public class AdminRestaurantService {
     private final MyFileUtils myFileUtils;
     private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
     private final RestaurantMenuRepository restaurantMenuRepository;
+    private final AdminRestaurantMapper adminRestaurantMapper;
 
     public int postReviewComment(InsReviewCommentReq req) {
         // 식당 관리자 권한 인증
@@ -124,6 +126,11 @@ public class AdminRestaurantService {
         Optional<Order> order = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
         if (order.isEmpty()) {
             throw new CustomException("해당 식당에 대한 주문 내역이 없는 사용자입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        int existingCount = adminRestaurantMapper.selBlackListCount(req.getRestaurantId());
+        if (existingCount > 0) {
+            throw new CustomException("이미 등록된 사용자입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // BlackListIds 객체 생성 및 값 설정
@@ -294,5 +301,23 @@ public class AdminRestaurantService {
         reviewCommentRepository.delete(reviewComment);
 
         return 1;
+    }
+
+    //블랙리스트 조회
+    @Transactional
+    public List<SelBlackListRes> getBlackList(SelBlackListReq req) {
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        if (!signedAdminId.equals(req.getAdminId())) {
+            throw new CustomException("로그인한 관리자 계정과 일치하지 않는 관리자 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        Admin admin = adminRepository.findById(req.getAdminId())
+                .orElseThrow(() -> new CustomException("해당하는 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
+        if (!admin.getDivisionId().equals(req.getRestaurantId())) {
+            throw new CustomException("해당 식당에 대한 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        List<SelBlackListRes> list = adminRestaurantMapper.selBlackList(req);
+        return list;
     }
 }
