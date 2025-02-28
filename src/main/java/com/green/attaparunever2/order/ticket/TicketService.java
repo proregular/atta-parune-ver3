@@ -1,12 +1,22 @@
 package com.green.attaparunever2.order.ticket;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.MealTime;
+import com.green.attaparunever2.entity.Order;
+import com.green.attaparunever2.entity.Restaurant;
+import com.green.attaparunever2.entity.Ticket;
+import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.ticket.model.*;
+import com.green.attaparunever2.restaurant.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -14,6 +24,10 @@ public class TicketService {
     private final TicketMapper mapper;
     private final TicketMapper ticketMapper;
     private final SimpMessagingTemplate messagingTemplate;
+    private final TicketRepository ticketRepository;
+    private final OrderRepository orderRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final MealTimeRepository mealTimeRepository;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -62,9 +76,18 @@ public class TicketService {
 
     // 식권 사용 완료 처리
     @Transactional
-    public int updTicket(long ticketId) {
+    public int updTicket(long ticketId, String paymentPassword) {
         // 식권 사용일 조회
         TicketUseDateSelRes res = mapper.selTicketUseDate(ticketId);
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new CustomException("해당 식권이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        Order order = orderRepository.findById(ticket.getOrder().getOrderId())
+                .orElseThrow(() -> new CustomException("해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        Restaurant restaurant = restaurantRepository.findById(order.getRestaurantId().getRestaurantId())
+                .orElseThrow(() -> new CustomException("해당 식당이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
         // 식권이 존재하지 않으면 예외 처리
         if (res == null) {
@@ -72,15 +95,35 @@ public class TicketService {
         }
 
         // 이미 사용된 식권일 경우 예외 처리
-        if (res.getUseDate() != null && !res.getUseDate().isEmpty()) {
+        if (ticket.getTicketStatus() == 1) {
             throw new CustomException("이미 사용된 티켓입니다.", HttpStatus.BAD_REQUEST);
         }
+
+        // 간편 결제 비밀번호 인증
+        if (!BCrypt.checkpw(paymentPassword, restaurant.getPaymentPassword())) {
+            throw new CustomException("간편 결제 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+
         // 식권 수정
-        int result = mapper.updTicket(ticketId);
+        ticket.setTicketStatus(1);
+        ticket.setUseDate(LocalDateTime.now());
+        ticketRepository.save(ticket);
+
+        int result = ticketRepository.updateTicketStatusAndUseDate(ticketId, 1, LocalDateTime.now());
 
         // 식권 수정에 실패
         if (result == 0) {
             throw new CustomException("식권 사용에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 식권 사용 시 식사 종료 시간 데이터 삽입
+        if (ticket.getTicketStatus() == 1) {
+            MealTime mealTime = mealTimeRepository.findByOrderId(ticket.getOrder())
+                    .orElseThrow(() -> new CustomException("해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+            mealTime.setEndMealDate(LocalDateTime.now());
+            mealTimeRepository.save(mealTime);
         }
 
         SelTicketDto dto = ticketMapper.selTicketByTicketId(ticketId);

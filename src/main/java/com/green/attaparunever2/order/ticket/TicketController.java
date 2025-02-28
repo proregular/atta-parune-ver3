@@ -34,8 +34,8 @@ public class TicketController {
 
     @PatchMapping
     @Operation(summary = "식권 사용 여부 변경", description = "식권 사용 완료 처리")
-    public ResultResponse<Integer> patchTicket(@RequestParam long ticketId) {
-        int result = service.updTicket(ticketId);
+    public ResultResponse<Integer> patchTicket(@RequestParam long ticketId, @RequestParam String paymentPassword) {
+        int result = service.updTicket(ticketId, paymentPassword);
 
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
