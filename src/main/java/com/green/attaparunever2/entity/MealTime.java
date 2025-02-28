@@ -18,8 +18,8 @@ public class MealTime extends UpdatedAt{
     private Long mealTimeId;
 
     @ManyToOne
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservationId;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order orderId;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
