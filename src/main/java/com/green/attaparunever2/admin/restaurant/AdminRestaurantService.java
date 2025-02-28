@@ -120,6 +120,7 @@ public class AdminRestaurantService {
         }
 
         // 블랙리스트 등록하려는 사용자가 해당 식당에 주문한 기록이 있는지 확인
+        // 아너
         User user = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new CustomException("유저 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
