@@ -350,7 +350,7 @@ public class AdminService {
         restaurant.setRestaurantName(req.getRestaurantName());
         restaurant.setRestaurantNumber(req.getRestaurantNumber());
         restaurant.setRestaurantAddress(req.getRestaurantAddress());
-        restaurant.setLet(req.getLet());
+        restaurant.setLat(req.getLat());
         restaurant.setLng(req.getLng());
         restaurant.setMaxCapacity(req.getMaxCapacity());
         restaurant.setOperatingHours(req.getOperatingHours());

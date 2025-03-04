@@ -11,6 +11,7 @@ import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuCategoryRepository;
 import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.model.DelMenuReq;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.UserRepository;
@@ -120,6 +121,7 @@ public class AdminRestaurantService {
         }
 
         // 블랙리스트 등록하려는 사용자가 해당 식당에 주문한 기록이 있는지 확인
+        // 아너
         User user = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new CustomException("유저 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
@@ -263,26 +265,47 @@ public class AdminRestaurantService {
 
     // 식당 메뉴 삭제
     @Transactional
-    public void deleteMenu(Long menuId) {
+    public void deleteMenu(DelMenuReq req) {
+        Long orderDetailId = orderRepository.findOrderDetailIdByMenuId(req.getMenuId());
+
         // 메뉴 존재 여부 확인
-        RestaurantMenu menu = restaurantMenuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다. menuId: " + menuId));
+        RestaurantMenu menu = restaurantMenuRepository.findById(req.getMenuId())
+                .orElseThrow(() -> new RuntimeException("해당 메뉴를 찾을 수 없습니다. menuId: " + req.getMenuId()));
 
-        // 메뉴 사진 파일 삭제
-        String menuPic = menu.getMenuPic();
-        if (menuPic != null && !menuPic.isEmpty()) {
-            String middlePath = String.format("menu/%d", menuId);
-            String filePath = String.format("%s/%s", middlePath, menuPic);
+        RestaurantMenuCategory restaurantMenuCategory = restaurantMenuCategoryRepository.findById(req.getCategoryId())
+                .orElseThrow(() -> new CustomException("해당 메뉴 카테고리가 없습니다.", HttpStatus.BAD_REQUEST));
 
-            try {
-                myFileUtils.deleteFile(filePath);
-            } catch (IOException e) {
-                throw new RuntimeException("파일 삭제 실패", e);
-            }
+        if(!restaurantMenuCategory.getCategoryId().equals(menu.getCategoryId().getCategoryId())) {
+            throw new CustomException("해당 카테고리가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
-        // 메뉴 삭제
-        restaurantMenuRepository.deleteById(menuId);
+        if(!restaurantMenuCategory.getRestaurant().getRestaurantId().equals(req.getRestaurantId())) {
+            throw new CustomException("해당 식당이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
+
+
+
+        if(orderDetailId == null) {
+            // 메뉴 사진 파일 삭제
+            String menuPic = menu.getMenuPic();
+            if (menuPic != null && !menuPic.isEmpty()) {
+                String middlePath = String.format("menu/%d", req.getMenuId());
+                String filePath = String.format("%s/%s", middlePath, menuPic);
+
+                try {
+                    myFileUtils.deleteFile(filePath);
+                } catch (IOException e) {
+                    throw new RuntimeException("파일 삭제 실패", e);
+                }
+            }
+
+            // 메뉴 삭제
+            restaurantMenuRepository.deleteById(req.getMenuId());
+        }
+        else {
+            menu.setUseYn(0);
+            restaurantMenuRepository.save(menu);
+        }
     }
 
     //리뷰 댓글 삭제
