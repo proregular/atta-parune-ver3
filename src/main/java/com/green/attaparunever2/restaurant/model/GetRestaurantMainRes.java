@@ -14,7 +14,7 @@ public class GetRestaurantMainRes {
     @Schema(description = "식당 주소")
     private String restaurantAddress;
     @Schema(description = "평균 식사 시간")
-    private int mealTimeAvg;
+    private int avgRestaurant;
     @Schema(description = "식당 사진 리스트")
     private RestaurantPicDto restaurantPic;
 }

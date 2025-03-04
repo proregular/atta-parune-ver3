@@ -59,7 +59,7 @@ public class RestaurantController {
                 .build();
     }
 
-    @GetMapping("v3/detail")
+    @GetMapping()
     @Operation(summary = "식당 상세 정보 보기")
     public ResultResponse<RestaurantDetailGetRes> getRestaurantV3(@ParameterObject @ModelAttribute @Valid RestaurantDetailGetReq req){
         RestaurantDetailGetRes res = restaurantService.getRestaurantDetailV3(req);
