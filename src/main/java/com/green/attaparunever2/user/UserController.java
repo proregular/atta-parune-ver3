@@ -109,17 +109,16 @@ public class UserController {
 
     }
 
-    @GetMapping("order/past")
+    @GetMapping("pastOrderCheak")
     @Operation(summary = "지난 주문 내역 확인")
-    public ResultResponse<List<SelUserOrderPastCheckRes>> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
-        List<SelUserOrderPastCheckRes> resList = userService.getUserPastOrderCheck(p);
+    public ResultResponse<SelUserOrderPastCheckRes> getUserOrderCheck(SelUserOrderPastCheckReq req){
+        SelUserOrderPastCheckRes res = userService.getUserOrderCheck(req);
 
-        return ResultResponse.<List<SelUserOrderPastCheckRes>>builder()
+        return ResultResponse.<SelUserOrderPastCheckRes>builder()
                 .statusCode(HttpStatus.OK.toString())
-                .resultMsg("지난 결제 내역 확인")
-                .resultData(resList)
+                .resultMsg("지난 주문 내역 확인 완료")
+                .resultData(res)
                 .build();
-
     }
 
     @PutMapping("v3/upw")
