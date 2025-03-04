@@ -38,7 +38,7 @@ public class InsRestaurantEnrollmentReq {
 
     @NotEmpty(message = "위도를 입력해주세요")
     @Schema(description = "위도", example = "13", requiredMode = Schema.RequiredMode.REQUIRED)
-    private double let;
+    private double lat;
 
     @NotEmpty(message = "경도를 입력해주세요")
     @Schema(description = "경도", example = "14", requiredMode = Schema.RequiredMode.REQUIRED)

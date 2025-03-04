@@ -175,4 +175,11 @@ public class AdminSystemService {
         return 1;
     }
 
+    // 식당 미입금 정산 처리
+    @Transactional
+    public int postSettlementList(InsSettlementListReq p){
+        settlementListRepository.insertSettlementList(p.getRestaurantId());
+
+        return 1;
+    }
 }
