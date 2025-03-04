@@ -200,8 +200,8 @@ public class AdminRestaurantController {
 
     @PostMapping("v3/pic")
     @Operation(summary = "식당 사진 등록")
-    public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> filePath, @RequestParam long restaurantId) {
-        InsRestaurantRes res = restaurantPicService.postRestaurantPic(filePath, restaurantId);
+    public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> picName, @RequestParam long restaurantId) {
+        InsRestaurantRes res = restaurantPicService.postRestaurantPic(picName, restaurantId);
 
         return ResultResponse.<InsRestaurantRes>builder()
                 .statusCode("200")
