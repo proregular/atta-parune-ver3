@@ -239,11 +239,11 @@ public class UserController {
                     .build();
         }
 
-        service.postOrderWithDetail(p);
+        long result = service.postOrderWithDetail(p);
         return ResultResponse.<Long>builder()
                 .statusCode("200")
                 .resultMsg("주문 정보 등록 완료")
-                .resultData(p.getOrderId())
+                .resultData(result)
                 .build();
     }
 
