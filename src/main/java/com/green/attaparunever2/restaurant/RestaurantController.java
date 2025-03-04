@@ -23,7 +23,7 @@ public class RestaurantController {
 
     //------------------------------------------------------------------------------------------------------------------------------------------
 
-    @GetMapping("v3/main")
+    @GetMapping("/main")
     @Operation(summary = "메인 화면 식당 조회")
     public ResultResponse<List<GetRestaurantMainRes>> getRestaurantMain(@ParameterObject @ModelAttribute GetRestaurantMainReq req){
         List<GetRestaurantMainRes> res = restaurantService.getRestaurantMainV3(req);
@@ -47,7 +47,7 @@ public class RestaurantController {
                 .build();
     }
 
-    @GetMapping("v3/around")
+    @GetMapping("/around")
     @Operation(summary = "식당 찾기 탭 식당 리스트 조회")
     public ResultResponse<List<RestaurantAroundGetRes>> getRestaurantAround(@ParameterObject @ModelAttribute @Valid RestaurantAroundGetReq req){
         List<RestaurantAroundGetRes> res = restaurantService.getRestaurantAroundV3(req);
