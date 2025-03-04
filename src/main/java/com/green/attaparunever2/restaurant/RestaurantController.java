@@ -84,5 +84,16 @@ public class RestaurantController {
                 .build();
     }
 
+    @GetMapping("dashboard")
+    @Operation(summary = "식당 매출정보 대시보드 조회")
+    public ResultResponse<SelRestaurantDashBoardRes> getRestaurantDashboard(@ParameterObject @ModelAttribute SelRestaurantDashboardReq p){
+        SelRestaurantDashBoardRes res = restaurantService.getRestaurantDashboard(p);
+
+        return ResultResponse.<SelRestaurantDashBoardRes>builder()
+                .statusCode("200")
+                .resultMsg("식당 매출 정보 대시보드 정보 조회 완료.")
+                .resultData(res)
+                .build();
+    }
 
 }
