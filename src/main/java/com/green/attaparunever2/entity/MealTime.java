@@ -17,7 +17,7 @@ public class MealTime extends UpdatedAt{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mealTimeId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order orderId;
 
