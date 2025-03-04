@@ -145,7 +145,7 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("alert")
+    /*@GetMapping("alert")
     @Operation(summary = "메인 페이지 사용자 알람 데이터")
     public ResultResponse<List<UserAlertDto>> getUserAlert(@Valid @RequestParam long userId) {
         List<UserAlertDto> res = userService.getUserAlert(userId);
@@ -154,7 +154,7 @@ public class UserController {
                 .resultMsg("알람 조회가 완료되었습니다.")
                 .resultData(res)
                 .build();
-    }
+    }*/
 
     @PutMapping("/find-password")
     @Operation(summary = "비밀번호 찾기")
@@ -273,7 +273,7 @@ public class UserController {
     }
 
     //2차 기능 개선---------------------------------------------------------------------------------
-    @GetMapping("v3/alert")
+    @GetMapping("/alert")
     @Operation(summary = "사용자 알람 데이터")
     public ResultResponse<List<UserAlertDto>> getUserAlertV3(@Valid @RequestParam long userId) {
         List<UserAlertDto> res = userService.getUserAlertV3(userId);
