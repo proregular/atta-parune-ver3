@@ -42,7 +42,7 @@ public class UserController {
     private final UserPaymentMemberService userPaymentMemberService;
     private final ReservationService reservationService;
 
-    @GetMapping
+    /*@GetMapping
     @Operation(summary = "회원 정보 조회")
     public ResultResponse<?> getUser(@ModelAttribute UserGetReq req) {
         UserGetRes result = userService.getUser(req);
@@ -52,7 +52,7 @@ public class UserController {
                 .resultMsg("회원 정보 조회 성공")
                 .resultData(result)
                 .build();
-    }
+    }*/
 
     @GetMapping("auth-token")
     @Operation(summary = "인증번호 인증")
