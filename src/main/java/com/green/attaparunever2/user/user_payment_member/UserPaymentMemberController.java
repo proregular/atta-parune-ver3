@@ -1,6 +1,9 @@
 package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.user.UserService;
+import com.green.attaparunever2.user.model.CompanyUserGetReq;
+import com.green.attaparunever2.user.model.CompanyUserGetRes;
 import com.green.attaparunever2.user.user_payment_member.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +23,7 @@ import java.util.List;
 @Tag(name="유저 결제 및 포인트 관련", description = "유저 결제 및 포인트 관련 API")
 public class UserPaymentMemberController {
     private final UserPaymentMemberService userPaymentMemberService;
+    private final UserService userService;
 
     @GetMapping("point")
     @Operation(summary = "남은 포인트 조회")
@@ -128,6 +132,19 @@ public class UserPaymentMemberController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("승인상태확인")
                 .resultData(list)
+                .build();
+    }
+
+    @GetMapping("/searchPeople")
+    @Operation(summary = "함께 결재할 인원 조회")
+    public ResultResponse<List<CompanyUserGetRes>> getCompanyUser(@ParameterObject @ModelAttribute @Valid CompanyUserGetReq req) {
+
+        List<CompanyUserGetRes> resList = userService.getCompanyUser(req);
+
+        return ResultResponse.<List<CompanyUserGetRes>>builder()
+                .statusCode("200")
+                .resultMsg("결제 인원 검색 완료")
+                .resultData(resList)
                 .build();
     }
 
