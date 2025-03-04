@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SelUserOrderPastCheckReq {
-    @Schema(description = "유저 아이디", example = "1")
-    private long userId;
+    @Schema(description = "주문 PK", example = "1")
+    private long orderId;
 }

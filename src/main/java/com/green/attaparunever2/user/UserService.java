@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -206,16 +207,25 @@ public class UserService {
         return accessToken;
     }
 
-    public List<SelUserOrderPastCheckRes> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
-        List<SelUserOrderPastCheckRes> res = userMapper.selUserPastOrderCheck(p);
-
-        return res;
-    }
+//    public List<SelUserOrderPastCheckRes> getUserPastOrderCheck(SelUserOrderPastCheckReq p) {
+//        List<SelUserOrderPastCheckRes> res = userMapper.selUserPastOrderCheck(p);
+//
+//        return res;
+//    }
 
     public List<SelUserOrderPastCheckRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> res = userMapper.selUserActiveOrderCheck(p);
 
         return res;
+    }
+
+
+    public SelUserOrderPastCheckRes getUserOrderCheck(SelUserOrderPastCheckReq req){
+       SelUserOrderPastCheckRes res = userMapper.selUserOrderPastCheck(req);
+       List<SelUserOrderPastCheckDto> list = userMapper.selUserOrderMenuPastCheck(req);
+       res.setPastDtoList(list);
+
+       return res;
     }
 
     public GetUserOrderVer2Res getUserOrder(GetUserOrderVer2Req p) {

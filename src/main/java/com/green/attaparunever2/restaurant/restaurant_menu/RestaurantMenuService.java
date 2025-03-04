@@ -3,9 +3,11 @@ package com.green.attaparunever2.restaurant.restaurant_menu;
 
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.OrderDetail;
 import com.green.attaparunever2.entity.Restaurant;
 import com.green.attaparunever2.entity.RestaurantMenu;
 import com.green.attaparunever2.entity.RestaurantMenuCategory;
+import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.PostMenuReq;
 import com.green.attaparunever2.restaurant.restaurant_menu.model.*;
@@ -26,7 +28,7 @@ public class RestaurantMenuService {
     private final RestaurantMenuRepository restaurantMenuRepository;
     private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
     private final RestaurantRepository restaurantRepository;
-
+    private final OrderRepository orderRepository;
 
 
     @Transactional
@@ -82,4 +84,5 @@ public class RestaurantMenuService {
         int result = restaurantMenuMapper.delCategory(p);
         return result;
     }
+
 }

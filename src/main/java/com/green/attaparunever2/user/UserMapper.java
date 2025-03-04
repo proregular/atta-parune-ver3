@@ -27,4 +27,7 @@ public interface UserMapper {
     List<UserAlertDto> selUserPaymentAlertByUserId(long userId);
     List<CompanyUserGetRes> selCompanyUserByUserId(CompanyUserGetReq req);
     UserGetRes selUserByUserIdV3(long userId);
+
+    SelUserOrderPastCheckRes selUserOrderPastCheck(SelUserOrderPastCheckReq req);
+    List<SelUserOrderPastCheckDto> selUserOrderMenuPastCheck(SelUserOrderPastCheckReq req);
 }
