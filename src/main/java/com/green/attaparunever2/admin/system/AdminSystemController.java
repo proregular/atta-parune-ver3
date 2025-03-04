@@ -149,4 +149,17 @@ public class AdminSystemController {
                 .resultData(result)
                 .build();
     }
+
+    @PostMapping("v3/settlement-list")
+    @Operation(summary = "입금 처리")
+    public ResultResponse<Integer> postSettlementList(@RequestBody InsSettlementListReq req) {
+        int result = adminSystemService.postSettlementList(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("입금 처리 완료")
+                .resultData(result)
+                .build();
+
+    }
 }
