@@ -284,7 +284,7 @@ public class RestaurantService {
             List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
 
             if(!picList.isEmpty()) {
-                restaurant.setRestaurantPic(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
+                restaurant.setRestaurantAroundPicList(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
             }
         }
 
@@ -333,7 +333,7 @@ public class RestaurantService {
             List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
 
             // 사진 리스트를 해당 식당 객체에 설정
-            restaurant.setRestaurantPicList(picList);
+            restaurant.setRestaurantArroundPicList(picList);
         }
         return restaurantList;
     }
