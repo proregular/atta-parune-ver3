@@ -247,7 +247,7 @@ public class UserController {
                 .build();
     }
 
-    @PostMapping("ticket")
+    /*@PostMapping("ticket")
     @Operation(summary = "티켓생성")
     public ResultResponse<Long> postTicket(@RequestBody PostTicketReq p){
         userPaymentMemberService.postTicket(p);
@@ -257,7 +257,7 @@ public class UserController {
                 .resultMsg("티켓생성완료")
                 .resultData(p.getTicketId())
                 .build();
-    }
+    }*/
 
     @PostMapping("reservation")
     @Operation(summary = "예약 요청")
