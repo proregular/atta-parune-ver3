@@ -247,7 +247,7 @@
         , (SELECT IFNULL(AVG(ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))), 40)
         FROM meal_time B
         WHERE B.restaurant_id = A.restaurant_id
-        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS mealTimeAvg
+        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS avgRestaurant
         FROM restaurant A
         LEFT JOIN `order` O
         ON A.restaurant_id = O.restaurant_id
@@ -294,17 +294,10 @@
         , F.restaurant_id AS restaurantId
         , F.lat, F.lng
         , (6371 * ACOS(COS(RADIANS(40)) * COS(RADIANS(F.lat)) * COS(RADIANS(F.lng) - RADIANS(127)) + SIN(RADIANS(40)) *
-        SIN(RADIANS(F.lat)))) AS DISTANCE,
-        IFNULL((
-        SELECT AVG(ABS(TIMESTAMPDIFF(MINUTE, B.reservation_time, C.use_date)))
-        FROM `order` A
-        INNER JOIN reservation B
-        ON A.order_id = B.order_id
-        INNER JOIN ticket C
-        ON B.order_id = C.order_id
-        WHERE A.restaurant_id = F.restaurant_id
-        GROUP BY A.restaurant_id
-        ), 40) AS avgRestaurant
+        SIN(RADIANS(F.lat)))) AS DISTANCE, (SELECT IFNULL(AVG(ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date))), 40)
+        FROM meal_time B
+        WHERE B.restaurant_id = F.restaurant_id
+        AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS avgRestaurant
         ,
         IFNULL((
         SELECT AVG(G.rating)
