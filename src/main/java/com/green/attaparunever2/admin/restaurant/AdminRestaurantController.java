@@ -200,8 +200,8 @@ public class AdminRestaurantController {
 
     @PostMapping("v3/pic")
     @Operation(summary = "식당 사진 등록")
-    public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> filePath, @RequestParam long restaurantId) {
-        InsRestaurantRes res = restaurantPicService.postRestaurantPic(filePath, restaurantId);
+    public ResultResponse<InsRestaurantRes> postRestaurantPic(@RequestPart List<MultipartFile> picName, @RequestParam long restaurantId) {
+        InsRestaurantRes res = restaurantPicService.postRestaurantPic(picName, restaurantId);
 
         return ResultResponse.<InsRestaurantRes>builder()
                 .statusCode("200")
@@ -321,7 +321,7 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @GetMapping("dashboard")
+   /* @GetMapping("dashboard")
     @Operation(summary = "식당 매출정보 대시보드 조회")
     public ResultResponse<SelRestaurantDashBoardRes> getRestaurantDashboard(@ParameterObject @ModelAttribute SelRestaurantDashboardReq p){
         SelRestaurantDashBoardRes res = restaurantService.getRestaurantDashboard(p);
@@ -331,7 +331,7 @@ public class AdminRestaurantController {
                 .resultMsg("식당 매출 정보 대시보드 정보 조회 완료.")
                 .resultData(res)
                 .build();
-    }
+    }*/
 
     @DeleteMapping("reviewComment")
     @Operation(summary = "리뷰 댓글 삭제")
