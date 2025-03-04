@@ -87,7 +87,7 @@ public class AdminRestaurantController {
     @DeleteMapping("v3/menu")
     @Operation(summary = "메뉴 정보 삭제")
     public ResultResponse<String> deleteMenu(@ParameterObject @ModelAttribute DelMenuReq p) {
-        adminRestaurantService.deleteMenu(p.getMenuId());
+        adminRestaurantService.deleteMenu(p);
 
         return ResultResponse.<String>builder()
                 .statusCode("200")
