@@ -12,4 +12,6 @@ public class DelMenuReq {
     private long categoryId;
     @Schema(title = "메뉴 PK", example = "10")
     private long menuId;
+    @Schema(title = "식당 PK", example = "1")
+    private Long restaurantId;
 }

@@ -351,5 +351,29 @@
         GROUP BY B.order_detail_id
     </select>
 
+    <select id="selUserOrderPastCheck">
+        SELECT A.restaurant_id AS restaurantId, A.restaurant_name AS restaurantName
+        , B.created_at AS createdAt, B.reservation_yn AS reservationYn
+        , (SUM(C.menu_count * C.price)) AS price
+        , IFNULL((SELECT 1 FROM review B WHERE B.order_id = D.order_id LIMIT 1), 0) AS reviewStatus
+        FROM restaurant A
+        INNER JOIN `order` B
+        ON A.restaurant_id = B.restaurant_id
+        INNER JOIN order_detail C
+        ON B.order_id = C.order_id
+        LEFT JOIN review D
+        ON B.order_id = D.order_id
+        WHERE B.order_id = #{orderId}
+    </select>
+
+    <select id="selUserOrderMenuPastCheck">
+        SELECT A.menu_id AS menuId, A.menu_name AS menuName, A.price , B.menu_count AS menuCount
+        FROM restaurant_menu A
+        INNER JOIN order_detail B
+        ON A.menu_id = B.menu_id
+        INNER JOIN `order` C
+        ON B.order_id = C.order_id
+        WHERE C.order_id = #{orderId}
+    </select>
 
 </mapper>
