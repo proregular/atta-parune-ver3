@@ -24,5 +24,5 @@ public class RestaurantAroundGetRes {
     @Schema(description = "식당 경도")
     private double lng;
     @Schema(description = "식당 사진 리스트")
-    private List<RestaurantPicDto> restaurantPicList;
+    private List<RestaurantPicDto> restaurantArroundPicList;
 }
