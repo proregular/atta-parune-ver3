@@ -2,17 +2,17 @@ package com.green.attaparunever2.user.user_payment_member;
 
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
-import com.green.attaparunever2.entity.Order;
-import com.green.attaparunever2.entity.User;
-import com.green.attaparunever2.entity.UserPaymentMember;
-import com.green.attaparunever2.entity.UserPaymentMemberIds;
+import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.model.OrderSelDto;
 import com.green.attaparunever2.order.ticket.TicketMapper;
+import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.order.ticket.model.TicketSelDto;
 import com.green.attaparunever2.reservation.ReservationMapper;
 import com.green.attaparunever2.reservation.model.ReservationDto;
 import com.green.attaparunever2.user.UserMapper;
+import com.green.attaparunever2.user.UserRepository;
 import com.green.attaparunever2.user.model.TicketMakeMessageRes;
 import com.green.attaparunever2.user.model.UserDTO;
 import com.green.attaparunever2.user.model.UserGetReq;
@@ -22,6 +22,7 @@ import com.green.attaparunever2.user.user_payment_member.scheduler.TicketSchedul
 import com.green.attaparunever2.user.user_payment_member.scheduler.UserPaymentMemberScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,9 @@ public class UserPaymentMemberService {
     private final TicketScheduler ticketScheduler;
     private final AuthenticationFacade authenticationFacade;
     private final UserPaymentMemberRepository userPaymentMemberRepository;
+    private final OrderRepository orderRepository;
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -139,6 +143,7 @@ public class UserPaymentMemberService {
     }
 
     //결제요청(티켓 생성)
+    @Transactional
     public long postTicket(PostTicketReq p){
         // 1.오더 아이디에 포함된 사용자들이 전부 승인을 했는지 여부
         List<SelUserOrderApprovalRes> list = userPaymentMemberMapper.selUserOrderApprovalAccess(p.getOrderId());
@@ -158,6 +163,7 @@ public class UserPaymentMemberService {
 
         log.info("sumMenuPrice : {}, sumUserPoint : {}", sumMenuPrice, sumUserPoint);
         if(sumMenuPrice != sumUserPoint) {
+            log.info("sumUserPoint: {}", sumUserPoint);
             throw new CustomException("금액이 정확하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -165,12 +171,27 @@ public class UserPaymentMemberService {
         for (SelUserOrderApprovalRes item : list) {
             log.info("userPoint : {}, itemPoint {}", item.getUserPoint(), item.getPoint());
 
-            userPaymentMemberMapper.updUserPoint(item.getPoint(), item.getUserId());
+            User user = userRepository.findById(item.getUserId()).orElseThrow(() -> new CustomException("사용자 정보를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST));
+
+            user.setPoint(user.getPoint() - item.getPoint());
+
+            userRepository.save(user);
+
+            //userPaymentMemberMapper.updUserPoint(item.getPoint(), item.getUserId());
         }
 
-        int result = userPaymentMemberMapper.insTicket(p);
+        // JPA로 변경
+        Ticket ticket = new Ticket();
+        Order order = orderRepository.findByOrderId(p.getOrderId()).orElseThrow(() -> new CustomException("주문정보를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST));
 
-        if(result > 0) {
+        ticket.setOrder(order);
+
+        // 만료시간 구하기
+        
+
+        ticketRepository.save(ticket);
+
+        if(ticket.getTicketId() != null) {
             OrderSelDto orderSelDto = orderMapper.selOrderByOrderId(p.getOrderId());
 
             // 사장님 구독 경로로 식권생성 완료 메세지 전송
@@ -200,9 +221,11 @@ public class UserPaymentMemberService {
 
             // 식권생성 후 2 시간 후 결재 처리
             ticketScheduler.scheduleCancellation(p.getOrderId(), time);
+        } else {
+            throw new CustomException("식권 생성에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return p.getTicketId();
+        return ticket.getTicketId();
     }
 
 
