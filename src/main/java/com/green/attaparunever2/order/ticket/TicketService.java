@@ -122,7 +122,7 @@ public class TicketService {
             MealTime mealTime = mealTimeRepository.findByOrderId(ticket.getOrder())
                     .orElseThrow(() -> new CustomException("해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-            mealTime.setEndMealDate(LocalDateTime.now());
+            mealTime.setEndMealDate(ticket.getUseDate());
             mealTimeRepository.save(mealTime);
         }
 
