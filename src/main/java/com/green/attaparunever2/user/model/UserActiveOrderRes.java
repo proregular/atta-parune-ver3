@@ -44,6 +44,9 @@ public class UserActiveOrderRes {
         @Schema(description = "예약 여부")
         private Integer reservationYn;
 
+    @Schema(description = "예약 상태")
+    private Integer reservationStatus;
+
         @Schema(description = "메뉴 정보")
         private List<GetOrderDto> orderDetails;
 }

@@ -91,6 +91,7 @@
         , D.reservation_time AS reservationTime
         , ticket_id AS ticketId
         , A.reservation_yn AS reservationYn
+        , A.reservation_status AS reservationStatus
         FROM `order` A INNER JOIN restaurant B
         ON A.restaurant_id = B.restaurant_id
         INNER JOIN restaurant_category C
