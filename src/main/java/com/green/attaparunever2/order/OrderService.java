@@ -9,6 +9,7 @@ import com.green.attaparunever2.order.model.*;
 import com.green.attaparunever2.order.ticket.MealTimeRepository;
 import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
 import com.green.attaparunever2.user.UserRepository;
 import com.green.attaparunever2.user.user_payment_member.UserPaymentMemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     private final TicketRepository ticketRepository;
+    private final RestaurantMenuRepository restaurantMenuRepository;
 
 
     public long postOrder(OrderPostReq p) {
@@ -105,14 +107,14 @@ public class OrderService {
 
 
         for (OrderDetailPostReq detailReq : p.getOrderDetails()) {
-            RestaurantMenu restaurantMenu = new RestaurantMenu();
+            RestaurantMenu restaurantMenu = restaurantMenuRepository.findById(detailReq.getMenuId()).orElseThrow(() -> new CustomException("존재하지 않는 메뉴 입니다.", HttpStatus.BAD_REQUEST));
             restaurantMenu.setMenuId(detailReq.getMenuId());
 
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderId(order);
             orderDetail.setMenuId(restaurantMenu);
             orderDetail.setMenuCount(detailReq.getMenuCount());
-            orderDetail.setPrice(detailReq.getPrice());
+            orderDetail.setPrice(restaurantMenu.getPrice());
             orderDetailRepository.save(orderDetail);
         }
 
