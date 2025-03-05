@@ -1,6 +1,7 @@
 package com.green.attaparunever2.order.ticket;
 
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.MealTime;
 import com.green.attaparunever2.entity.Order;
 import com.green.attaparunever2.entity.Restaurant;
@@ -28,6 +29,7 @@ public class TicketService {
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
     private final MealTimeRepository mealTimeRepository;
+    private final AuthenticationFacade authenticationFacade;
     //private final OrderMapper orderMapper;
     //private final PaymentUserMapper paymentUserMapper;
 
@@ -76,11 +78,11 @@ public class TicketService {
 
     // 식권 사용 완료 처리
     @Transactional
-    public int updTicket(long ticketId, String paymentPassword) {
+    public int updTicket(TicketUpdReq req) {
         // 식권 사용일 조회
-        TicketUseDateSelRes res = mapper.selTicketUseDate(ticketId);
+        TicketUseDateSelRes res = mapper.selTicketUseDate(req.getTicketId());
 
-        Ticket ticket = ticketRepository.findById(ticketId)
+        Ticket ticket = ticketRepository.findById(req.getTicketId())
                 .orElseThrow(() -> new CustomException("해당 식권이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
         Order order = orderRepository.findById(ticket.getOrder().getOrderId())
@@ -100,17 +102,21 @@ public class TicketService {
         }
 
         // 간편 결제 비밀번호 인증
-        if (!BCrypt.checkpw(paymentPassword, restaurant.getPaymentPassword())) {
+        if (!BCrypt.checkpw(req.getPaymentPassword(), restaurant.getPaymentPassword())) {
             throw new CustomException("간편 결제 비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
+        // 해당 식당에서 발행된 식권이 맞는지 검증
+        if (!ticket.getOrder().getRestaurantId().getRestaurantId().equals(req.getRestaurantId())) {
+            throw new CustomException("해당 식당에 대한 식권이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 식권 수정
         ticket.setTicketStatus(1);
         ticket.setUseDate(LocalDateTime.now());
         ticketRepository.save(ticket);
 
-        int result = ticketRepository.updateTicketStatusAndUseDate(ticketId, 1, LocalDateTime.now());
+        int result = ticketRepository.updateTicketStatusAndUseDate(ticket.getTicketId(), 1, LocalDateTime.now());
 
         // 식권 수정에 실패
         if (result == 0) {
@@ -126,7 +132,7 @@ public class TicketService {
             mealTimeRepository.save(mealTime);
         }
 
-        SelTicketDto dto = ticketMapper.selTicketByTicketId(ticketId);
+        SelTicketDto dto = ticketMapper.selTicketByTicketId(ticket.getTicketId());
 
         // 사용자에게 식권사용 완료 메세지 전송
         messagingTemplate.convertAndSend(
