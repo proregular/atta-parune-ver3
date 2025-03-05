@@ -17,7 +17,9 @@ public interface SettlementListRepository extends JpaRepository<SettlementList, 
         FROM ticket A
         INNER JOIN `order` B
         ON A.order_id = B.order_id
-        WHERE B.restaurant_id = :restaurantId"""
+        WHERE B.restaurant_id = :restaurantId
+            AND ticket_id NOT IN(SELECT ticket_id FROM settlement_list B) 
+            """
         , nativeQuery = true)
     void insertSettlementList(@Param("restaurantId") Long restaurantId);
 }

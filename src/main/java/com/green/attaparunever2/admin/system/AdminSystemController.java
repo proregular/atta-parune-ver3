@@ -162,4 +162,16 @@ public class AdminSystemController {
                 .build();
 
     }
+
+    @GetMapping("v3/settlement-list")
+    @Operation(summary = "이번 주 정산 내역")
+    public ResultResponse<List<SelSettlementDetailRes>> getSettlementList(){
+        List<SelSettlementDetailRes> resList = adminSystemService.getSettlementList();
+
+        return ResultResponse.<List<SelSettlementDetailRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("정산 내역 조회 완료")
+                .resultData(resList)
+                .build();
+    }
 }
