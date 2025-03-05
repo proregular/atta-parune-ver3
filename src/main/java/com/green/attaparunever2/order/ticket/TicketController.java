@@ -4,6 +4,7 @@ import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.order.ticket.model.TicketGetReq;
 import com.green.attaparunever2.order.ticket.model.TicketGetRes;
 import com.green.attaparunever2.order.ticket.model.TicketPostReq;
+import com.green.attaparunever2.order.ticket.model.TicketUpdReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -34,8 +35,8 @@ public class TicketController {
 
     @PatchMapping
     @Operation(summary = "식권 사용 여부 변경", description = "식권 사용 완료 처리")
-    public ResultResponse<Integer> patchTicket(@RequestParam long ticketId, @RequestParam String paymentPassword) {
-        int result = service.updTicket(ticketId, paymentPassword);
+    public ResultResponse<Integer> patchTicket(@RequestBody TicketUpdReq req) {
+        int result = service.updTicket(req);
 
         return ResultResponse.<Integer>builder()
                 .statusCode("200")
