@@ -125,12 +125,12 @@ public class AdminRestaurantService {
         User user = userRepository.findById(req.getUserId())
                 .orElseThrow(() -> new CustomException("유저 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
-        Optional<Order> order = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
+        List<Order> order = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
         if (order.isEmpty()) {
             throw new CustomException("해당 식당에 대한 주문 내역이 없는 사용자입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        int existingCount = adminRestaurantMapper.selBlackListCount(req.getRestaurantId());
+        int existingCount = adminRestaurantMapper.selBlackListCount(req.getRestaurantId(), req.getUserId());
         if (existingCount > 0) {
             throw new CustomException("이미 등록된 사용자입니다.", HttpStatus.BAD_REQUEST);
         }
