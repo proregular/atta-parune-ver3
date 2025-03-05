@@ -175,6 +175,7 @@ public class ReservationService {
             Map<String, String> messageObject = new HashMap<>();
 
             messageObject.put("message", "예약시간: " + req.getReservationTime() + "에 대한 예약에 대한 자동 취소가 5분 남았습니다. 예약을 완료해 주세요.");
+            messageObject.put("orderId", String.valueOf(order.getOrderId()));
 
             messagingTemplate.convertAndSend(
                     "/queue/reservation/" + order.getOrderId() + "/user/reservation",

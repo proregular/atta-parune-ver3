@@ -85,26 +85,28 @@
 
     <!-- 진행 주문 내역 : 신권생성이 되고 사용이 안된 -->
     <select id="selUserActiveOrderCheck">
-        SELECT C.restaurant_name AS restaurantName, D.file_path AS filePath, A.reservation_yn AS reservationYn
-        , GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuName, SUM(E.menu_count * F.price) AS menuTotalPrice
-        , E.menu_count AS menuCount
-        , A.created_at AS createdAt
-        , A.restaurant_id AS restaurantId
-        , G.ticket_id AS ticketId
-        FROM `order` A
-        INNER JOIN restaurant C
-        ON A.restaurant_id = C.restaurant_id
-        LEFT JOIN restaurant_pic D
-        ON C.restaurant_id = D.restaurant_id
-        INNER JOIN order_detail E
-        ON A.order_id = E.order_id
-        INNER JOIN restaurant_menu F
-        ON E.menu_id = F.menu_id
-        INNER JOIN ticket G
-        ON G.order_id = A.order_id
-        AND G.ticket_status = 0
+        SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, B.restaurant_name AS restaurantName, C.category_name AS categoryName
+        , A.created_at AS orderDate, E.user_id AS reservationUserId
+        , E.`name` AS reservationUserName, D.user_phone AS reservationUserPhone
+        , D.reservation_time AS reservationTime
+        , ticket_id AS ticketId
+        , A.reservation_yn AS reservationYn
+        FROM `order` A INNER JOIN restaurant B
+        ON A.restaurant_id = B.restaurant_id
+        INNER JOIN restaurant_category C
+        ON B.category_id = C.category_id
+        LEFT JOIN reservation D
+        ON A.order_id = D.order_id
+        LEFT JOIN user E
+        ON A.user_id = E.user_id
+        AND A.order_id = D.order_id
+        LEFT JOIN ticket F
+        ON A.order_id = F.order_id
+        AND F.ticket_status = 0
         WHERE A.user_id = #{userId}
-        GROUP BY A.order_id DESC
+        AND A.reservation_status IN(0, 1)
+        ORDER BY A.order_id DESC
+        LIMIT 1
     </select>
 
     <!-- 지난 주문 내역 : 식권사용이 완료된 -->
