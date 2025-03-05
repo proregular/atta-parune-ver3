@@ -10,5 +10,5 @@ import java.util.List;
 public interface AdminRestaurantMapper {
     List<SelBlackListRes> selBlackList(SelBlackListReq p);
 
-    int selBlackListCount(long restaurantId);
+    int selBlackListCount(long restaurantId, long userId);
 }

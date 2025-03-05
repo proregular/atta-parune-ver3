@@ -80,11 +80,13 @@ public class OrderService {
         }
 
         // 해당 유저의 진행중인 결제가 있는지 조회
-        Optional<Order> existingOrder = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
-        if (existingOrder.isPresent()) {
-            Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(existingOrder.get().getOrderId());
-            if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
-                throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        List<Order> existingOrder = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
+        if (!existingOrder.isEmpty()) {
+            for (Order order : existingOrder) {
+                Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(order.getOrderId());
+                if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
+                    throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+                }
             }
         }
 
