@@ -96,7 +96,7 @@ public class UserController {
         return userService.getAccessToken(req);
     }
 
-    @GetMapping("order/active")
+    @GetMapping("activeOrderCheck")
     @Operation(summary = "진행중인 주문 내역 확인")
     public ResultResponse<List<SelUserOrderPastCheckRes>> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
         List<SelUserOrderPastCheckRes> resList = userService.getUserActiveOrderCheck(p);
@@ -239,11 +239,11 @@ public class UserController {
                     .build();
         }
 
-        service.postOrderWithDetail(p);
+        long result = service.postOrderWithDetail(p);
         return ResultResponse.<Long>builder()
                 .statusCode("200")
                 .resultMsg("주문 정보 등록 완료")
-                .resultData(p.getOrderId())
+                .resultData(result)
                 .build();
     }
 
@@ -284,7 +284,7 @@ public class UserController {
     }
 
     //2차 기능 개선---------------------------------------------------------------------------------
-    @GetMapping("v3/company/user")
+    /*@GetMapping("v3/company/user")
     @Operation(summary = "함께 결재할 인원 조회")
     public ResultResponse<List<CompanyUserGetRes>> getCompanyUser(@ParameterObject @ModelAttribute @Valid CompanyUserGetReq req) {
 
@@ -295,7 +295,7 @@ public class UserController {
                 .resultMsg("결제 인원 검색 완료")
                 .resultData(resList)
                 .build();
-    }
+    }*/
 
     @GetMapping()
     @Operation(summary = "회원 정보 조회")

@@ -1,17 +1,26 @@
 package com.green.attaparunever2.order;
 
+import com.green.attaparunever2.admin.AdminRepository;
+import com.green.attaparunever2.admin.restaurant.BlackListRepository;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.model.*;
+import com.green.attaparunever2.order.ticket.MealTimeRepository;
+import com.green.attaparunever2.order.ticket.TicketRepository;
+import com.green.attaparunever2.restaurant.RestaurantRepository;
+import com.green.attaparunever2.user.UserRepository;
+import com.green.attaparunever2.user.user_payment_member.UserPaymentMemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,6 +31,13 @@ public class OrderService {
     private final AuthenticationFacade authenticationFacade;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final MealTimeRepository mealTimeRepository;
+    private final UserPaymentMemberRepository userPaymentMemberRepository;
+    private final BlackListRepository blackListRepository;
+    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final TicketRepository ticketRepository;
 
 
     public long postOrder(OrderPostReq p) {
@@ -34,18 +50,65 @@ public class OrderService {
 
     @Transactional
     public long postOrderWithDetail(OrderPostReq p) {
-        User user = new User();
-        user.setUserId(p.getUserId());
+        User user = userRepository.findByUserId(p.getUserId())
+                .orElseThrow(() -> new CustomException("해당 유저가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setRestaurantId(p.getRestaurantId());
+        Restaurant restaurant = restaurantRepository.findById(p.getRestaurantId())
+                .orElseThrow(() -> new CustomException("해당 식당이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
+        BlackList blackList = blackListRepository.findByRestaurantIdAndUserId(p.getRestaurantId(), p.getUserId())
+                .orElse(null);
+
+        // 사용자 블랙리스트 여부 확인
+        if (blackList != null) {
+            throw new CustomException("해당 식당의 블랙리스트에 등록되어 주문할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 식당 영업 상태 확인
+        if (restaurant.getStatus() != 0) {
+            throw new CustomException("해당 식당이 영업중이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        Admin admin = adminRepository.findByDivisionId(p.getRestaurantId())
+                .orElseThrow(() -> new CustomException("해당 관리자 정보가 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 식당 비활성화 상태 확인
+        if (admin.getCode().getCode().equals("00101") && admin.getCoalitionState() != 0) {
+            throw new CustomException("해당 식당이 비활성화 상태입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 해당 유저의 진행중인 결제가 있는지 조회
+        Optional<Order> existingOrder = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
+        if (existingOrder.isPresent()) {
+            Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(existingOrder.get().getOrderId());
+            if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
+                throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Order 테이블 insert
         Order order = new Order();
         order.setUserId(user);
         order.setRestaurantId(restaurant);
+
         orderRepository.save(order);
         orderRepository.flush();
 
+        Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(order.getOrderId());
+        if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
+            if (ticket.get().getOrder().getUserId().getUserId().equals(p.getUserId())) {
+                throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Meal_Time 테이블 insert
+        MealTime mealTime = new MealTime();
+        mealTime.setOrderId(order);
+        mealTime.setStartMealDate(order.getCreatedAt());
+        mealTime.setRestaurantId(restaurant);
+
+        mealTimeRepository.save(mealTime);
+        mealTimeRepository.flush();
 
 
         for (OrderDetailPostReq detailReq : p.getOrderDetails()) {

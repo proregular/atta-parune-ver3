@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<Ticket> findByOrder(Order order);
 
+    Optional<Ticket> findByOrderOrderId(Long orderId);
+
     @Modifying
     @Transactional
     @Query("UPDATE Ticket t SET t.ticketStatus = :status, t.useDate = :useDate WHERE t.ticketId = :ticketId")
