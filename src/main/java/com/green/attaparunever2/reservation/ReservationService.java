@@ -2,6 +2,7 @@ package com.green.attaparunever2.reservation;
 
 import com.green.attaparunever2.admin.AdminRepository;
 import com.green.attaparunever2.admin.restaurant.BlackListRepository;
+import com.green.attaparunever2.common.delayed.DelayedTaskScheduler;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.order.OrderDetailRepository;
@@ -26,8 +27,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +52,8 @@ public class ReservationService {
     private final AdminRepository adminRepository;
     private final TicketRepository ticketRepository;
     private final RestaurantMenuRepository restaurantMenuRepository;
+    private final DelayedTaskScheduler scheduler;
+
 
     @Transactional
     public int postReservation(ReservationPostReq req) {
@@ -163,6 +169,19 @@ public class ReservationService {
 
         // 예약 10분 뒤 업데이트 안할 시 취소 처리할 스케줄러 실행
         reservationScheduler.scheduleCancellation(reservationInsDto.getReservationId());
+
+        // 5분 지난뒤 5분 남았다고 알림
+        scheduler.schedule(() -> {
+            Map<String, String> messageObject = new HashMap<>();
+
+            messageObject.put("message", "예약시간: " + req.getReservationTime() + "에 대한 예약에 대한 자동 취소가 5분 남았습니다. 예약을 완료해 주세요.");
+
+            messagingTemplate.convertAndSend(
+                    "/queue/reservation/" + order.getOrderId() + "/user/reservation",
+                    messageObject
+            );
+
+        }, 5, TimeUnit.MINUTES);
 
         // 생성된 예약 정보 가져옴(소켓 통신으로 보내줌.)
         ReservationDto createdReservationDto = reservationMapper.selReservationByReservationId(reservationInsDto.getReservationId());
