@@ -94,13 +94,6 @@ public class OrderService {
         orderRepository.save(order);
         orderRepository.flush();
 
-        Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(order.getOrderId());
-        if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
-            if (ticket.get().getOrder().getUserId().getUserId().equals(p.getUserId())) {
-                throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
-            }
-        }
-
         // Meal_Time 테이블 insert
         MealTime mealTime = new MealTime();
         mealTime.setOrderId(order);
