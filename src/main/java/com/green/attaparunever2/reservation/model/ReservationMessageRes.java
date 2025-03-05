@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class ReservationMessageRes {
     private long orderId;
     private long restaurantId;
     private long userId;
-    private String reservationTime;
+    private LocalDateTime reservationTime;
     private int reservationPeopleCount;
     private String userPhone;
     private List<ReservationMenuDto> menuList;

@@ -1,20 +1,32 @@
 package com.green.attaparunever2.reservation;
 
+import com.green.attaparunever2.admin.AdminRepository;
+import com.green.attaparunever2.admin.restaurant.BlackListRepository;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.entity.*;
+import com.green.attaparunever2.order.OrderDetailRepository;
 import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.OrderRepository;
 import com.green.attaparunever2.order.OrderService;
 import com.green.attaparunever2.order.model.OrderAccessPatchReq;
 import com.green.attaparunever2.order.model.OrderDetailPostReq;
 import com.green.attaparunever2.order.model.OrderPostReq;
+import com.green.attaparunever2.order.ticket.MealTimeRepository;
 import com.green.attaparunever2.order.ticket.TicketMapper;
+import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.order.ticket.model.TicketSelDto;
 import com.green.attaparunever2.reservation.model.*;
 import com.green.attaparunever2.reservation.scheduler.ReservationScheduler;
+import com.green.attaparunever2.restaurant.RestaurantRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
+import com.green.attaparunever2.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +37,19 @@ public class ReservationService {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
     private final TicketMapper ticketMapper;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final ReservationRepository reservationRepository;
+    private final MealTimeRepository mealTimeRepository;
+    private final BlackListRepository blackListRepository;
+    private final AdminRepository adminRepository;
+    private final TicketRepository ticketRepository;
+    private final RestaurantMenuRepository restaurantMenuRepository;
 
     @Transactional
-    public Long postReservation(ReservationPostReq req) {
+    public int postReservation(ReservationPostReq req) {
         Long createdOrderId = null; // 생성된 주문 PK(프론트로 반환해 줄 값)
 
         // 현재 예약이 있는지 검사
@@ -54,82 +76,117 @@ public class ReservationService {
             }
         }*/
 
-        // 주문정보 생성
-        OrderPostReq orderData = new OrderPostReq();
+        // user 테이블 조회
+        User user = userRepository.findById(req.getUserId())
+                .orElseThrow(() -> new CustomException("해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
-        orderData.setUserId(req.getUserId());
-        orderData.setRestaurantId(req.getRestaurantId());
-//        orderData.setReservationYn(1);
-//        orderData.setReservationStatus(0);
+        // restaurant 테이블 조회
+        Restaurant restaurant = restaurantRepository.findById(req.getRestaurantId())
+                .orElseThrow(() -> new CustomException("해당 식당을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
-        long result = orderMapper.insReservationOrder(orderData);
+        BlackList blackList = blackListRepository.findByRestaurantIdAndUserId(req.getRestaurantId(), req.getUserId())
+                .orElse(null);
 
-        if(result == 1) {
-            createdOrderId = orderData.getOrderId();
-            // 주문상세정보 생성
-            for(ReservationMenuDto reservationMenuDto : req.getMenuList()) {
-                OrderDetailPostReq orderDetailData = new OrderDetailPostReq();
+        // 사용자 블랙리스트 여부 확인
+        if (blackList != null) {
+            throw new CustomException("해당 식당의 블랙리스트에 등록되어 주문할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
-                orderDetailData.setOrderId(createdOrderId);
-                orderDetailData.setMenuId(reservationMenuDto.getMenuId());
-                orderDetailData.setMenuCount(reservationMenuDto.getMenuCount());
+        // 식당 영업 상태 확인
+        if (restaurant.getStatus() != 0) {
+            throw new CustomException("해당 식당이 영업중이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
 
-                result = orderService.postOrderDetail(orderDetailData);
+        Admin admin = adminRepository.findByDivisionId(req.getRestaurantId())
+                .orElseThrow(() -> new CustomException("해당 관리자 정보가 없습니다.", HttpStatus.NOT_FOUND));
 
-                if(result != 1) {
-                    throw new CustomException("주문 상세 정보 생성에 실패 하였습니다.", HttpStatus.BAD_REQUEST);
-                }
+        // 식당 비활성화 상태 확인
+        if (admin.getCode().getCode().equals("00101") && admin.getCoalitionState() != 0) {
+            throw new CustomException("해당 식당이 비활성화 상태입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 해당 유저의 진행중인 결제가 있는지 조회
+        Optional<Order> existingOrder = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
+        if (existingOrder.isPresent()) {
+            Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(existingOrder.get().getOrderId());
+            if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
+                throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
             }
+        }
 
-            // 예약 정보 생성
-            ReservationInsDto reservationInsDto = new ReservationInsDto();
+        // 주문 정보 생성
+        Order order = new Order();
+        order.setUserId(user);
+        order.setRestaurantId(restaurant);
+        order.setReservationYn(1);
+        orderRepository.save(order);
+        orderRepository.flush();
 
-            reservationInsDto.setOrderId(createdOrderId);
-            reservationInsDto.setReservationPeopleCount(req.getReservationPeopleCount());
-            reservationInsDto.setReservationTime(req.getReservationTime());
-            reservationInsDto.setUserPhone(req.getUserPhone());
+        // 주문상세정보 생성
+        for (ReservationMenuDto reservationMenuDto : req.getMenuList()) {
+            RestaurantMenu restaurantMenu = restaurantMenuRepository.findById(reservationMenuDto.getMenuId())
+                            .orElseThrow(() -> new CustomException("해당 메뉴를 조회할 수 없습니다.", HttpStatus.NOT_FOUND));
 
-            // 예약 등록
-            result = reservationMapper.postReservation(reservationInsDto);
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrderId(order);
+            orderDetail.setMenuId(restaurantMenu);
+            orderDetail.setMenuCount(reservationMenuDto.getMenuCount());
+            orderDetail.setPrice(restaurantMenu.getPrice());
+            orderDetailRepository.save(orderDetail);
+        }
 
-            if (result == 0) {
-                throw new CustomException("예약 요청에 실패했습니다.", HttpStatus.BAD_REQUEST);
-            }
+        // 예약 정보 생성
+        Reservation reservation = new Reservation();
+        reservation.setOrder(order);
+        reservation.setReservationTime(req.getReservationTime());
+        reservation.setReservationPeopleCount(req.getReservationPeopleCount());
+        reservation.setUserPhone(req.getUserPhone());
+        reservationRepository.save(reservation);
 
-            // 예약 10분 뒤 업데이트 안할 시 취소 처리할 스케줄러 실행
-            reservationScheduler.scheduleCancellation(reservationInsDto.getReservationId());
+        ReservationInsDto reservationInsDto = new ReservationInsDto();
 
-            // 생성된 예약 정보 가져옴(소켓 통신으로 보내줌.)
-            ReservationDto createdReservationDto = reservationMapper.selReservationByReservationId(reservationInsDto.getReservationId());
+        reservationInsDto.setOrderId(order.getOrderId());
+        reservationInsDto.setReservationPeopleCount(req.getReservationPeopleCount());
+        reservationInsDto.setReservationTime(req.getReservationTime());
+        reservationInsDto.setUserPhone(req.getUserPhone());
 
-            req.setOrderId(createdOrderId);
+        // meal_time 테이블 insert
+        MealTime mealTime = new MealTime();
+        mealTime.setOrderId(order);
+        mealTime.setStartMealDate(reservation.getReservationTime());
+        mealTime.setRestaurantId(restaurant);
+        mealTimeRepository.save(mealTime);
+        mealTimeRepository.flush();
 
-            // 사장님 구독 경로로 예약 알림 메시지 전송
-            ReservationMessageRes reservationMessageRes = new ReservationMessageRes();
-            reservationMessageRes.setOrderId(createdOrderId);
-            reservationMessageRes.setReservationPeopleCount(req.getReservationPeopleCount());
-            reservationMessageRes.setReservationTime(req.getReservationTime());
-            reservationMessageRes.setUserPhone(req.getUserPhone());
-            reservationMessageRes.setRestaurantId(req.getRestaurantId());
-            reservationMessageRes.setUserId(req.getUserId());
-            reservationMessageRes.setMenuList(req.getMenuList());
-            reservationMessageRes.setTypeMessage("예약 요청");
+        // 예약 10분 뒤 업데이트 안할 시 취소 처리할 스케줄러 실행
+        reservationScheduler.scheduleCancellation(reservationInsDto.getReservationId());
 
-            messagingTemplate.convertAndSend(
-                    "/queue/restaurant/" + req.getRestaurantId() + "/owner/reservation",
-                    req
-            );
+        // 생성된 예약 정보 가져옴(소켓 통신으로 보내줌.)
+        ReservationDto createdReservationDto = reservationMapper.selReservationByReservationId(reservationInsDto.getReservationId());
 
-            // 일단 무조건 승인 되었다고 처리함.
+        // 사장님 구독 경로로 예약 알림 메시지 전송
+        ReservationMessageRes reservationMessageRes = new ReservationMessageRes();
+        reservationMessageRes.setOrderId(order.getOrderId());
+        reservationMessageRes.setReservationPeopleCount(req.getReservationPeopleCount());
+        reservationMessageRes.setReservationTime(req.getReservationTime());
+        reservationMessageRes.setUserPhone(req.getUserPhone());
+        reservationMessageRes.setRestaurantId(restaurant.getRestaurantId());
+        reservationMessageRes.setUserId(user.getUserId());
+        reservationMessageRes.setMenuList(req.getMenuList());
+        reservationMessageRes.setTypeMessage("예약 요청");
+
+        messagingTemplate.convertAndSend(
+                "/queue/restaurant/" + req.getRestaurantId() + "/owner/reservation",
+                req
+        );
+
+        // 일단 무조건 승인 되었다고 처리함.
             /*OrderAccessPatchReq p = new OrderAccessPatchReq();
             p.setOrderId(createdOrderId);
             p.setReservationStatus(1);
 
             result = orderService.updOrderAccess(p);*/
-        } else {
-            throw new CustomException("주문정보 생성에 실패 하였습니다.", HttpStatus.BAD_REQUEST);
-        }
 
-        return createdOrderId;
+        return 1;
     }
 }
