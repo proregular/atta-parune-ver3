@@ -15,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -181,5 +184,46 @@ public class AdminSystemService {
         settlementListRepository.insertSettlementList(p.getRestaurantId());
 
         return 1;
+    }
+
+    public static LocalDate getDateByCode(LocalDate baseDate, String code) {
+        DayOfWeek dayOfWeek;
+
+        switch (code) {
+            case "00401": dayOfWeek = DayOfWeek.MONDAY; break;
+            case "00402": dayOfWeek = DayOfWeek.TUESDAY; break;
+            case "00403": dayOfWeek = DayOfWeek.WEDNESDAY; break;
+            case "00404": dayOfWeek = DayOfWeek.THURSDAY; break;
+            case "00405": dayOfWeek = DayOfWeek.FRIDAY; break;
+            case "00406": dayOfWeek = DayOfWeek.SATURDAY; break;
+            case "00407": dayOfWeek = DayOfWeek.SUNDAY; break;
+            default: throw new IllegalArgumentException("유효하지 않은 코드: " + code);
+        }
+
+        return baseDate.with(dayOfWeek); // 해당 요일의 날짜 반환
+    }
+
+    // 정산 내역
+    @Transactional
+    public List<SelSettlementDetailRes> getSettlementList(){
+        SelSettlementDetailReq req = new SelSettlementDetailReq();
+        String code = settlementDayRepository.findSettlementDay();
+
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = getDateByCode(today, code); // code 에 따른 요일 설정
+        LocalDate sixDayBeforeTargetDate = targetDate.minusDays(6); // targetDate 에 6일전
+
+        // 날짜를 문자열로 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String targetDateStr = targetDate.format(formatter);
+        String sixDayBeforeTargetDateStr = sixDayBeforeTargetDate.format(formatter);
+
+        req.setStartDate(sixDayBeforeTargetDateStr);
+        req.setEndDate(targetDateStr);
+
+        List<SelSettlementDetailRes> resList = adminSystemMapper.selSettlementDetail(req);
+
+        return resList;
+
     }
 }
