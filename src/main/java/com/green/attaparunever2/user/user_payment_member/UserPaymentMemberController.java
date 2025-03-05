@@ -151,12 +151,12 @@ public class UserPaymentMemberController {
     @PostMapping("insTicket")
     @Operation(summary = "티켓생성")
     public ResultResponse<Long> postTicket(@RequestBody PostTicketReq p){
-        userPaymentMemberService.postTicket(p);
+        long result = userPaymentMemberService.postTicket(p);
 
         return ResultResponse.<Long>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("티켓생성완료")
-                .resultData(p.getTicketId())
+                .resultData(result)
                 .build();
     }
 
