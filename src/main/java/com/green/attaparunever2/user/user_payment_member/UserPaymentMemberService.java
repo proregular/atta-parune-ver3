@@ -10,6 +10,7 @@ import com.green.attaparunever2.order.ticket.TicketMapper;
 import com.green.attaparunever2.order.ticket.TicketRepository;
 import com.green.attaparunever2.order.ticket.model.TicketSelDto;
 import com.green.attaparunever2.reservation.ReservationMapper;
+import com.green.attaparunever2.reservation.ReservationRepository;
 import com.green.attaparunever2.reservation.model.ReservationDto;
 import com.green.attaparunever2.user.UserMapper;
 import com.green.attaparunever2.user.UserRepository;
@@ -48,6 +49,7 @@ public class UserPaymentMemberService {
     private final OrderRepository orderRepository;
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
 
     //사용자 포인트 조회
     public UserGetPointRes getPoint(long userId) {
@@ -187,7 +189,17 @@ public class UserPaymentMemberService {
         ticket.setOrder(order);
 
         // 만료시간 구하기
-        
+        Reservation reservation = reservationRepository.findByOrder(order).orElse(null);
+        LocalDateTime expiredDate = LocalDateTime.now();
+
+        // 예약이 존재하는 경우 예약시간 + 2시간 후
+        if(reservation != null) {
+            expiredDate = reservation.getReservationTime();
+        }
+
+        expiredDate = expiredDate.plusHours(2);
+
+        ticket.setExpiredDate(expiredDate);
 
         ticketRepository.save(ticket);
 
