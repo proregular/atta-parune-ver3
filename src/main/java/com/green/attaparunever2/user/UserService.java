@@ -15,6 +15,8 @@ import com.green.attaparunever2.config.jwt.JwtUser;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.User;
+import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.OrderGetReq;
 import com.green.attaparunever2.user.model.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +52,7 @@ public class UserService {
     private final CodeRepository codeRepository;
     private final UserRepository userRepository;
     private final MyFileUtils myFileUtils;
+    private final OrderMapper orderMapper;
 
     // 회원가입
     @Transactional
@@ -213,8 +216,15 @@ public class UserService {
 //        return res;
 //    }
 
-    public List<SelUserOrderPastCheckRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
-        List<SelUserOrderPastCheckRes> res = userMapper.selUserActiveOrderCheck(p);
+    public UserActiveOrderRes getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
+        Long userId = authenticationFacade.getSignedUserId();
+
+        UserActiveOrderRes res = userMapper.selUserActiveOrderCheck(userId);
+
+        OrderGetReq orderGetReq = new OrderGetReq(res.getOrderId());
+        orderGetReq.setOrderId(res.getOrderId());
+
+        res.setOrderDetails(orderMapper.getOrderList(orderGetReq));
 
         return res;
     }

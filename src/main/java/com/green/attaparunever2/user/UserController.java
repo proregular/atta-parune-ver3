@@ -98,13 +98,13 @@ public class UserController {
 
     @GetMapping("activeOrderCheck")
     @Operation(summary = "진행중인 주문 내역 확인")
-    public ResultResponse<List<SelUserOrderPastCheckRes>> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
-        List<SelUserOrderPastCheckRes> resList = userService.getUserActiveOrderCheck(p);
+    public ResultResponse<UserActiveOrderRes> getUserActiveOrderCheck(SelUserOrderPastCheckReq p) {
+        UserActiveOrderRes res = userService.getUserActiveOrderCheck(p);
 
-        return ResultResponse.<List<SelUserOrderPastCheckRes>>builder()
+        return ResultResponse.<UserActiveOrderRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("진행 주문 내역 확인")
-                .resultData(resList)
+                .resultData(res)
                 .build();
 
     }
