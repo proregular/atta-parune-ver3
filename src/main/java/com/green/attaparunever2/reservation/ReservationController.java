@@ -16,4 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "예약", description = "예약 관리")
 public class ReservationController {
     private final ReservationService reservationService;
+
+    @PostMapping
+    @Operation(summary = "예약 요청")
+    public ResultResponse<Integer> postReservation(@RequestBody ReservationPostReq req) {
+        int result = reservationService.postReservation(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("예약 요청 완료")
+                .resultData(result)
+                .build();
+    }
 }

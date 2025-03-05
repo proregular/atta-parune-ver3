@@ -259,18 +259,6 @@ public class UserController {
                 .build();
     }*/
 
-    @PostMapping("reservation")
-    @Operation(summary = "예약 요청")
-    public ResultResponse<Long> postReservation(@RequestBody ReservationPostReq req) {
-        Long result = reservationService.postReservation(req);
-
-        return ResultResponse.<Long>builder()
-                .statusCode("200")
-                .resultMsg("예약 요청 완료")
-                .resultData(result)
-                .build();
-    }
-
     //2차 기능 개선---------------------------------------------------------------------------------
     @GetMapping("/alert")
     @Operation(summary = "사용자 알람 데이터")

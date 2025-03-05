@@ -14,14 +14,12 @@ import java.util.List;
 public class ReservationPostReq {
     @JsonIgnore
     private long reservationId; // 예약 후 변경 없을 시 10분 뒤에 자동 취소 처리를 위해 필요.
-    @Schema(title = "주문 PK(예약요청 알림 전송을 위해 필요 프론트에서는 보낼 필요 없습니다.)")
-    private long orderId;
     @Schema(title = "식당 PK(예약요청 알림 전송을 위해 필요)", requiredMode = Schema.RequiredMode.REQUIRED)
     private long restaurantId;
     @Schema(title = "유저 PK(다른 예약 여부 확인을 위해 필요)", requiredMode = Schema.RequiredMode.REQUIRED)
     private long userId;
     @Schema(title = "예약 시간")
-    private String reservationTime;
+    private LocalDateTime reservationTime;
     @Schema(title = "예약 인원 수")
     private int reservationPeopleCount;
     @Schema(title = "사용자 연락처")
