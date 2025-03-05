@@ -18,4 +18,5 @@
         WHERE A.restaurant_id = #{restaurantId}
         AND B.user_id = #{userId}
     </select>
+
 </mapper>
