@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminMapper;
 import com.green.attaparunever2.admin.AdminRepository;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPointHistory;
-import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
+import com.green.attaparunever2.admin.company.model.*;
 import com.green.attaparunever2.admin.model.AdminGetReq;
 import com.green.attaparunever2.admin.model.AdminGetRes;
 import com.green.attaparunever2.common.delayed.DelayedTaskScheduler;
@@ -205,6 +203,20 @@ public class AdminCompanyService {
         Long adminId = 1L;//authenticationFacade.getSignedUserId();
 
         List<AdminCompanyPointHistory> resList = adminCompanyMapper.selCompanyPointHistoryByAdminId(adminId);
+
+        return resList;
+    }
+
+    //포인트 구매 이력
+    public List<SelPurchaseHistoryRes> getPurchaseHistory(SelPurchaseHistoryReq req){
+        List<SelPurchaseHistoryRes> resList = adminCompanyMapper.selPurchaseHistory(req);
+
+        return resList;
+    }
+
+    //포인트 입금 내역
+    public List<SelDepositDetailRes> getDepositDetail(SelDepositDetailReq req){
+        List<SelDepositDetailRes> resList = adminCompanyMapper.selDepositDetail(req);
 
         return resList;
     }

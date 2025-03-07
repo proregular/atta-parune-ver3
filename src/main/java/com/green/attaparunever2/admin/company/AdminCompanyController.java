@@ -3,10 +3,7 @@ package com.green.attaparunever2.admin.company;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.green.attaparunever2.admin.AdminService;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPaymentTempPostReq;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPointHistory;
-import com.green.attaparunever2.admin.company.model.AdminCompanyPointPatchReq;
-import com.green.attaparunever2.admin.company.model.AdminCompanyUserPointPatchReq;
+import com.green.attaparunever2.admin.company.model.*;
 import com.green.attaparunever2.admin.model.InsCompanyEnrollmentReq;
 import com.green.attaparunever2.admin.model.SelCompanyEnrollmentRes;
 import com.green.attaparunever2.admin.model.getCompanyPaymentRes;
@@ -207,4 +204,29 @@ public class AdminCompanyController {
                 .resultData(resList)
                 .build();
     }
+
+    @GetMapping("v3/purchaseHistory")
+    @Operation(summary = "회사 포인트 구매 이력")
+    public ResultResponse<List<SelPurchaseHistoryRes>> getPurchaseHistory(SelPurchaseHistoryReq req){
+        List<SelPurchaseHistoryRes> res = adminCompanyService.getPurchaseHistory(req);
+
+        return ResultResponse.<List<SelPurchaseHistoryRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 포인트 구매 이력 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/depositDetail")
+    @Operation(summary = "포인트 입금 내역")
+    public ResultResponse<List<SelDepositDetailRes>> getDepositDetail(SelDepositDetailReq req){
+        List<SelDepositDetailRes> res = adminCompanyService.getDepositDetail(req);
+
+        return ResultResponse.<List<SelDepositDetailRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("포인트 입금 내역 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
 }
