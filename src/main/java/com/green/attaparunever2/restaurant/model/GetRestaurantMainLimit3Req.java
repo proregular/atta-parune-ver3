@@ -9,4 +9,6 @@ import lombok.Setter;
 public class GetRestaurantMainLimit3Req {
     @JsonIgnore
     private int filterType;
+
+    private Long userId;
 }

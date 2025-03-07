@@ -30,5 +30,5 @@ public class RestaurantAroundGetReq {
     private double sysMaxLat;
     @JsonIgnore
     private double sysMaxLng;
-
+    private Long userId;
 }

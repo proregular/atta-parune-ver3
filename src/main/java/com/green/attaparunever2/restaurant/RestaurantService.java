@@ -1,8 +1,10 @@
 package com.green.attaparunever2.restaurant;
 
 
+import com.green.attaparunever2.admin.restaurant.AdminRestaurantMapper;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
+import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.Holiday;
 import com.green.attaparunever2.entity.Restaurant;
 import com.green.attaparunever2.order.OrderMapper;
@@ -26,10 +28,7 @@ import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -42,6 +41,8 @@ public class RestaurantService {
     private final OrderMapper orderMapper;
     private final RestaurantRepository restaurantRepository;
     private final HolidayRepository holidayRepository;
+    private final AuthenticationFacade authenticationFacade;
+    private final AdminRestaurantMapper adminRestaurantMapper;
 
     public long postRestaurant(InsRestaurantReq p){
         int result = restaurantMapper.insRestaurant(p);
@@ -276,18 +277,38 @@ public class RestaurantService {
 
     // 메인 화면 식당 리스트 조회
     public List<GetRestaurantMainRes> getRestaurantMainV3(GetRestaurantMainReq req){
+
         // 식당 정보 불러오기
         List<GetRestaurantMainRes> restaurantList = restaurantMapper.selRestaurantMainV3(req);
 
-        // 식당 사진 불러오기
-        for (GetRestaurantMainRes restaurant : restaurantList) {
-            List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
+        // 블랙리스트에 등록되지 않은 식당만 조회
+        if (req.getUserId() != null) {
+            List<GetRestaurantMainRes> filteredList = new ArrayList<>();
 
-            if(!picList.isEmpty()) {
-                restaurant.setRestaurantAroundPicList(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
+            for (GetRestaurantMainRes restaurant : restaurantList) {
+                int blackListCount = adminRestaurantMapper.selBlackListCount(restaurant.getRestaurantId(), req.getUserId());
+
+                if (blackListCount == 0) {
+                    filteredList.add(restaurant);
+                }
             }
+            restaurantList = filteredList;
         }
 
+        // 식당 사진 불러오기
+        for (GetRestaurantMainRes restaurant : restaurantList) {
+            // 로그인한 사용자가 없거나, 블랙리스트에 등록되지 않은 경우에만 사진을 조회
+            if (req.getUserId() == null || adminRestaurantMapper.selBlackListCount(restaurant.getRestaurantId(), req.getUserId()) == 0) {
+                List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
+
+                if (!picList.isEmpty()) {
+                    restaurant.setRestaurantAroundPicList(picList.get(0));  // 메인화면의 식당 사진은 하나만 사용하므로 첫번째 사진만 설정
+                }
+            } else {
+                // 블랙리스트에 등록된 사용자는 사진 조회 불가
+                restaurant.setRestaurantAroundPicList(null);
+            }
+        }
         return restaurantList;
     }
 
@@ -299,6 +320,20 @@ public class RestaurantService {
 
         // 식당 정보 불러오기
         List<GetRestaurantMainLimit3Res> restaurantList = restaurantMapper.selRestaurantMainV3Limit3(req);
+
+        // 블랙리스트에 등록되지 않은 식당만 조회
+        if (req.getUserId() != null) {
+            List<GetRestaurantMainLimit3Res> filteredList = new ArrayList<>();
+
+            for (GetRestaurantMainLimit3Res restaurant : restaurantList) {
+                int blackListCount = adminRestaurantMapper.selBlackListCount(restaurant.getRestaurantId(), req.getUserId());
+
+                if (blackListCount == 0) {
+                    filteredList.add(restaurant);
+                }
+            }
+            restaurantList = filteredList;
+        }
 
         // 식당 사진 불러오기
         for (GetRestaurantMainLimit3Res restaurant : restaurantList) {
@@ -328,6 +363,20 @@ public class RestaurantService {
         // 식당 리스트 조회
         List<RestaurantAroundGetRes> restaurantList = restaurantMapper.selRestaurantAroundV3(req);
 
+        // 블랙리스트에 등록되지 않은 식당만 조회
+        if (req.getUserId() != null) {
+            List<RestaurantAroundGetRes> filteredList = new ArrayList<>();
+
+            for (RestaurantAroundGetRes restaurant : restaurantList) {
+                int blackListCount = adminRestaurantMapper.selBlackListCount(restaurant.getRestaurantId(), req.getUserId());
+
+                if (blackListCount == 0) {
+                    filteredList.add(restaurant);
+                }
+            }
+            restaurantList = filteredList;
+        }
+
         for (RestaurantAroundGetRes restaurant : restaurantList) {
             // 각 식당에 대해 사진 리스트를 가져오기
             List<RestaurantPicDto> picList = restaurantPicMapper.selRestaurantPicByRestaurantIdV3(restaurant.getRestaurantId());
@@ -335,6 +384,7 @@ public class RestaurantService {
             // 사진 리스트를 해당 식당 객체에 설정
             restaurant.setRestaurantArroundPicList(picList);
         }
+
         return restaurantList;
     }
 

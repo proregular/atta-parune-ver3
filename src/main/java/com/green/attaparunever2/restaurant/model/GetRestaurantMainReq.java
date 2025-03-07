@@ -1,5 +1,6 @@
 package com.green.attaparunever2.restaurant.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.attaparunever2.common.model.Paging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -20,6 +21,8 @@ public class GetRestaurantMainReq extends Paging {
     @Max(value = 1, message = "filterType은 1 이하이어야 합니다.")
     @Schema(description = "정렬 필터(null: 기본순, 0: 평균 별점 순, 1: 리뷰 순")
     private Integer filterType;
+
+    private Long userId;
 
     public GetRestaurantMainReq(Integer page, Integer size, long categoryId, Integer filterType) {
         super(page, size);
