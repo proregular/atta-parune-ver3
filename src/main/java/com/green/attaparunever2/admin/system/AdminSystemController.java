@@ -1,10 +1,7 @@
 package com.green.attaparunever2.admin.system;
 
 import com.green.attaparunever2.admin.AdminService;
-import com.green.attaparunever2.admin.model.InsAnnouncementReq;
-import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
-import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
-import com.green.attaparunever2.admin.model.SelRefundRes;
+import com.green.attaparunever2.admin.model.*;
 import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.common.repository.CodeRepository;
@@ -29,7 +26,7 @@ public class AdminSystemController {
     private final AdminService adminService;
     private final AdminSystemService adminSystemService;
 
-    @PostMapping("v3/announcement")
+    /*@PostMapping("v3/announcement")
     @Operation(summary = "공지사항 등록하기")
     public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
             , @RequestPart InsAnnouncementReq req){
@@ -40,7 +37,7 @@ public class AdminSystemController {
                 .resultMsg("공지사항 등록완료")
                 .resultData(result)
                 .build();
-    }
+    }*/
 
     @GetMapping("v3/Refund")
     @Operation(summary = "환불 내역 조회")
@@ -172,6 +169,18 @@ public class AdminSystemController {
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("정산 내역 조회 완료")
                 .resultData(resList)
+                .build();
+    }
+
+    @GetMapping("v3/payment")
+    @Operation(summary = "회사 포인트 판매 내역 조회")
+    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
+        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+
+        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 포인트 판매 내역조회")
+                .resultData(res)
                 .build();
     }
 }

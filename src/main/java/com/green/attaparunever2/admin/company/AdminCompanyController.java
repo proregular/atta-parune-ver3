@@ -123,7 +123,7 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @GetMapping("v3/payment")
+    /*@GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
     public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
         List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
@@ -133,7 +133,7 @@ public class AdminCompanyController {
                 .resultMsg("회사 포인트 판매 내역조회")
                 .resultData(res)
                 .build();
-    }
+    }*/
 
     @PostMapping("v3/refund")
     @Operation(summary = "환불 요청")
