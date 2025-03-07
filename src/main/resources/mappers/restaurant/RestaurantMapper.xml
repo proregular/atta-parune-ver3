@@ -255,9 +255,9 @@
         ON O.order_id = R.order_id
         JOIN `admin` C
         ON A.restaurant_id = C.division_id
+        AND C.coalition_state = 0
         WHERE A.`status` = 0
         AND A.category_id = #{categoryId}
-        AND C.coalition_state = 0
         GROUP BY A.restaurant_id
         ORDER BY
         CASE
