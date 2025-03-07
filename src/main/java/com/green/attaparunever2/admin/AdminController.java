@@ -52,7 +52,7 @@ public class AdminController {
                 .build();
     }
 
-    @PostMapping("v3/sign-in")
+    @PostMapping("sign-in")
     @Operation(summary = "관리자 로그인")
     public ResultResponse<?> signInAdmin(@RequestBody SignInAdminReq p, HttpServletResponse response) {
         SignInAdminRes res = adminService.signInAdmin(p, response);
@@ -104,8 +104,8 @@ public class AdminController {
                 .build();
     }
 
-    @PostMapping("v3/sign-up")
-    @Operation(summary = "시스템 관리자 회원가입")
+    @PostMapping("sign-up")
+    @Operation(summary = "시스템 관리자 회원가입(백엔드 전용 컨트롤러)")
     public ResultResponse<Integer> signUpAdmin(@RequestBody SignAdminReq p) {
         int result = adminService.SignUpAdmin(p);
 
