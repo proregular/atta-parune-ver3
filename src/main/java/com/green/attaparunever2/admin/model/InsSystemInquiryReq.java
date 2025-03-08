@@ -3,6 +3,8 @@ package com.green.attaparunever2.admin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -31,4 +33,8 @@ public class InsSystemInquiryReq {
     @NotNull(message = "권한 PK를 입력해주세요")
     @Schema(description = "권한 PK(adminId, userId)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
+    @Min(value = 0, message = "게시글 유형은 0 또는 1이어야 합니다.")
+    @Max(value = 1, message = "게시글 유형은 0 또는 1이어야 합니다.")
+    @Schema(description = "게시글 유형 (0: 자주 묻는 질문, 1: 공지 및 게시판)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private int postType;
 }

@@ -461,20 +461,27 @@ public class AdminService {
             throw new CustomException("유효하지 않은 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        switch (req.getPostCode()) {
-            case "00201": // 공지사항
-                if (!"00103".equals(req.getRoleCode())) {
-                    throw new CustomException("공지사항 등록은 관리자만 가능합니다.", HttpStatus.FORBIDDEN);
-                }
-                break;
-            case "00202": // 문의사항
-            case "00203": // 불편사항
-                if ("00103".equals(req.getRoleCode())) { // ROLE_ADMIN은 불가
-                    throw new CustomException("관리자는 문의사항 또는 불편사항을 등록할 수 없습니다.", HttpStatus.FORBIDDEN);
-                }
-                break;
-            case "00204": // 자주 묻는 질문
-                break;
+        // 추가) 게시글 유형 (0: 자주묻는 질문, 1: 공지 및 게시판)
+        int postType = req.getPostType();
+
+        if (postType == 0) {
+            if (!"00103".equals(req.getRoleCode())) {
+                throw new CustomException("자주 묻는 질문은 관리자만 작성할 수 있습니다.", HttpStatus.FORBIDDEN);
+            }
+        } else if (postType == 1) {
+            switch (req.getPostCode()) {
+                case "00201": // 공지사항
+                    if (!"00103".equals(req.getRoleCode())) {
+                        throw new CustomException("공지사항 등록은 관리자만 가능합니다.", HttpStatus.FORBIDDEN);
+                    }
+                    break;
+                case "00202": // 문의사항
+                case "00203": // 불편사항
+                    if ("00103".equals(req.getRoleCode())) { // ROLE_ADMIN은 불가
+                        throw new CustomException("관리자는 문의사항 또는 불편사항을 등록할 수 없습니다.", HttpStatus.FORBIDDEN);
+                    }
+                    break;
+            }
         }
 
         String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
