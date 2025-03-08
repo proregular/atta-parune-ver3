@@ -468,6 +468,10 @@ public class AdminService {
             if (!"00103".equals(req.getRoleCode())) {
                 throw new CustomException("자주 묻는 질문은 관리자만 작성할 수 있습니다.", HttpStatus.FORBIDDEN);
             }
+
+            if (!"00204".equals(req.getPostCode())) {
+                throw new CustomException("잘못된 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
+            }
         } else if (postType == 1) {
             switch (req.getPostCode()) {
                 case "00201": // 공지사항
