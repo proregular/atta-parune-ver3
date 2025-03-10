@@ -21,7 +21,7 @@ import java.util.List;
 public class OrderController {
     private final OrderService service;
 
-    @PostMapping("/whit-detail")
+    @PostMapping("/with-detail")
     @Operation(summary = "주문 정보 등록")
     public ResultResponse<Long> postOrderWithDetail(@Valid @RequestBody OrderPostReq p, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
