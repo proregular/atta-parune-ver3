@@ -195,10 +195,10 @@ public class AdminCompanyController {
 
     @GetMapping("v3/purchaseHistory")
     @Operation(summary = "회사 포인트 구매 이력")
-    public ResultResponse<List<SelPurchaseHistoryRes>> getPurchaseHistory(SelPurchaseHistoryReq req){
-        List<SelPurchaseHistoryRes> res = adminCompanyService.getPurchaseHistory(req);
+    public ResultResponse<CompanyPurchaseHistoryGetRes> getPurchaseHistory(SelPurchaseHistoryReq req){
+        CompanyPurchaseHistoryGetRes res = adminCompanyService.getPurchaseHistory(req);
 
-        return ResultResponse.<List<SelPurchaseHistoryRes>>builder()
+        return ResultResponse.<CompanyPurchaseHistoryGetRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 포인트 구매 이력 조회 완료")
                 .resultData(res)
@@ -207,10 +207,10 @@ public class AdminCompanyController {
 
     @GetMapping("v3/depositDetail")
     @Operation(summary = "포인트 입금 내역")
-    public ResultResponse<List<SelDepositDetailRes>> getDepositDetail(SelDepositDetailReq req){
-        List<SelDepositDetailRes> res = adminCompanyService.getDepositDetail(req);
+    public ResultResponse<CompanyDepositHistoryGetRes> getDepositDetail(SelDepositDetailReq req){
+        CompanyDepositHistoryGetRes res = adminCompanyService.getDepositDetail(req);
 
-        return ResultResponse.<List<SelDepositDetailRes>>builder()
+        return ResultResponse.<CompanyDepositHistoryGetRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("포인트 입금 내역 조회 완료")
                 .resultData(res)
