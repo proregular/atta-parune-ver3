@@ -108,18 +108,6 @@ public class AdminCompanyController {
                 .build();
     }
 
-    @GetMapping("v3/enrollment")
-    @Operation(summary = "회사 제휴신청서 보기")
-    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
-        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
-
-        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("회사 제휴신청서 보기 완료")
-                .resultData(res)
-                .build();
-    }
-
     /*@GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
     public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
