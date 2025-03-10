@@ -11,7 +11,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class GetReviewReq extends Paging {
-    @JsonIgnore
     @Schema(description = "사용자 pk")
     private Long userId;
     @Schema(description = "시작일")
