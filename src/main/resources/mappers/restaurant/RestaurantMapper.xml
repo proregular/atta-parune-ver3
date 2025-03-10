@@ -248,6 +248,7 @@
         FROM meal_time B
         WHERE B.restaurant_id = A.restaurant_id
         AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS avgRestaurant
+        , IFNULL(AVG(R.rating), 0) AS avgRating
         FROM restaurant A
         LEFT JOIN `order` O
         ON A.restaurant_id = O.restaurant_id
