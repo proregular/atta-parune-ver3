@@ -635,6 +635,13 @@ public class AdminService {
         Admin admin = adminRepository.findById(req.adminId)
                 .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
+        String adminCode = admin.getCode().getCode();
+
+        // 식당 or 회사 관리자인지 확인
+        if (!"00101".equals(adminCode) && !"00102".equals(adminCode)) {
+            throw new CustomException("제휴상태 변경 요청을 할 수 없는 관리자입니다.", HttpStatus.BAD_REQUEST);
+        }
+
         switch (admin.getCoalitionState()) {
             case 0:
                 // 활성화 상태일 경우 비활성화 요청
