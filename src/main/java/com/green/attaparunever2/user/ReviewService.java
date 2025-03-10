@@ -158,9 +158,7 @@ public class ReviewService {
 
         Long signedUserId = authenticationFacade.getSignedUserId();
 
-        if (!p.getUserId().equals(signedUserId)) {
-            throw new RuntimeException("본인이 작성한 리뷰만 조회할 수 있습니다.");
-        }
+        p.setUserId(signedUserId);
 
         List<GetReviewDto> reviewDtoList = reviewMapper.getReviewList(p);
 
