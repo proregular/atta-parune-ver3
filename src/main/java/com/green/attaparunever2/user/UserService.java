@@ -230,12 +230,14 @@ public class UserService {
     }
 
 
-    public SelUserOrderPastCheckRes getUserOrderCheck(SelUserOrderPastCheckReq req){
-       SelUserOrderPastCheckRes res = userMapper.selUserOrderPastCheck(req);
-       List<SelUserOrderPastCheckDto> list = userMapper.selUserOrderMenuPastCheck(req);
-       res.setPastDtoList(list);
-
-       return res;
+    public List<SelUserOrderPastCheckRes> getUserOrderCheck(){
+        long signedUserId = authenticationFacade.getSignedUserId();
+        List<SelUserOrderPastCheckRes> res = userMapper.selUserOrderPastCheck(signedUserId);
+        for(SelUserOrderPastCheckRes item : res){
+            List<SelUserOrderPastCheckDto> list = userMapper.selUserOrderMenuPastCheck(item.getOrderId());
+            item.setPastDtoList(list);
+        }
+        return res;
     }
 
     public GetUserOrderVer2Res getUserOrder(GetUserOrderVer2Req p) {

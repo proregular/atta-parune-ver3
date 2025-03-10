@@ -355,18 +355,20 @@
     </select>
 
     <select id="selUserOrderPastCheck">
-        SELECT A.restaurant_id AS restaurantId, A.restaurant_name AS restaurantName
+        SELECT A.restaurant_id AS restaurantId, B.order_id AS orderId
+        , A.restaurant_name AS restaurantName
         , B.created_at AS createdAt, B.reservation_yn AS reservationYn
         , (SUM(C.menu_count * C.price)) AS price
         , IFNULL((SELECT 1 FROM review B WHERE B.order_id = D.order_id LIMIT 1), 0) AS reviewStatus
         FROM restaurant A
-        INNER JOIN `order` B
+        LEFT JOIN `order` B
         ON A.restaurant_id = B.restaurant_id
-        INNER JOIN order_detail C
+        LEFT JOIN order_detail C
         ON B.order_id = C.order_id
         LEFT JOIN review D
         ON B.order_id = D.order_id
-        WHERE B.order_id = #{orderId}
+        WHERE B.user_id = #{signedUserId}
+        GROUP BY B.order_id;
     </select>
 
     <select id="selUserOrderMenuPastCheck">
