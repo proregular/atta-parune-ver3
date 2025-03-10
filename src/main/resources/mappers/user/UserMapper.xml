@@ -281,9 +281,8 @@
         SELECT A.user_id AS userId
         , B.name AS companyName
         , A.company_id AS companyId
-        , A.role_id AS roleId
         , A.nick_name AS nickName
-        , A.uid, A.upw, A.name, A.pic
+        , A.uid, A.name, A.user_pic AS userPic
         , A.email, A.phone, A.point
         FROM user A INNER JOIN company B
         ON A.company_id = B.company_id

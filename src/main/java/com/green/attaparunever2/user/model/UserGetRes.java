@@ -14,6 +14,7 @@ public class UserGetRes {
     private String companyName;
     private String uid;
     private String name;
+    private String nickName;
     private String usePic;
     private String email;
     private String phone;
