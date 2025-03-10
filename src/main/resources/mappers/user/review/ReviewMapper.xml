@@ -70,5 +70,4 @@
         FROM review_pic
         WHERE order_id = #{orderId}
     </select>
-
 </mapper>

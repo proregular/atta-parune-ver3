@@ -54,7 +54,7 @@
 
     <select id="selAdminByAdminId">
         SELECT A.admin_id AS adminId, A.code, A.aid, A.apw, A.name, B.name AS role, A.email, A.phone, A.division_id AS companyId
-        FROM admin INNER JOIN code B
+        FROM admin A INNER JOIN code B
         ON A.code = B.code
         WHERE admin_id = #{adminId}
     </select>
