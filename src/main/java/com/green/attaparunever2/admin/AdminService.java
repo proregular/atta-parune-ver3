@@ -627,16 +627,30 @@ public class AdminService {
         Admin admin = adminRepository.findById(req.adminId)
                 .orElseThrow(() -> new CustomException("관리자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
 
-        // 활성화일 경우 비활성화 요청
-        if (admin.getCoalitionState() == 0) {
-            admin.setCoalitionState(2);
-            adminRepository.save(admin);
-        }
+        switch (admin.getCoalitionState()) {
+            case 0:
+                // 활성화 상태일 경우 비활성화 요청
+                admin.setCoalitionState(2);
+                adminRepository.save(admin);
+                break;
 
-        // 비활성화일 경우 활성화 요청
-        if (admin.getCoalitionState() == 1) {
-            admin.setCoalitionState(3);
-            adminRepository.save(admin);
+            case 1:
+                // 비활성화 상태일 경우 활성화 요청
+                admin.setCoalitionState(3);
+                adminRepository.save(admin);
+                break;
+
+            case 2:
+                // 비활성화 요청 취소하려는 경우
+                admin.setCoalitionState(0);
+                adminRepository.save(admin);
+                break;
+
+            case 3:
+                // 활성화 요청 취소하려는 경우
+                admin.setCoalitionState(1);
+                adminRepository.save(admin);
+                break;
         }
 
         return 1;
