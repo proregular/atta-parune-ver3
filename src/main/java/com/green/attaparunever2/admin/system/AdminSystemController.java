@@ -6,8 +6,11 @@ import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.entity.Code;
+import com.green.attaparunever2.user.model.GetReviewReq;
+import com.green.attaparunever2.user.model.GetReviewRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
@@ -207,4 +210,17 @@ public class AdminSystemController {
                 .resultData(res)
                 .build();
     }
+
+    @GetMapping("v3/review")
+    @Operation(summary = "리뷰 삭제 요청 리스트 보기")
+    public ResultResponse<List<GetReviewRequestDto>> getReviewRequestList(@ParameterObject @ModelAttribute @Valid GetReviewReq p) {
+        List<GetReviewRequestDto> res = adminSystemService.getReviewRequestList(p);
+
+        return ResultResponse.<List<GetReviewRequestDto>>builder()
+                .statusCode("200")
+                .resultMsg("리뷰 삭제 요청 리스트 보기 완료")
+                .resultData(res)
+                .build();
+    }
+
 }

@@ -10,5 +10,7 @@ public interface AdminCompanyMapper {
     List<AdminCompanyPointHistory> selCompanyPointHistoryByAdminId(long adminId);
 
     List<SelPurchaseHistoryRes> selPurchaseHistory(SelPurchaseHistoryReq req);
+    int selPurchaseHistoryTotalCount(SelPurchaseHistoryReq req);
     List<SelDepositDetailRes> selDepositDetail(SelDepositDetailReq req);
+    int selDepositTotalCount(SelDepositDetailReq req);
 }

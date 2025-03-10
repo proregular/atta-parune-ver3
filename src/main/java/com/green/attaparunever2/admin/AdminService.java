@@ -598,7 +598,7 @@ public class AdminService {
 
         // 페이지 개수 구하기
         int totalListCount = adminMapper.selPostCount();
-        int totalPageCount = (int)Math.ceil(totalListCount / adjustedPaging.getPage());
+        int totalPageCount = (int)Math.ceil(totalListCount / adjustedPaging.getSize());
 
         res.setTotalPageCount(totalPageCount);
         res.setPostList(resultPosts);

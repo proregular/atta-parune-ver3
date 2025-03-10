@@ -1,6 +1,7 @@
 package com.green.attaparunever2.company;
 
 import com.green.attaparunever2.admin.AdminRepository;
+import com.green.attaparunever2.admin.company.model.AdminCompanyEmployeeGetRes;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.repository.CodeRepository;
@@ -187,8 +188,11 @@ public class CompanyService {
         return 1;
     }
 
-    public List<GetEmployeeRes> getEmployee(GetEmployeeReq req) {
+    public AdminCompanyEmployeeGetRes getEmployee(GetEmployeeReq req) {
+        AdminCompanyEmployeeGetRes res = new AdminCompanyEmployeeGetRes();
         List<GetEmployeeRes> list = companyMapper.selEmployee(req);
+        int listTotalCount = companyMapper.selEmployeeCount(req);
+        int totalPageCount = (int)Math.ceil(listTotalCount / req.getSize());
 
         // 관리자 권한 조회
         Long signedAdminId = authenticationFacade.getSignedUserId();
@@ -201,7 +205,10 @@ public class CompanyService {
             throw new CustomException("조건에 맞는 사원이 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        return list;
+        res.setEmployeeList(list);
+        res.setTotalPageCount(totalPageCount);
+
+        return res;
     }
 
     @Transactional
