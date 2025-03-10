@@ -297,7 +297,6 @@ public class AdminSystemService {
             reviewRepository.save(review);
             return 1;
         }
-
         // 상태값이 1일 경우 승인
         else if (status == 1) {
             review.setReviewStatus(1);
