@@ -29,4 +29,5 @@ public interface AdminMapper {
     SelOneSystemPostRes selOneSystemPost(SystemPostDetailGetReq req);
     List<SelSystemPostRes> selSystemBoard();
     List<SelSystemPostRes> selSystemPost(int startIdx, Integer size);
+    int selPostCount();
 }

@@ -1,6 +1,7 @@
 package com.green.attaparunever2.admin;
 
 import com.green.attaparunever2.admin.model.AdminSignUpReq;
+import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
@@ -579,8 +580,8 @@ public class AdminService {
 
     // 게시글 조회
     @Transactional
-    public List<SelSystemPostRes> getSystemPost(Paging paging) {
-
+    public SystemPostGetRes getSystemPost(Paging paging) {
+        SystemPostGetRes res = new SystemPostGetRes();
         Paging adjustedPaging = new Paging(paging.getPage(), 10);
 
         List<SelSystemPostRes> resultPosts = new ArrayList<>();
@@ -595,7 +596,14 @@ public class AdminService {
             resultPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), adjustedPaging.getSize());
         }
 
-        return resultPosts;
+        // 페이지 개수 구하기
+        int totalListCount = adminMapper.selPostCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / adjustedPaging.getPage());
+
+        res.setTotalPageCount(totalPageCount);
+        res.setPostList(resultPosts);
+
+        return res;
         }
 
     // 게시글 삭제
