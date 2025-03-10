@@ -170,6 +170,13 @@
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 
+    <!-- 전체 게시글 count: 공지사항 제외(공지사항은 무조건3개) -->
+    <select id="selPostCount">
+        SELECT COUNT(*)
+        FROM system_post
+        WHERE post_code != '00201'
+    </select>
+
     <select id="selCompanyPointHistoryByAdminId">
         SELECT E.*
         FROM (

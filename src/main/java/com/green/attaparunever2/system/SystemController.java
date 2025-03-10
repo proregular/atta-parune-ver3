@@ -5,6 +5,7 @@ import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
 import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
 import com.green.attaparunever2.admin.model.SelSystemPostRes;
 import com.green.attaparunever2.admin.model.SystemPostDetailGetReq;
+import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
 import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.system.model.UpdSystemPostReq;
@@ -66,15 +67,15 @@ public class SystemController {
 
     @GetMapping("v3/post")
     @Operation(summary = "게시글 조회하기")
-    public ResultResponse<List<SelSystemPostRes>> getSystemPost(
+    public ResultResponse<SystemPostGetRes> getSystemPost(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
 
         Paging paging = new Paging(page, size);
 
-        List<SelSystemPostRes> res = adminService.getSystemPost(paging);
+        SystemPostGetRes res = adminService.getSystemPost(paging);
 
-        return ResultResponse.<List<SelSystemPostRes>>builder()
+        return ResultResponse.<SystemPostGetRes>builder()
                 .statusCode("200")
                 .resultMsg("게시글 조회가 완료되었습니다.")
                 .resultData(res)
