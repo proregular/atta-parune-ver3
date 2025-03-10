@@ -14,6 +14,16 @@
         LIMIT #{startIdx}, #{size}
     </select>
 
+    <select id="selPurchaseHistoryTotalCount">
+        SELECT COUNT(*)
+        FROM company_point_deposit A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON B.division_id = C.company_id
+        WHERE C.company_id = #{companyId}
+    </select>
+
     <select id="selDepositDetail">
         SELECT A.created_at AS createdAt, A.point_amount AS pointAmount
             , A.user_id AS userId, D.`name`
@@ -26,5 +36,15 @@
         ON A.user_id = D.user_id
         WHERE C.company_id = #{companyId}
         LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="selDepositTotalCount">
+        SELECT COUNT(*)
+        FROM user_point_deposit A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON B.division_id = C.company_id
+        WHERE C.company_id = #{companyId}
     </select>
 </mapper>

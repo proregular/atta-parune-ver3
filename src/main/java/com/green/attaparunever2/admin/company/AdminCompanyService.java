@@ -123,7 +123,7 @@ public class AdminCompanyService {
     // 회사 >> 사용자 포인트 입금
     @Transactional
     public void patchPointUser(AdminCompanyUserPointPatchReq req) {
-        Long adminId = 1L;//authenticationFacade.getSignedUserId();
+        Long adminId = authenticationFacade.getSignedUserId();
 
         // 어드민 정보 가져옴
         Admin admin = adminRepository.findById(adminId).orElseThrow();
@@ -200,7 +200,7 @@ public class AdminCompanyService {
 
     // 관리자 정보 조회
     public List<AdminCompanyPointHistory> getCompanyPointHistoryByAdminId() {
-        Long adminId = 1L;//authenticationFacade.getSignedUserId();
+        Long adminId = authenticationFacade.getSignedUserId();
 
         List<AdminCompanyPointHistory> resList = adminCompanyMapper.selCompanyPointHistoryByAdminId(adminId);
 
@@ -208,16 +208,28 @@ public class AdminCompanyService {
     }
 
     //포인트 구매 이력
-    public List<SelPurchaseHistoryRes> getPurchaseHistory(SelPurchaseHistoryReq req){
+    public CompanyPurchaseHistoryGetRes getPurchaseHistory(SelPurchaseHistoryReq req){
+        CompanyPurchaseHistoryGetRes res = new CompanyPurchaseHistoryGetRes();
         List<SelPurchaseHistoryRes> resList = adminCompanyMapper.selPurchaseHistory(req);
+        int totalListCount = adminCompanyMapper.selPurchaseHistoryTotalCount(req);
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
 
-        return resList;
+        res.setTotalPageCount(totalPageCount);
+        res.setHistoryList(resList);
+
+        return res;
     }
 
     //포인트 입금 내역
-    public List<SelDepositDetailRes> getDepositDetail(SelDepositDetailReq req){
+    public CompanyDepositHistoryGetRes getDepositDetail(SelDepositDetailReq req){
+        CompanyDepositHistoryGetRes res = new CompanyDepositHistoryGetRes();
         List<SelDepositDetailRes> resList = adminCompanyMapper.selDepositDetail(req);
+        int totalListCount = adminCompanyMapper.selDepositTotalCount(req);
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
 
-        return resList;
+        res.setHistoryList(resList);
+        res.setTotalPageCount(totalPageCount);
+
+        return res;
     }
 }
