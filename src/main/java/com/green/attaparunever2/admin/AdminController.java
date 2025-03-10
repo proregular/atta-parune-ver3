@@ -128,4 +128,15 @@ public class AdminController {
                 .build();
     }
 
+    @PatchMapping("v3/coalition-request")
+    @Operation(summary = "식당, 회사 제휴상태 변경 요청")
+    public ResultResponse<Integer> patchAdminCoalitionState(@RequestBody UpdAdminCoalitionStateRequestReq req) {
+        int result = adminService.patchAdminCoalitionState(req);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode("200")
+                .resultMsg("제휴상태 변경 요청 성공")
+                .resultData(result)
+                .build();
+    }
 }
