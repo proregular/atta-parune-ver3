@@ -18,4 +18,15 @@
         ORDER BY A.uid ASC
         LIMIT #{startIdx}, #{size}
     </select>
+
+    <select id="selEmployeeCount">
+        SELECT COUNT(*)
+        FROM user A
+        INNER JOIN company B
+        ON A.company_id = B.company_id
+        INNER JOIN admin C
+        ON B.company_id = C.division_id
+        WHERE A.company_id = #{companyId}
+        AND C.admin_id = #{adminId}
+    </select>
 </mapper>

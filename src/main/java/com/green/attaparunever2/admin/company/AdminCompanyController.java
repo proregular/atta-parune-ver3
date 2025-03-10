@@ -50,13 +50,13 @@ public class AdminCompanyController {
 
     @GetMapping("v3/employee")
     @Operation(summary = "사원 정보 조회")
-    public ResultResponse<List<GetEmployeeRes>> getEmployee(@ParameterObject GetEmployeeReq req) {
-        List<GetEmployeeRes> list = companyService.getEmployee(req);
+    public ResultResponse<AdminCompanyEmployeeGetRes> getEmployee(@ParameterObject GetEmployeeReq req) {
+        AdminCompanyEmployeeGetRes res = companyService.getEmployee(req);
 
-        return ResultResponse.<List<GetEmployeeRes>>builder()
+        return ResultResponse.<AdminCompanyEmployeeGetRes>builder()
                 .statusCode("200")
                 .resultMsg("사원 정보 조회 성공")
-                .resultData(list)
+                .resultData(res)
                 .build();
     }
 

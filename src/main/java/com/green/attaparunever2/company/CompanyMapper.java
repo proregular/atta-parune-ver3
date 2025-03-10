@@ -9,4 +9,5 @@ import java.util.List;
 @Mapper
 public interface CompanyMapper {
     List<GetEmployeeRes> selEmployee(GetEmployeeReq req);
+    int selEmployeeCount(GetEmployeeReq req);
 }
