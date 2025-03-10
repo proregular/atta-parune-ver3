@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GetReviewReq extends Paging {
+public class GetReviewRequestReq extends Paging {
     @JsonIgnore
     @Schema(description = "사용자 pk")
     private Long userId;
@@ -19,7 +19,7 @@ public class GetReviewReq extends Paging {
     @Schema(description = "종료일")
     private String endDate;
 
-    public GetReviewReq(Integer page, Integer size) {
+    public GetReviewRequestReq(Integer page, Integer size) {
         super(page, size);
     }
 }
