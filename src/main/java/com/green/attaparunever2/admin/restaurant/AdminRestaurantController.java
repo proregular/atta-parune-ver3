@@ -162,18 +162,6 @@ public class AdminRestaurantController {
                 .build();
     }
 
-    @GetMapping("v3/enrollment")
-    @Operation(summary = "식당 입점신청서 보기")
-    public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
-        List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
-
-        return ResultResponse.<List<SelRestaurantEnrollmentRes>>builder()
-                .statusCode(HttpStatus.OK.toString())
-                .resultMsg("식당 입점신청서 보기 완료")
-                .resultData(res)
-                .build();
-    }
-
     @PostMapping("v3/enrollment")
     @Operation(summary = "식당 입점 신청서 작성")
     public ResultResponse<Integer> postRestaurantEnrollment(@RequestBody InsRestaurantEnrollmentReq req){
