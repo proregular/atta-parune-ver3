@@ -29,4 +29,49 @@
         GROUP BY B.restaurant_id
     </select>
 
+    <select id="getReviewRequestList">
+        SELECT
+        A.order_id AS orderId,
+        C.restaurant_name AS restaurantName,
+        A.review_text AS reviewText,
+        CASE
+        WHEN A.review_status = 1 THEN A.updated_at
+        ELSE NULL
+        END AS statusChangedAt
+        FROM review A
+        JOIN `order` B ON A.order_id = B.order_id
+        JOIN restaurant C ON B.restaurant_id = C.restaurant_id
+        WHERE B.user_id = #{userId}
+        <if test="startDate != null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            AND DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+
+        <if test="startDate != null and endDate == null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            )
+        </if>
+
+        <if test="startDate == null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+        ORDER BY A.created_at DESC
+        LIMIT #{size} OFFSET #{startIdx}
+    </select>
 </mapper>

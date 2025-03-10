@@ -9,6 +9,8 @@ import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
+import com.green.attaparunever2.user.model.GetReviewReq;
+import com.green.attaparunever2.user.model.GetReviewRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ public class AdminSystemService {
     private final SettlementListRepository settlementListRepository;
     private final SettlementDayRepository settlementDayRepository;
 
+    @Transactional
     public int patchCoalition(UpdCoalitionReq req) {
         // 관리자 로그인 인증
         Long signedAdminId = authenticationFacade.getSignedUserId();
@@ -46,6 +49,11 @@ public class AdminSystemService {
         // 식당 & 회사 관리자 정보 조회
         Admin admin = adminRepository.findById(req.getAdminCompanyAndRestaurantId())
                 .orElseThrow(() -> new CustomException("관리자 정보를 조회할 수 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 제휴 상태 변경 요청 중이 아닌 경우
+        if (admin.getCoalitionState() != 2 && admin.getCoalitionState() != 3) {
+            throw new CustomException("제휴 상태 변경 요청 중이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 제휴 상태 변경
         if (admin.getCoalitionState() == 2) {
@@ -233,5 +241,12 @@ public class AdminSystemService {
 
         return resList;
 
+    }
+
+    // 리뷰 삭제 요청 리스트
+    @Transactional
+    public List<GetReviewRequestDto> getReviewRequestList(GetReviewReq p) {
+        Long signedAdminId = authenticationFacade.getSignedUserId();
+        return null;
     }
 }

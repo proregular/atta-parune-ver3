@@ -2,6 +2,7 @@ package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.user.model.GetReviewDto;
 import com.green.attaparunever2.user.model.GetReviewReq;
+import com.green.attaparunever2.user.model.GetReviewRequestDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.repository.query.Param;
 
