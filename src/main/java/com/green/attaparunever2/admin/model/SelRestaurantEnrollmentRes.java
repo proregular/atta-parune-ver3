@@ -27,12 +27,12 @@ public class SelRestaurantEnrollmentRes {
     private int status;
     @Schema(description = "식당 인원수")
     private int maxCapacity;
-    @Schema(description = "식당 위도")
+    /*@Schema(description = "식당 위도")
     private double lat;
     @Schema(description = "식당 경도")
     private double lng;
     @Schema(description = "식당 간단 비밀번호")
-    private String paymentPassword;
+    private String paymentPassword;*/
     @Schema(description = "식당 신청 일자")
     private String createdAt;
 }

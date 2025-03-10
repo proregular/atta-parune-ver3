@@ -184,7 +184,7 @@ public class AdminSystemController {
                 .build();
     }
 
-    @GetMapping("v3/enrollment")
+    @GetMapping("v3/restaurant/enrollment")
     @Operation(summary = "식당 입점신청서 보기")
     public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
         List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
@@ -192,6 +192,18 @@ public class AdminSystemController {
         return ResultResponse.<List<SelRestaurantEnrollmentRes>>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("식당 입점신청서 보기 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/company/enrollment")
+    @Operation(summary = "회사 제휴신청서 보기")
+    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
+        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
+
+        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 제휴신청서 보기 완료")
                 .resultData(res)
                 .build();
     }
