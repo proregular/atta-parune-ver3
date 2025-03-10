@@ -13,6 +13,7 @@ import com.green.attaparunever2.user.ReviewMapper;
 import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
+import com.green.attaparunever2.user.model.GetReviewRequestReq;
 import com.green.attaparunever2.user.model.GetReviewRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -264,7 +265,7 @@ public class AdminSystemService {
 
     // 리뷰 삭제 요청 리스트
     @Transactional
-    public List<GetReviewRequestDto> getReviewRequestList(GetReviewReq p) {
+    public List<GetReviewRequestDto> getReviewRequestList(GetReviewRequestReq p) {
         Long signedAdminId = authenticationFacade.getSignedUserId();
         String adminCode = adminRepository.findCodeByAdminId(signedAdminId).getCode();
 
