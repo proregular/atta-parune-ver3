@@ -32,7 +32,7 @@
     
     <insert id="insAdmin" useGeneratedKeys="true" keyProperty="adminId">
         INSERT INTO `admin`
-           SET `role_id` = #{roleId}
+           SET `code` = 00103
              , aid = #{aid}
              , apw = #{apw}
              , `name` = #{name}

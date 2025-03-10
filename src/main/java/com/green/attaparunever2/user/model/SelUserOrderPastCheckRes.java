@@ -12,6 +12,9 @@ public class SelUserOrderPastCheckRes {
     @Schema(description = "레스토랑 PK")
     private long restaurantId;
 
+    @Schema(description = "주문 PK")
+    private long orderId;
+
     @Schema(description = "레스토랑 이름")
     private String restaurantName;
 

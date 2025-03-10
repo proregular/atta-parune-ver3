@@ -41,7 +41,7 @@
         FROM review A
         JOIN `order` B ON A.order_id = B.order_id
         JOIN restaurant C ON B.restaurant_id = C.restaurant_id
-        WHERE B.user_id = #{userId}
+        AND A.review_status = 1
         <if test="startDate != null and endDate != null">
             AND
             (

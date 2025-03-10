@@ -111,10 +111,10 @@ public class UserController {
 
     @GetMapping("pastOrderCheak")
     @Operation(summary = "지난 주문 내역 확인")
-    public ResultResponse<SelUserOrderPastCheckRes> getUserOrderCheck(SelUserOrderPastCheckReq req){
-        SelUserOrderPastCheckRes res = userService.getUserOrderCheck(req);
+    public ResultResponse<List<SelUserOrderPastCheckRes>> getUserOrderCheck(){
+        List<SelUserOrderPastCheckRes> res = userService.getUserOrderCheck();
 
-        return ResultResponse.<SelUserOrderPastCheckRes>builder()
+        return ResultResponse.<List<SelUserOrderPastCheckRes>>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("지난 주문 내역 확인 완료")
                 .resultData(res)
