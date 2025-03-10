@@ -10,7 +10,8 @@ import lombok.ToString;
 @ToString
 public class AdminDTO {
     private long adminId;
-    private String roleId;
+    private String code;
+    private long divisionId;
     private String aid;
     private String name;
     private String email;
