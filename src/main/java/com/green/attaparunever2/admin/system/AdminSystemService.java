@@ -287,24 +287,30 @@ public class AdminSystemService {
     }
 
     @Transactional
-    public int patchReviewRequest(Long orderId, int status) {
+    public int patchReviewRequest(ReviewRequestDto p) {
+        Review review = reviewRepository.findByOrderId(p.getOrderId())
+                .orElseThrow(() -> new CustomException("해당 주문에 대한 리뷰가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if (p.getStatus() == 0) {
+            review.setReviewStatus(2); // 거절 처리
+        } else if (p.getStatus() == 1) {
+            review.setReviewStatus(1); // 승인 처리
+        } else {
+            throw new CustomException("유효하지 않은 상태값입니다.", HttpStatus.BAD_REQUEST);
+        }
+        reviewRepository.save(review);
+        return 1;
+    }
+
+    @Transactional
+    public int deleteReviewRequest(Long orderId) {
         Review review = reviewRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new CustomException("해당 주문에 대한 리뷰가 없습니다.", HttpStatus.BAD_REQUEST));
 
-        // 상태값이 0일 경우 거절
-        if (status == 0) {
-            review.setReviewStatus(2);
-            reviewRepository.save(review);
-            return 1;
+        if (review.getReviewStatus() != 1) {
+            throw new CustomException("삭제 요청된 리뷰만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
         }
-        // 상태값이 1일 경우 승인
-        else if (status == 1) {
-            review.setReviewStatus(1);
-            reviewRepository.save(review);
-            return 1;
-        }
-        else {
-            throw new CustomException("유효하지 않은 상태값입니다.", HttpStatus.BAD_REQUEST);
-        }
+        reviewRepository.delete(review);
+        return 1;
     }
 }
