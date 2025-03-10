@@ -1,5 +1,6 @@
 package com.green.attaparunever2.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.green.attaparunever2.common.model.Paging;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class GetReviewReq extends Paging {
+    @JsonIgnore
     @Schema(description = "사용자 pk")
     private Long userId;
     @Schema(description = "시작일")

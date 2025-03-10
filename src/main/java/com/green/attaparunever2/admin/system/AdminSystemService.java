@@ -9,8 +9,10 @@ import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
+import com.green.attaparunever2.user.ReviewMapper;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
+import com.green.attaparunever2.user.model.GetReviewRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ public class AdminSystemService {
     private final CodeRepository codeRepository;
     private final SettlementListRepository settlementListRepository;
     private final SettlementDayRepository settlementDayRepository;
+    private final ReviewMapper reviewMapper;
 
     @Transactional
     public int patchCoalition(UpdCoalitionReq req) {
@@ -83,7 +86,7 @@ public class AdminSystemService {
         Long divisionId = admin.getDivisionId();
         Company company = companyRepository.findById(divisionId)
                 .orElseThrow(() -> new CustomException("해당 회사가 없습니다.", HttpStatus.BAD_REQUEST));
-        if(req.getRefundYn() == 1) {
+        if (req.getRefundYn() == 1) {
             int minPoint = refund.getRefundPoint();
             company.setCurrentPoint(company.getCurrentPoint() + minPoint);
             companyRepository.save(company);
@@ -92,12 +95,11 @@ public class AdminSystemService {
         refundRepository.save(refund);
 
 
-
         return 1;
     }
 
     //입점신청서 승인 및 거절
-    public int patchEnrollmentState(UpdAdmin req){
+    public int patchEnrollmentState(UpdAdmin req) {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("해당 관라자가 없습니다", HttpStatus.BAD_REQUEST));
 
@@ -108,14 +110,14 @@ public class AdminSystemService {
     }
 
     //시스템 문의 답변
-    public int postSystemPostComment(InsSystemPostCommentReq req){
+    public int postSystemPostComment(InsSystemPostCommentReq req) {
         SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
                 .orElseThrow(() -> new CustomException("해당 게시물이 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
 
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("해당 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
 
-        if(!admin.getCode().getCode().equals("00103")){
+        if (!admin.getCode().getCode().equals("00103")) {
             throw new CustomException("시스템 관리자가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -129,21 +131,21 @@ public class AdminSystemService {
     }
 
     //시스템 문의 답변 조회
-    public List<SelSystemPostCommentRes> getSystemPostComment(SelSystemPostCommentReq req){
+    public List<SelSystemPostCommentRes> getSystemPostComment(SelSystemPostCommentReq req) {
         List<SelSystemPostCommentRes> res = adminSystemMapper.selSystemPostComment(req);
 
         return res;
     }
 
     //시스템 문의 답변 수정
-    public int patchSystemPostComment(UpdSystemPostCommentReq req){
+    public int patchSystemPostComment(UpdSystemPostCommentReq req) {
         SystemPostComment systemPostComment = systemPostCommentRepository.findById(req.getInquiryCommentId())
                 .orElseThrow(() -> new CustomException("해당 문의답변이 없습니다", HttpStatus.BAD_REQUEST));
 
         Admin admin = adminRepository.findById(systemPostComment.getAdmin().getAdminId())
                 .orElseThrow(() -> new CustomException("해당 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
 
-        if(!admin.getCode().getCode().equals("00103")){
+        if (!admin.getCode().getCode().equals("00103")) {
             throw new CustomException("시스템 관리자가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -154,14 +156,14 @@ public class AdminSystemService {
     }
 
     //시스템 문의 답변 삭제
-    public int delSystemPostComment(DelSystemPostCommentReq req){
+    public int delSystemPostComment(DelSystemPostCommentReq req) {
         SystemPostComment systemPostComment = systemPostCommentRepository.findById(req.getInquiryCommentId())
                 .orElseThrow(() -> new CustomException("해당 문의답변이 없습니다", HttpStatus.BAD_REQUEST));
 
         Admin admin = adminRepository.findById(systemPostComment.getAdmin().getAdminId())
                 .orElseThrow(() -> new CustomException("해당 관리자가 없습니다.", HttpStatus.BAD_REQUEST));
 
-        if(!admin.getCode().getCode().equals("00103")){
+        if (!admin.getCode().getCode().equals("00103")) {
             throw new CustomException("시스템 관리자가 아닙니다", HttpStatus.BAD_REQUEST);
         }
 
@@ -179,7 +181,7 @@ public class AdminSystemService {
 
         SettlementDay settlementDay;
 
-        if(prevSettlementDay.size() == 0) { // 없으면 삽입
+        if (prevSettlementDay.size() == 0) { // 없으면 삽입
             settlementDay = new SettlementDay();
             settlementDay.setCode(codeEntity);
         } else { // 있으면 수정
@@ -196,7 +198,7 @@ public class AdminSystemService {
 
     // 식당 미입금 정산 처리
     @Transactional
-    public int postSettlementList(InsSettlementListReq p){
+    public int postSettlementList(InsSettlementListReq p) {
         settlementListRepository.insertSettlementList(p.getRestaurantId());
 
         return 1;
@@ -206,14 +208,29 @@ public class AdminSystemService {
         DayOfWeek dayOfWeek;
 
         switch (code) {
-            case "00401": dayOfWeek = DayOfWeek.MONDAY; break;
-            case "00402": dayOfWeek = DayOfWeek.TUESDAY; break;
-            case "00403": dayOfWeek = DayOfWeek.WEDNESDAY; break;
-            case "00404": dayOfWeek = DayOfWeek.THURSDAY; break;
-            case "00405": dayOfWeek = DayOfWeek.FRIDAY; break;
-            case "00406": dayOfWeek = DayOfWeek.SATURDAY; break;
-            case "00407": dayOfWeek = DayOfWeek.SUNDAY; break;
-            default: throw new IllegalArgumentException("유효하지 않은 코드: " + code);
+            case "00401":
+                dayOfWeek = DayOfWeek.MONDAY;
+                break;
+            case "00402":
+                dayOfWeek = DayOfWeek.TUESDAY;
+                break;
+            case "00403":
+                dayOfWeek = DayOfWeek.WEDNESDAY;
+                break;
+            case "00404":
+                dayOfWeek = DayOfWeek.THURSDAY;
+                break;
+            case "00405":
+                dayOfWeek = DayOfWeek.FRIDAY;
+                break;
+            case "00406":
+                dayOfWeek = DayOfWeek.SATURDAY;
+                break;
+            case "00407":
+                dayOfWeek = DayOfWeek.SUNDAY;
+                break;
+            default:
+                throw new IllegalArgumentException("유효하지 않은 코드: " + code);
         }
 
         return baseDate.with(dayOfWeek); // 해당 요일의 날짜 반환
@@ -221,7 +238,7 @@ public class AdminSystemService {
 
     // 정산 내역
     @Transactional
-    public List<SelSettlementDetailRes> getSettlementList(){
+    public List<SelSettlementDetailRes> getSettlementList() {
         SelSettlementDetailReq req = new SelSettlementDetailReq();
         String code = settlementDayRepository.findSettlementDay();
 
@@ -247,6 +264,22 @@ public class AdminSystemService {
     @Transactional
     public List<GetReviewRequestDto> getReviewRequestList(GetReviewReq p) {
         Long signedAdminId = authenticationFacade.getSignedUserId();
-        return null;
+        String adminCode = adminRepository.findCodeByAdminId(signedAdminId).getCode();
+
+        if (adminCode == null || !"00103".equals(adminCode)) {
+            throw new CustomException("리뷰 삭제 요청 목록은 시스템 관리자만 조회할 수 있습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        List<GetReviewRequestDto> reviewRequestList = adminSystemMapper.getReviewRequestList(p);
+
+        for (GetReviewRequestDto reviewRequest : reviewRequestList) {
+            Long orderId = reviewRequest.getOrderId();
+
+            List<String> reviewPics = reviewMapper.getReviewPicList(orderId);
+
+            reviewRequest.setReviewPic(reviewPics);
+        }
+
+        return reviewRequestList;
     }
 }
