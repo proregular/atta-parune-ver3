@@ -48,7 +48,15 @@ public class AdminSystemService {
                 .orElseThrow(() -> new CustomException("관리자 정보를 조회할 수 없습니다.", HttpStatus.NOT_FOUND));
 
         // 제휴 상태 변경
-        admin.setCoalitionState(1 - admin.getCoalitionState());
+        if (admin.getCoalitionState() == 2) {
+            admin.setCoalitionState(1);
+            adminRepository.save(admin);
+        }
+
+        if (admin.getCoalitionState() == 3) {
+            admin.setCoalitionState(0);
+            adminRepository.save(admin);
+        }
 
         adminRepository.save(admin);
 
