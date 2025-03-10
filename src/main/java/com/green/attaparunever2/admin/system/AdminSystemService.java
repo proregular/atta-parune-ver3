@@ -10,6 +10,7 @@ import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.user.ReviewMapper;
+import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
 import com.green.attaparunever2.user.model.GetReviewRes;
@@ -40,6 +41,7 @@ public class AdminSystemService {
     private final SettlementListRepository settlementListRepository;
     private final SettlementDayRepository settlementDayRepository;
     private final ReviewMapper reviewMapper;
+    private final ReviewRepository reviewRepository;
 
     @Transactional
     public int patchCoalition(UpdCoalitionReq req) {
@@ -281,5 +283,28 @@ public class AdminSystemService {
         }
 
         return reviewRequestList;
+    }
+
+    @Transactional
+    public int patchReviewRequest(Long orderId, int status) {
+        Review review = reviewRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new CustomException("해당 주문에 대한 리뷰가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        // 상태값이 0일 경우 거절
+        if (status == 0) {
+            review.setReviewStatus(2);
+            reviewRepository.save(review);
+            return 1;
+        }
+
+        // 상태값이 1일 경우 승인
+        else if (status == 1) {
+            review.setReviewStatus(1);
+            reviewRepository.save(review);
+            return 1;
+        }
+        else {
+            throw new CustomException("유효하지 않은 상태값입니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 }
