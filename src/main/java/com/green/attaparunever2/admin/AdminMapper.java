@@ -24,9 +24,12 @@ public interface AdminMapper {
     int getCompanyPaymentTotalCount();
     int signAdmin(SignAdminReq p);
     SignInAdminRes signInAdminByAid(String aId);
-    List<SelRefundRes> selRefund();
-    List<SelCompanyEnrollmentRes> selCompanyEnrollment();
-    List<SelRestaurantEnrollmentRes> selRestaurantEnrollment();
+    List<SelRefundRes> selRefund(GetRefundReq req);
+    int selRefundTotalCount();
+    List<SelCompanyEnrollmentRes> selCompanyEnrollment(GetCompanyAndRestaurantEnrollmentReq req);
+    int selCompanyEnrollmentTotalCount();
+    List<SelRestaurantEnrollmentRes> selRestaurantEnrollment(GetCompanyAndRestaurantEnrollmentReq req);
+    int selRestaurantEnrollmentTotalCount();
     SelOneSystemPostRes selOneSystemPost(SystemPostDetailGetReq req);
     List<SelSystemPostRes> selSystemBoard();
     List<SelSystemPostRes> selSystemPost(int startIdx, Integer size);
