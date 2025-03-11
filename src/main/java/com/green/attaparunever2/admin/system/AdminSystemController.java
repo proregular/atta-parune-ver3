@@ -178,10 +178,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
-    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
-        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+    public ResultResponse<SelCompanyPaymentRes> getCompanyPayment(@ParameterObject SelCompanyPaymentReq req){
+        SelCompanyPaymentRes res = adminService.getCompanyPayment(req);
 
-        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+        return ResultResponse.<SelCompanyPaymentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 포인트 판매 내역조회")
                 .resultData(res)
