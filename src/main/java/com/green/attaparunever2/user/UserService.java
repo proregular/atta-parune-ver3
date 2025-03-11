@@ -368,7 +368,7 @@ public class UserService {
             } catch (IOException e) {
                 throw new RuntimeException("프로필 사진 업로드 실패", e);
             }
-            user.setUserPic(userId + "/" + savedPicName);
+            user.setUserPic(savedPicName);
         }
         return userRepository.save(user);
     }
