@@ -438,7 +438,26 @@ public class RestaurantService {
             review.setMenuName(restaurantMapper.getMenuName(orderId));
         }
 
-        List<RatingCountDto> ratingCounts = restaurantMapper.getCountByRating(restaurantId);
+        List<RatingCountDto> ratingCounts = new ArrayList<>();
+        List<RatingCountDto> selRatingCounts = restaurantMapper.getCountByRating(restaurantId);
+
+        for(int i=5; i>0; i--) {
+            int count = 0;
+
+            for(RatingCountDto item : selRatingCounts) {
+                if(item.getRating() == i) {
+                    count = item.getCount();
+                    break;
+                }
+            }
+            RatingCountDto ratingCountDto = new RatingCountDto();
+            ratingCountDto.setCount(count);
+            ratingCountDto.setRating(i);
+
+            ratingCounts.add(ratingCountDto);
+        }
+
+
         String restaurantName = restaurantMapper.getRestaurantName(restaurantId);
         double avgRating = restaurantMapper.getAvgRating(restaurantId);
 
