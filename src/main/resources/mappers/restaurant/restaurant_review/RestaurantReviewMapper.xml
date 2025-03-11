@@ -11,7 +11,9 @@
         C.rating AS rating,
         C.review_text AS reviewText, C.created_at AS createdAt,
         G.comment_text AS commentText, G.created_at AS commentCreatedAt,
-        F.restaurant_name AS restaurantName
+        F.restaurant_name AS restaurantName,
+        (SELECT AVG(rating) FROM review WHERE order_id
+        IN (SELECT order_id FROM `order` WHERE restaurant_id = #{restaurantId})) AS avgRating
         FROM `order` A
         JOIN `user` B ON A.user_id = B.user_id
         JOIN review C ON A.order_id = C.order_id
