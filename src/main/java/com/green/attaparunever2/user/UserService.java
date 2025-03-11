@@ -338,27 +338,28 @@ public class UserService {
 
         // 프로필 사진 업로드
         if (userPic != null && !userPic.isEmpty()) {
+            Long userId = user.getUserId();
+            String folderPath = "profile/" + userId + "/";
+            myFileUtils.makeFolders(folderPath);
+
             // 기존 프로필 사진
             String currentPic = user.getUserPic();
             if (currentPic != null && !currentPic.isEmpty()) {
                 try {
-                    myFileUtils.deleteFile("profile/" + currentPic);
+                    myFileUtils.deleteFile(folderPath + currentPic);
                 } catch (IOException e) {
                     throw new RuntimeException("기존 프로필 사진 삭제 실패", e);
                 }
             }
 
             // 새로운 프로필 사진
-            String folderPath = "profile/";
-            myFileUtils.makeFolders(folderPath);
             String savedPicName = myFileUtils.makeRandomFileName(userPic);
-
             try {
                 myFileUtils.transferTo(userPic, folderPath + savedPicName);
             } catch (IOException e) {
                 throw new RuntimeException("프로필 사진 업로드 실패", e);
             }
-            user.setUserPic(savedPicName);
+            user.setUserPic(userId + "/" + savedPicName);
         }
         return userRepository.save(user);
     }
