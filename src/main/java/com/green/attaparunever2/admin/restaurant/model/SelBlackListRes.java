@@ -9,6 +9,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SelBlackListRes {
+    @Schema(description = "유저 PK")
+    private long userId;
     @Schema(description = "유저 id")
     private String uid;
     @Schema(description = "닉네임")
