@@ -256,7 +256,19 @@ public class AdminSystemController {
 
         return ResultResponse.<GetSystemPostRes>builder()
                 .statusCode("200")
-                .resultMsg("시스템 문의관리 조회")
+                .resultMsg("시스템 문의관리 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/systemPost-count")
+    @Operation(summary = "불만 접수 현황")
+    public ResultResponse<SelSystemPostPercentageRes> getSystemPostPercentage(){
+        SelSystemPostPercentageRes res = adminSystemService.getSystemPostPercentage();
+
+        return ResultResponse.<SelSystemPostPercentageRes>builder()
+                .statusCode("200")
+                .resultMsg("불만 접수 현황 조회 완료")
                 .resultData(res)
                 .build();
     }

@@ -111,4 +111,12 @@
         ON A.inquiry_id = D.inquiry_id
         WHERE A.post_code NOT IN('00201', '00204')
     </select>
+    
+    <select id="selSystemPostPercentage">
+        SELECT
+        COUNT(CASE WHEN post_code = '00202' THEN 1 END) AS countForInquiry,
+        COUNT(CASE WHEN post_code = '00203' THEN 1 END) AS countForInconvenience,
+        COUNT(*) - COUNT(CASE WHEN post_code IN ('00201', '00204') THEN 1 END) AS totalCount
+        FROM system_post
+    </select>
 </mapper>

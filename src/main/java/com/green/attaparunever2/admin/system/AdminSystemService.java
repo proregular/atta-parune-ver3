@@ -329,4 +329,11 @@ public class AdminSystemService {
 
         return res;
     }
+
+    // 불만 접수 현황
+    public SelSystemPostPercentageRes getSystemPostPercentage() {
+        SelSystemPostPercentageRes res = adminSystemMapper.selSystemPostPercentage();
+
+        return res;
+    }
 }
