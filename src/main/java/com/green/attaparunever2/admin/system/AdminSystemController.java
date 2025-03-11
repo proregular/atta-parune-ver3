@@ -45,10 +45,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/Refund")
     @Operation(summary = "환불 내역 조회")
-    public ResultResponse<List<SelRefundRes>> getRefund(){
-        List<SelRefundRes> res = adminService.getRefund();
+    public ResultResponse<GetRefundRes> getRefund(@ParameterObject GetRefundReq req) {
+        GetRefundRes res = adminService.getRefund(req);
 
-        return ResultResponse.<List<SelRefundRes>>builder()
+        return ResultResponse.<GetRefundRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("환불 내역 조회 완료")
                 .resultData(res)
@@ -190,10 +190,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/restaurant/enrollment")
     @Operation(summary = "식당 입점신청서 보기")
-    public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
-        List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
+    public ResultResponse<GetRestaurantEnrollmentRes> getRestaurantEnrollment(@ParameterObject GetCompanyAndRestaurantEnrollmentReq req){
+        GetRestaurantEnrollmentRes res = adminService.getRestaurantEnrollment(req);
 
-        return ResultResponse.<List<SelRestaurantEnrollmentRes>>builder()
+        return ResultResponse.<GetRestaurantEnrollmentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("식당 입점신청서 보기 완료")
                 .resultData(res)
@@ -202,10 +202,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/company/enrollment")
     @Operation(summary = "회사 제휴신청서 보기")
-    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
-        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
+    public ResultResponse<GetCompanyEnrollmentRes> getCompanyEnrollment(@ParameterObject GetCompanyAndRestaurantEnrollmentReq req){
+        GetCompanyEnrollmentRes res = adminService.getCompanyEnrollment(req);
 
-        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
+        return ResultResponse.<GetCompanyEnrollmentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 제휴신청서 보기 완료")
                 .resultData(res)
