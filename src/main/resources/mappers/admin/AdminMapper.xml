@@ -91,6 +91,16 @@
         ON A.admin_id = B.admin_id
         INNER JOIN company C
         ON C.company_id = B.division_id
+        LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="getCompanyPaymentTotalCount">
+        SELECT COUNT(*)
+        FROM company_point_deposit A
+        INNER JOIN  `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id
     </select>
 
     <insert id="signAdmin" useGeneratedKeys="true" keyProperty="adminId">
@@ -119,7 +129,17 @@
         INNER JOIN `admin` B
         ON A.admin_id = B.admin_id
         INNER JOIN company C
-        ON C.company_id = B.division_id;
+        ON C.company_id = B.division_id
+        LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="selRefundTotalCount">
+        SELECT COUNT(*)
+        FROM refund A
+        INNER JOIN `admin` B
+        ON A.admin_id = B.admin_id
+        INNER JOIN company C
+        ON C.company_id = B.division_id
     </select>
     
     <select id="selCompanyEnrollment">
@@ -127,12 +147,24 @@
              , A.address, A.ceo_name AS ceoName, A.business_number AS businessNumber
              , A.current_point AS currentPoint, A.created_at AS createdAt
           FROM company A
+         INNER JOIN admin B
+            ON A.company_id = B.division_id
+         WHERE B.code = '00102'
+         LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="selCompanyEnrollmentTotalCount">
+        SELECT COUNT(*)
+        FROM company A
+        INNER JOIN admin B
+        ON A.company_id = B.division_id
+        WHERE B.code = '00102'
     </select>
 
     <select id="selRestaurantEnrollment">
         SELECT A.restaurant_id AS restaurantId, A.category_id AS categoryId
-             , B.category_name AS categoryName, A.restaurant_name AS restaurantName
-             , A.restaurant_address AS restaurantAddress, A.business_number AS businessNumber
+             , B.category_name AS categoryName, A.restaurant_name AS restaurantName, A.restaurant_number AS restaurantNumber
+             , A.restaurant_address AS restaurantAddress, A.business_number AS businessNumber, C.coalition_state AS coalitionState
              , A.operating_hours AS operatingHours
              , A.restaurant_description AS restaurantDescription, A.`status` AS status
              , A.max_capacity AS maxCapacity
@@ -141,6 +173,20 @@
           FROM restaurant A
          INNER JOIN restaurant_category B
             ON A.category_id = B.category_id
+         INNER JOIN admin C
+            ON A.restaurant_id = C.division_id
+         WHERE C.code = '00101'
+         LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="selRestaurantEnrollmentTotalCount">
+        SELECT COUNT(*)
+        FROM restaurant A
+        INNER JOIN restaurant_category B
+        ON A.category_id = B.category_id
+        INNER JOIN admin C
+        ON A.restaurant_id = C.division_id
+        WHERE C.code = '00101'
     </select>
     
     <select id="selOneSystemPost">

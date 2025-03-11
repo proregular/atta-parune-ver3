@@ -9,6 +9,10 @@ import lombok.Setter;
 public class SelRestaurantEnrollmentRes {
     @Schema(description = "식당 PK")
     private long restaurantId;
+    @Schema(description = "식당 연락처")
+    private String restaurantNumber;
+    @Schema(description = "제휴상태")
+    private int coalitionState;
     @Schema(description = "카테고리 PK")
     private long categoryId;
     @Schema(description = "카테고리 명")

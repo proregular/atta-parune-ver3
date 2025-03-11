@@ -10,8 +10,10 @@ import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
 import com.green.attaparunever2.user.ReviewMapper;
+import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
+import com.green.attaparunever2.user.model.GetReviewRequestReq;
 import com.green.attaparunever2.user.model.GetReviewRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,7 @@ public class AdminSystemService {
     private final SettlementListRepository settlementListRepository;
     private final SettlementDayRepository settlementDayRepository;
     private final ReviewMapper reviewMapper;
+    private final ReviewRepository reviewRepository;
 
     @Transactional
     public int patchCoalition(UpdCoalitionReq req) {
@@ -262,7 +265,7 @@ public class AdminSystemService {
 
     // 리뷰 삭제 요청 리스트
     @Transactional
-    public List<GetReviewRequestDto> getReviewRequestList(GetReviewReq p) {
+    public List<GetReviewRequestDto> getReviewRequestList(GetReviewRequestReq p) {
         Long signedAdminId = authenticationFacade.getSignedUserId();
         String adminCode = adminRepository.findCodeByAdminId(signedAdminId).getCode();
 
@@ -281,5 +284,34 @@ public class AdminSystemService {
         }
 
         return reviewRequestList;
+    }
+
+    @Transactional
+    public int patchReviewRequest(ReviewRequestDto p) {
+        Review review = reviewRepository.findByOrderId(p.getOrderId())
+                .orElseThrow(() -> new CustomException("해당 주문에 대한 리뷰가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if (p.getStatus() == 0) {
+            review.setReviewStatus(2); // 거절 처리
+        } else if (p.getStatus() == 1) {
+            review.setReviewStatus(1); // 승인 처리
+        } else {
+            throw new CustomException("유효하지 않은 상태값입니다.", HttpStatus.BAD_REQUEST);
+        }
+        reviewRepository.save(review);
+        return 1;
+    }
+
+    @Transactional
+    public int deleteReviewRequest(Long orderId) {
+        Review review = reviewRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new CustomException("해당 주문에 대한 리뷰가 없습니다.", HttpStatus.BAD_REQUEST));
+
+        if (review.getReviewStatus() != 1) {
+            throw new CustomException("삭제 요청된 리뷰만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST);
+        }
+        reviewRepository.delete(review);
+        return 1;
+
     }
 }

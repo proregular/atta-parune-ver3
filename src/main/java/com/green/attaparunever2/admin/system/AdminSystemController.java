@@ -8,6 +8,7 @@ import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
+import com.green.attaparunever2.user.model.GetReviewRequestReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -44,10 +45,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/Refund")
     @Operation(summary = "환불 내역 조회")
-    public ResultResponse<List<SelRefundRes>> getRefund(){
-        List<SelRefundRes> res = adminService.getRefund();
+    public ResultResponse<GetRefundRes> getRefund(@ParameterObject GetRefundReq req) {
+        GetRefundRes res = adminService.getRefund(req);
 
-        return ResultResponse.<List<SelRefundRes>>builder()
+        return ResultResponse.<GetRefundRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("환불 내역 조회 완료")
                 .resultData(res)
@@ -177,10 +178,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
-    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
-        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+    public ResultResponse<SelCompanyPaymentRes> getCompanyPayment(@ParameterObject SelCompanyPaymentReq req){
+        SelCompanyPaymentRes res = adminService.getCompanyPayment(req);
 
-        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+        return ResultResponse.<SelCompanyPaymentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 포인트 판매 내역조회")
                 .resultData(res)
@@ -189,10 +190,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/restaurant/enrollment")
     @Operation(summary = "식당 입점신청서 보기")
-    public ResultResponse<List<SelRestaurantEnrollmentRes>> getRestaurantEnrollment(){
-        List<SelRestaurantEnrollmentRes> res = adminService.getRestaurantEnrollment();
+    public ResultResponse<GetRestaurantEnrollmentRes> getRestaurantEnrollment(@ParameterObject GetCompanyAndRestaurantEnrollmentReq req){
+        GetRestaurantEnrollmentRes res = adminService.getRestaurantEnrollment(req);
 
-        return ResultResponse.<List<SelRestaurantEnrollmentRes>>builder()
+        return ResultResponse.<GetRestaurantEnrollmentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("식당 입점신청서 보기 완료")
                 .resultData(res)
@@ -201,10 +202,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/company/enrollment")
     @Operation(summary = "회사 제휴신청서 보기")
-    public ResultResponse<List<SelCompanyEnrollmentRes>> getCompanyEnrollment(){
-        List<SelCompanyEnrollmentRes> res = adminService.getCompanyEnrollment();
+    public ResultResponse<GetCompanyEnrollmentRes> getCompanyEnrollment(@ParameterObject GetCompanyAndRestaurantEnrollmentReq req){
+        GetCompanyEnrollmentRes res = adminService.getCompanyEnrollment(req);
 
-        return ResultResponse.<List<SelCompanyEnrollmentRes>>builder()
+        return ResultResponse.<GetCompanyEnrollmentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 제휴신청서 보기 완료")
                 .resultData(res)
@@ -213,7 +214,7 @@ public class AdminSystemController {
 
     @GetMapping("v3/review")
     @Operation(summary = "리뷰 삭제 요청 리스트 보기")
-    public ResultResponse<List<GetReviewRequestDto>> getReviewRequestList(@ParameterObject @ModelAttribute @Valid GetReviewReq p) {
+    public ResultResponse<List<GetReviewRequestDto>> getReviewRequestList(@ParameterObject @ModelAttribute @Valid GetReviewRequestReq p) {
         List<GetReviewRequestDto> res = adminSystemService.getReviewRequestList(p);
 
         return ResultResponse.<List<GetReviewRequestDto>>builder()
@@ -223,4 +224,28 @@ public class AdminSystemController {
                 .build();
     }
 
+    @PatchMapping("v3/review")
+    @Operation(summary = "리뷰 삭제 요청 응답")
+    public ResultResponse<Integer> patchReviewRequest(ReviewRequestDto p) {
+        int result = adminSystemService.patchReviewRequest(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 요청 응답 완료")
+                .resultData(result)
+                .build();
+    }
+
+
+    @DeleteMapping("v3/review")
+    @Operation(summary = "리뷰 삭제")
+    public ResultResponse<Integer> deleteReviewRequest(Long orderId) {
+        int result = adminSystemService.deleteReviewRequest(orderId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 완료")
+                .resultData(result)
+                .build();
+    }
 }
