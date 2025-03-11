@@ -140,7 +140,6 @@
         ON A.admin_id = B.admin_id
         INNER JOIN company C
         ON C.company_id = B.division_id
-        LIMIT #{startIdx}, #{size}
     </select>
     
     <select id="selCompanyEnrollment">
