@@ -328,9 +328,18 @@ public class UserPaymentMemberService {
 
     //나에게 온 결제 요청 정보 승인 및 거부
     public int patchPaymentMember(UserPatchPaymentMemberReq p) {
-        int result = userPaymentMemberMapper.patchPaymentMember(p);
+        UserPaymentMemberIds ids = new UserPaymentMemberIds(p.getOrderId(), p.getUserId());
+        ids.setUserId(p.getUserId());
+        ids.setOrderId(p.getOrderId());
 
-        return result;
+        UserPaymentMember userPaymentMember = userPaymentMemberRepository.findById(ids)
+                .orElseThrow(() -> new CustomException("해당 결제 승인 요청이 없습니다.", HttpStatus.NOT_FOUND));
+
+        userPaymentMember.setApprovalStatus(p.getApprovalStatus());
+        userPaymentMember.setSelectDate(LocalDateTime.now());
+        userPaymentMemberRepository.save(userPaymentMember);
+
+        return 1;
     }
 
     @Transactional

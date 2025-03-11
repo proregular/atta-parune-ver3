@@ -314,4 +314,26 @@ public class AdminSystemService {
         return 1;
 
     }
+
+    // 시스템 문의 관리
+    @Transactional
+    public GetSystemPostRes getSystemPost(GetSystemPostReq req) {
+        List<SelSystemPostRes> list = adminSystemMapper.selSystemPost(req);
+
+        int totalListCount = adminSystemMapper.selSystemPostTotalCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+
+        GetSystemPostRes res = new GetSystemPostRes();
+        res.setTotalPageCount(totalPageCount);
+        res.setSelSystemPostResList(list);
+
+        return res;
+    }
+
+    // 불만 접수 현황
+    public SelSystemPostPercentageRes getSystemPostPercentage() {
+        SelSystemPostPercentageRes res = adminSystemMapper.selSystemPostPercentage();
+
+        return res;
+    }
 }

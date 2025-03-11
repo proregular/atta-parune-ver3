@@ -1,9 +1,6 @@
 package com.green.attaparunever2.admin.system;
 
-import com.green.attaparunever2.admin.system.model.SelSettlementDetailReq;
-import com.green.attaparunever2.admin.system.model.SelSettlementDetailRes;
-import com.green.attaparunever2.admin.system.model.SelSystemPostCommentReq;
-import com.green.attaparunever2.admin.system.model.SelSystemPostCommentRes;
+import com.green.attaparunever2.admin.system.model.*;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
 import com.green.attaparunever2.user.model.GetReviewRequestReq;
@@ -17,4 +14,9 @@ public interface AdminSystemMapper {
     SelSettlementDetailRes res = new SelSettlementDetailRes();
     List<SelSettlementDetailRes> selSettlementDetail(SelSettlementDetailReq req);
     List<GetReviewRequestDto> getReviewRequestList(GetReviewRequestReq p);
+
+    List<SelSystemPostRes> selSystemPost(GetSystemPostReq req);
+    int selSystemPostTotalCount();
+
+    SelSystemPostPercentageRes selSystemPostPercentage();
 }

@@ -15,7 +15,7 @@ public class UserGetRes {
     private String uid;
     private String name;
     private String nickName;
-    private String usePic;
+    private String userPic;
     private String email;
     private String phone;
     private int point;

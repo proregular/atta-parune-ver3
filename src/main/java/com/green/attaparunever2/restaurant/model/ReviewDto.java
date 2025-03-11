@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 @ToString
 public class ReviewDto {
-    @JsonIgnore
     private long orderId;
     private String nickName;
     private String userPic;

@@ -168,7 +168,7 @@ public class UserController {
 
     @PatchMapping("v3/userInfo")
     @Operation(summary = "회원 정보 등록", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
-    public ResultResponse<User> updateUser(@RequestPart("req") @Valid @ParameterObject UserUpdateInfoReq req,
+    public ResultResponse<User> updateUser(@RequestPart("req") @Valid UserUpdateInfoReq req,
                                            @RequestPart("userPic") MultipartFile userPic) {
         /*UserUpdateInfoReq req = new UserUpdateInfoReq();
         req.setNickName(nickName);
