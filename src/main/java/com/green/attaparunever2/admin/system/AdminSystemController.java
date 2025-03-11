@@ -224,4 +224,28 @@ public class AdminSystemController {
                 .build();
     }
 
+    @PatchMapping("v3/review")
+    @Operation(summary = "리뷰 삭제 요청 응답")
+    public ResultResponse<Integer> patchReviewRequest(ReviewRequestDto p) {
+        int result = adminSystemService.patchReviewRequest(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 요청 응답 완료")
+                .resultData(result)
+                .build();
+    }
+
+
+    @DeleteMapping("v3/review")
+    @Operation(summary = "리뷰 삭제")
+    public ResultResponse<Integer> deleteReviewRequest(Long orderId) {
+        int result = adminSystemService.deleteReviewRequest(orderId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 완료")
+                .resultData(result)
+                .build();
+    }
 }
