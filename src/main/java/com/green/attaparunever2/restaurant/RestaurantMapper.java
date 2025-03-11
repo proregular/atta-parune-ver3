@@ -43,4 +43,9 @@ public interface RestaurantMapper {
     // 별점별 리뷰 개수 조회
     List<RatingCountDto> getCountByRating(long restaurantId);
 
+    // 식당명 조회
+    String getRestaurantName(long restaurantId);
+
+    // 평균 별점 조회
+    double getAvgRating(long restaurantId);
 }

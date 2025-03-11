@@ -12,4 +12,6 @@ import java.util.List;
 public class ReviewResponseDto {
     private List<ReviewDto> reviews;  // 식당 리뷰 리스트
     private List<RatingCountDto> ratingCounts;  // 별점별 리뷰 개수 리스트
+    private String restaurantName;
+    private double avgRating;
 }

@@ -318,22 +318,43 @@ public class AdminService {
     }
 
     // 환불 금액 보기
-    public List<SelRefundRes> getRefund() {
-        List<SelRefundRes> res = adminMapper.selRefund();
+    public GetRefundRes getRefund(GetRefundReq req) {
+        List<SelRefundRes> list = adminMapper.selRefund(req);
+
+        int totalListCount = adminMapper.selRefundTotalCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+
+        GetRefundRes res = new GetRefundRes();
+        res.setTotalPageCount(totalPageCount);
+        res.setSelRefundResList(list);
 
         return res;
     }
 
     //회사 입점신청서 보기
-    public List<SelCompanyEnrollmentRes> getCompanyEnrollment() {
-        List<SelCompanyEnrollmentRes> res = adminMapper.selCompanyEnrollment();
+    public GetCompanyEnrollmentRes getCompanyEnrollment(GetCompanyAndRestaurantEnrollmentReq req) {
+        List<SelCompanyEnrollmentRes> list = adminMapper.selCompanyEnrollment(req);
+
+        int totalListCount = adminMapper.selCompanyEnrollmentTotalCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+
+        GetCompanyEnrollmentRes res = new GetCompanyEnrollmentRes();
+        res.setTotalPageCount(totalPageCount);
+        res.setSelCompanyEnrollmentResList(list);
 
         return res;
     }
 
     //식당 입점신청서 보기
-    public List<SelRestaurantEnrollmentRes> getRestaurantEnrollment() {
-        List<SelRestaurantEnrollmentRes> res = adminMapper.selRestaurantEnrollment();
+    public GetRestaurantEnrollmentRes getRestaurantEnrollment(GetCompanyAndRestaurantEnrollmentReq req) {
+        List<SelRestaurantEnrollmentRes> list = adminMapper.selRestaurantEnrollment(req);
+
+        int totalListCount = adminMapper.selRestaurantEnrollmentTotalCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+
+        GetRestaurantEnrollmentRes res = new GetRestaurantEnrollmentRes();
+        res.setTotalPageCount(totalPageCount);
+        res.setSelRestaurantEnrollmentResList(list);
 
         return res;
     }
