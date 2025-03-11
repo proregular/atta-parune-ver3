@@ -27,7 +27,7 @@ public class UserPaymentMember extends UpdatedAt{
     private LocalDateTime selectDate;
 
     @Column
-    private int point;
+    private Integer point;
 
     @Column(nullable = false, columnDefinition = "int default 0")
     private int approvalStatus;
