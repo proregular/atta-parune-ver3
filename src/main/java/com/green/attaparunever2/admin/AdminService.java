@@ -294,8 +294,15 @@ public class AdminService {
         return 1;
     }
 
-    public List<getCompanyPaymentRes> getCompanyPayment() {
-        List<getCompanyPaymentRes> res = adminMapper.getCompanyPayment();
+    public SelCompanyPaymentRes getCompanyPayment(SelCompanyPaymentReq req) {
+        List<getCompanyPaymentRes> list = adminMapper.getCompanyPayment(req);
+
+        int totalListCount = adminMapper.getCompanyPaymentTotalCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+
+        SelCompanyPaymentRes res = new SelCompanyPaymentRes();
+        res.setTotalPageCount(totalPageCount);
+        res.setGetCompanyPaymentResList(list);
 
         return res;
     }
