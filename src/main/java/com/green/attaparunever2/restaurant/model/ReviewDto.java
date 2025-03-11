@@ -21,4 +21,5 @@ public class ReviewDto {
     private List<String> menuName;
     private String commentText;
     private String commentCreatedAt;
+    private long userId;
 }

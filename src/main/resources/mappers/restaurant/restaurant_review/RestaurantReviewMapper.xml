@@ -8,6 +8,7 @@
         A.order_id AS orderId,
         B.nick_name AS nickName,
         B.user_pic AS userPic,
+        B.user_id AS userId,
         C.rating AS rating,
         C.review_text AS reviewText, C.created_at AS createdAt,
         G.comment_text AS commentText, G.created_at AS commentCreatedAt
