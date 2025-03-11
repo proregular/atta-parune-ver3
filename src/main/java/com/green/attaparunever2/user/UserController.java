@@ -109,7 +109,7 @@ public class UserController {
 
     }
 
-    @GetMapping("pastOrderCheak")
+    @GetMapping("pastOrderCheck")
     @Operation(summary = "지난 주문 내역 확인")
     public ResultResponse<List<SelUserOrderPastCheckRes>> getUserOrderCheck(){
         List<SelUserOrderPastCheckRes> res = userService.getUserOrderCheck();
