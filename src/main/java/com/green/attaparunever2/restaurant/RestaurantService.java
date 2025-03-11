@@ -439,11 +439,14 @@ public class RestaurantService {
         }
 
         List<RatingCountDto> ratingCounts = restaurantMapper.getCountByRating(restaurantId);
+        String restaurantName = restaurantMapper.getRestaurantName(restaurantId);
+        double avgRating = restaurantMapper.getAvgRating(restaurantId);
 
         ReviewResponseDto response = new ReviewResponseDto();
         response.setReviews(reviews);
         response.setRatingCounts(ratingCounts);
+        response.setRestaurantName(restaurantName);
+        response.setAvgRating(avgRating);
         return response;
     }
-
 }
