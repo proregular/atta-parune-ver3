@@ -14,7 +14,7 @@
         F.restaurant_name AS restaurantName
         FROM `order` A
         JOIN `user` B ON A.user_id = B.user_id
-        LEFT JOIN review C ON A.order_id = C.order_id
+        JOIN review C ON A.order_id = C.order_id
         LEFT JOIN review_comment G ON A.order_id = G.order_id
         JOIN restaurant F ON A.restaurant_id = F.restaurant_id
         WHERE A.restaurant_id = #{restaurantId}
