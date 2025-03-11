@@ -22,5 +22,4 @@ public class ReviewDto {
     private List<String> menuName;
     private String commentText;
     private String commentCreatedAt;
-    private String restaurantName;
 }
