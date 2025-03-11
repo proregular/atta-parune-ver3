@@ -23,4 +23,5 @@ public class ReviewDto {
     private String commentText;
     private String commentCreatedAt;
     private String restaurantName;
+    private double avgRating;
 }
