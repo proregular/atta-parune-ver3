@@ -178,10 +178,10 @@ public class AdminSystemController {
 
     @GetMapping("v3/payment")
     @Operation(summary = "회사 포인트 판매 내역 조회")
-    public ResultResponse<List<getCompanyPaymentRes>> getCompanyPayment(){
-        List<getCompanyPaymentRes> res = adminService.getCompanyPayment();
+    public ResultResponse<SelCompanyPaymentRes> getCompanyPayment(@ParameterObject SelCompanyPaymentReq req){
+        SelCompanyPaymentRes res = adminService.getCompanyPayment(req);
 
-        return ResultResponse.<List<getCompanyPaymentRes>>builder()
+        return ResultResponse.<SelCompanyPaymentRes>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("회사 포인트 판매 내역조회")
                 .resultData(res)
@@ -224,4 +224,28 @@ public class AdminSystemController {
                 .build();
     }
 
+    @PatchMapping("v3/review")
+    @Operation(summary = "리뷰 삭제 요청 응답")
+    public ResultResponse<Integer> patchReviewRequest(ReviewRequestDto p) {
+        int result = adminSystemService.patchReviewRequest(p);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 요청 응답 완료")
+                .resultData(result)
+                .build();
+    }
+
+
+    @DeleteMapping("v3/review")
+    @Operation(summary = "리뷰 삭제")
+    public ResultResponse<Integer> deleteReviewRequest(Long orderId) {
+        int result = adminSystemService.deleteReviewRequest(orderId);
+
+        return ResultResponse.<Integer>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("리뷰 삭제 완료")
+                .resultData(result)
+                .build();
+    }
 }

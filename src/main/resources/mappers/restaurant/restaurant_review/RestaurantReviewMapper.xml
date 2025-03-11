@@ -10,13 +10,15 @@
         B.user_pic AS userPic,
         C.rating AS rating,
         C.review_text AS reviewText, C.created_at AS createdAt,
-        G.comment_text AS commentText, G.created_at AS commentCreatedAt
+        G.comment_text AS commentText, G.created_at AS commentCreatedAt,
+        F.restaurant_name AS restaurantName
         FROM `order` A
         JOIN `user` B ON A.user_id = B.user_id
         LEFT JOIN review C ON A.order_id = C.order_id
         LEFT JOIN review_comment G ON A.order_id = G.order_id
+        JOIN restaurant F ON A.restaurant_id = F.restaurant_id
         WHERE A.restaurant_id = #{restaurantId}
-        ORDER BY C.created_at DESC
+        ORDER BY C.created_at DESC;
     </select>
 
     <select id="getReviewPic">

@@ -20,7 +20,8 @@ public interface AdminMapper {
     int patchUpw(AdminUpwPatchReq p);
 
 
-    List<getCompanyPaymentRes> getCompanyPayment();
+    List<getCompanyPaymentRes> getCompanyPayment(SelCompanyPaymentReq req);
+    int getCompanyPaymentTotalCount();
     int signAdmin(SignAdminReq p);
     SignInAdminRes signInAdminByAid(String aId);
     List<SelRefundRes> selRefund();
