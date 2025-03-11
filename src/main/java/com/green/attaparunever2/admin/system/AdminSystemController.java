@@ -248,4 +248,16 @@ public class AdminSystemController {
                 .resultData(result)
                 .build();
     }
+
+    @GetMapping("v3/systemPost-management")
+    @Operation(summary = "시스템 문의 관리")
+    public ResultResponse<GetSystemPostRes> getSystemPostManagement(@ParameterObject GetSystemPostReq req){
+        GetSystemPostRes res = adminSystemService.getSystemPost(req);
+
+        return ResultResponse.<GetSystemPostRes>builder()
+                .statusCode("200")
+                .resultMsg("시스템 문의관리 조회")
+                .resultData(res)
+                .build();
+    }
 }

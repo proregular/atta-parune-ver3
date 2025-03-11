@@ -74,4 +74,41 @@
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
+    
+    <select id="selSystemPost">
+        SELECT A.inquiry_id AS inquiryId, A.created_at AS createdAt, YEAR(A.created_at) AS `year`, A.role_code AS roleCode, A.post_code AS postCode,
+        case
+        when A.role_code = '00104' then B.name
+        when A.role_code IN('00101', '00102') then C.name
+        END AS name,
+        case
+        when D.inquiry_comment_id IS NOT NULL then 1
+        ELSE 0
+        END AS commentYn
+        FROM system_post A
+        LEFT JOIN user B
+        ON A.id = B.user_id
+        AND B.code = '00104'
+        LEFT JOIN admin C
+        ON A.id = C.admin_id
+        AND C.code IN('00101', '00102')
+        LEFT JOIN system_post_comment D
+        ON A.inquiry_id = D.inquiry_id
+        WHERE A.post_code NOT IN('00201', '00204')
+        LIMIT #{startIdx}, #{size}
+    </select>
+
+    <select id="selSystemPostTotalCount">
+        SELECT COUNT(*)
+        FROM system_post A
+        LEFT JOIN user B
+        ON A.id = B.user_id
+        AND B.code = '00104'
+        LEFT JOIN admin C
+        ON A.id = C.admin_id
+        AND C.code IN('00101', '00102')
+        LEFT JOIN system_post_comment D
+        ON A.inquiry_id = D.inquiry_id
+        WHERE A.post_code NOT IN('00201', '00204')
+    </select>
 </mapper>
