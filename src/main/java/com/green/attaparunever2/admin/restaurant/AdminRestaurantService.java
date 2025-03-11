@@ -301,6 +301,10 @@ public class AdminRestaurantService {
 
             // 메뉴 삭제
             restaurantMenuRepository.deleteById(req.getMenuId());
+
+            if (restaurantMenuRepository.countByCategoryId(restaurantMenuCategory) == 0) {
+                restaurantMenuCategoryRepository.deleteById(req.getCategoryId());
+            }
         }
         else {
             menu.setUseYn(0);

@@ -8,6 +8,7 @@ import com.green.attaparunever2.common.repository.CodeRepository;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.user.model.GetReviewReq;
 import com.green.attaparunever2.user.model.GetReviewRequestDto;
+import com.green.attaparunever2.user.model.GetReviewRequestReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -213,7 +214,7 @@ public class AdminSystemController {
 
     @GetMapping("v3/review")
     @Operation(summary = "리뷰 삭제 요청 리스트 보기")
-    public ResultResponse<List<GetReviewRequestDto>> getReviewRequestList(@ParameterObject @ModelAttribute @Valid GetReviewReq p) {
+    public ResultResponse<List<GetReviewRequestDto>> getReviewRequestList(@ParameterObject @ModelAttribute @Valid GetReviewRequestReq p) {
         List<GetReviewRequestDto> res = adminSystemService.getReviewRequestList(p);
 
         return ResultResponse.<List<GetReviewRequestDto>>builder()

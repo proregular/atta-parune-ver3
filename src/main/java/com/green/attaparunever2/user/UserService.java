@@ -384,7 +384,7 @@ public class UserService {
     }
 
     // 회원정보 조회
-    public UserGetRes getUserV3(UserGetReq p) {
+    public UserGetRes getUserV3() {
         long userId = authenticationFacade.getSignedUserId();
 
         UserGetRes res = userMapper.selUserByUserIdV3(userId);

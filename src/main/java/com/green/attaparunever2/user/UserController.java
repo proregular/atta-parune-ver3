@@ -166,7 +166,7 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("v3/userInfo")
+    @PatchMapping("v3/userInfo")
     @Operation(summary = "회원 정보 등록", description = "닉네임, 핸드폰 번호, 프로필 사진 등록 및 수정")
     public ResultResponse<User> updateUser(@RequestPart("req") @Valid @ParameterObject UserUpdateInfoReq req,
                                            @RequestPart("userPic") MultipartFile userPic) {
@@ -268,8 +268,8 @@ public class UserController {
 
     @GetMapping()
     @Operation(summary = "회원 정보 조회")
-    public ResultResponse<?> getUserV3(@ParameterObject @ModelAttribute UserGetReq req) {
-        UserGetRes result = userService.getUserV3(req);
+    public ResultResponse<?> getUserV3() {
+        UserGetRes result = userService.getUserV3();
 
         return ResultResponse.<UserGetRes>builder()
                 .statusCode(HttpStatus.OK.toString())

@@ -1,6 +1,7 @@
 package com.green.attaparunever2.user;
 
 import com.green.attaparunever2.common.MyFileUtils;
+import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
@@ -12,6 +13,7 @@ import com.green.attaparunever2.user.model.GetReviewRes;
 import com.green.attaparunever2.user.model.ReviewRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -157,10 +159,10 @@ public class ReviewService {
     public List<GetReviewRes> getReview(GetReviewReq p)  {
 
         Long signedUserId = authenticationFacade.getSignedUserId();
-
-        if (!p.getUserId().equals(signedUserId)) {
-            throw new RuntimeException("본인이 작성한 리뷰만 조회할 수 있습니다.");
+        if (signedUserId == null) {
+            throw new CustomException("로그인이 필요합니다", HttpStatus.UNAUTHORIZED);
         }
+        p.setUserId(signedUserId);
 
         List<GetReviewDto> reviewDtoList = reviewMapper.getReviewList(p);
 
