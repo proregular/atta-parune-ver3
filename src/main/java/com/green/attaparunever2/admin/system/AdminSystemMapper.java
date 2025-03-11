@@ -17,4 +17,6 @@ public interface AdminSystemMapper {
 
     List<SelSystemPostRes> selSystemPost(GetSystemPostReq req);
     int selSystemPostTotalCount();
+
+    SelSystemPostPercentageRes selSystemPostPercentage();
 }
