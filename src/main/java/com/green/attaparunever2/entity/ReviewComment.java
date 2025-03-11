@@ -16,6 +16,6 @@ public class ReviewComment extends UpdatedAt{
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 1000)
     private String commentText;
 }
