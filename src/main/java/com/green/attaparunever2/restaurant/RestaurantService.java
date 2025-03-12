@@ -169,7 +169,7 @@ public class RestaurantService {
         if(req.getRestaurantDescription() != null && req.getRestaurantDescription() != ""){
             restaurant.setRestaurantDescription(req.getRestaurantDescription());
         }
-        if(req.getStatus() != null && req.getStatus() != 0){
+        if(req.getStatus() != null){
             restaurant.setStatus(req.getStatus());
         }
         if(req.getMaxCapacity() != null && req.getMaxCapacity() != 0){
