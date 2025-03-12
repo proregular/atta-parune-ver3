@@ -73,9 +73,8 @@ public class RestaurantController {
 
     @GetMapping("v3/review")
     @Operation(summary = "식당 리뷰 및 별점별 리뷰 개수 조회")
-    public ResultResponse<ReviewResponseDto> getReviewResponse(@Valid @RequestParam long restaurantId) {
-
-        ReviewResponseDto res = restaurantService.getRestaurantReview(restaurantId);
+    public ResultResponse<ReviewResponseDto> getReviewResponse(@ParameterObject @ModelAttribute GetRestaurantReviewReq p) {
+        ReviewResponseDto res = restaurantService.getRestaurantReview(p);
 
         return ResultResponse.<ReviewResponseDto>builder()
                 .statusCode("200")

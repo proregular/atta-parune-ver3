@@ -19,6 +19,7 @@ import com.green.attaparunever2.order.ticket.model.TicketSelDto;
 import com.green.attaparunever2.reservation.model.*;
 import com.green.attaparunever2.reservation.scheduler.ReservationScheduler;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
+import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuCategoryRepository;
 import com.green.attaparunever2.restaurant.restaurant_menu.RestaurantMenuRepository;
 import com.green.attaparunever2.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ public class ReservationService {
     private final TicketRepository ticketRepository;
     private final RestaurantMenuRepository restaurantMenuRepository;
     private final DelayedTaskScheduler scheduler;
+    private final RestaurantMenuCategoryRepository restaurantMenuCategoryRepository;
 
 
     @Transactional
@@ -135,6 +137,16 @@ public class ReservationService {
         for (ReservationMenuDto reservationMenuDto : req.getMenuList()) {
             RestaurantMenu restaurantMenu = restaurantMenuRepository.findById(reservationMenuDto.getMenuId())
                             .orElseThrow(() -> new CustomException("해당 메뉴를 조회할 수 없습니다.", HttpStatus.NOT_FOUND));
+
+            RestaurantMenu selRestaurantMenu = restaurantMenuRepository.findById(restaurantMenu.getMenuId())
+                    .orElseThrow(() -> new CustomException("해당 메뉴를 조회할 수 없습니다.", HttpStatus.NOT_FOUND));
+
+            RestaurantMenuCategory restaurantMenuCategory = restaurantMenuCategoryRepository.findById(selRestaurantMenu.getCategoryId().getCategoryId())
+                    .orElseThrow(() -> new CustomException("해당 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
+
+            if(!(restaurantMenuCategory.getRestaurant().getRestaurantId().equals(req.getRestaurantId()))) {
+                throw new CustomException("해당 식당의 메뉴가 아닙니다.", HttpStatus.BAD_REQUEST);
+            }
 
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderId(order);

@@ -16,6 +16,7 @@ import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.GetOrderDto;
 import com.green.attaparunever2.order.model.OrderGetReq;
 import com.green.attaparunever2.user.model.*;
 import jakarta.servlet.http.Cookie;
@@ -226,6 +227,14 @@ public class UserService {
 
         res.setOrderDetails(orderMapper.getOrderList(orderGetReq));
 
+        int totalMenuCost = 0;
+        // 메뉴 총 가격
+        for(GetOrderDto item : res.getOrderDetails()) {
+            totalMenuCost += item.getMenuPrice() * item.getMenuCount();
+        }
+
+        res.setTotalMenuCost(totalMenuCost);
+
         return res;
     }
 
@@ -359,7 +368,7 @@ public class UserService {
             } catch (IOException e) {
                 throw new RuntimeException("프로필 사진 업로드 실패", e);
             }
-            user.setUserPic(userId + "/" + savedPicName);
+            user.setUserPic(savedPicName);
         }
         return userRepository.save(user);
     }
