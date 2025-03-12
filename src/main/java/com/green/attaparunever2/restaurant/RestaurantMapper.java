@@ -33,7 +33,7 @@ public interface RestaurantMapper {
     RestaurantDetailGetRes selRestaurantByRestaurantId(long restaurantId);
 
     // 식당 리뷰 조회
-    List<ReviewDto> getReview(long restaurantId);
+    List<ReviewDto> getReview(GetRestaurantReviewReq p);
 
     List<String> getReviewPic(long orderId);
 
