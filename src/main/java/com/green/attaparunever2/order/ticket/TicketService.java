@@ -126,7 +126,7 @@ public class TicketService {
         // 식권 사용 시 식사 종료 시간 데이터 삽입
         if (ticket.getTicketStatus() == 1) {
             MealTime mealTime = mealTimeRepository.findByOrderId(ticket.getOrder())
-                    .orElseThrow(() -> new CustomException("해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new CustomException("해당 주문에 대한 식사 시간이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
             mealTime.setEndMealDate(ticket.getUseDate());
             mealTimeRepository.save(mealTime);
