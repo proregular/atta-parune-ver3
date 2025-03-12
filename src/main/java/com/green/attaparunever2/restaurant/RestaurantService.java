@@ -428,9 +428,9 @@ public class RestaurantService {
     }
 
     // 식당 리뷰 및 별점 개수 조회
-    public ReviewResponseDto getRestaurantReview(long restaurantId) {
+    public ReviewResponseDto getRestaurantReview(GetRestaurantReviewReq p) {
 
-        List<ReviewDto> reviews = restaurantMapper.getReview(restaurantId);
+        List<ReviewDto> reviews = restaurantMapper.getReview(p);
 
         for (ReviewDto review : reviews) {
             long orderId = review.getOrderId();
@@ -438,9 +438,28 @@ public class RestaurantService {
             review.setMenuName(restaurantMapper.getMenuName(orderId));
         }
 
-        List<RatingCountDto> ratingCounts = restaurantMapper.getCountByRating(restaurantId);
-        String restaurantName = restaurantMapper.getRestaurantName(restaurantId);
-        double avgRating = restaurantMapper.getAvgRating(restaurantId);
+        List<RatingCountDto> ratingCounts = new ArrayList<>();
+        List<RatingCountDto> selRatingCounts = restaurantMapper.getCountByRating(p.getRestaurantId());
+
+        for(int i=5; i>0; i--) {
+            int count = 0;
+
+            for(RatingCountDto item : selRatingCounts) {
+                if(item.getRating() == i) {
+                    count = item.getCount();
+                    break;
+                }
+            }
+            RatingCountDto ratingCountDto = new RatingCountDto();
+            ratingCountDto.setCount(count);
+            ratingCountDto.setRating(i);
+
+            ratingCounts.add(ratingCountDto);
+        }
+
+
+        String restaurantName = restaurantMapper.getRestaurantName(p.getRestaurantId());
+        double avgRating = restaurantMapper.getAvgRating(p.getRestaurantId());
 
         ReviewResponseDto response = new ReviewResponseDto();
         response.setReviews(reviews);

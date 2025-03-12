@@ -16,6 +16,7 @@ import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.User;
 import com.green.attaparunever2.order.OrderMapper;
+import com.green.attaparunever2.order.model.GetOrderDto;
 import com.green.attaparunever2.order.model.OrderGetReq;
 import com.green.attaparunever2.user.model.*;
 import jakarta.servlet.http.Cookie;
@@ -226,6 +227,14 @@ public class UserService {
 
         res.setOrderDetails(orderMapper.getOrderList(orderGetReq));
 
+        int totalMenuCost = 0;
+        // 메뉴 총 가격
+        for(GetOrderDto item : res.getOrderDetails()) {
+            totalMenuCost += item.getMenuPrice() * item.getMenuCount();
+        }
+
+        res.setTotalMenuCost(totalMenuCost);
+
         return res;
     }
 
@@ -338,21 +347,22 @@ public class UserService {
 
         // 프로필 사진 업로드
         if (userPic != null && !userPic.isEmpty()) {
+            Long userId = user.getUserId();
+            String folderPath = "profile/" + userId + "/";
+            myFileUtils.makeFolders(folderPath);
+
             // 기존 프로필 사진
             String currentPic = user.getUserPic();
             if (currentPic != null && !currentPic.isEmpty()) {
                 try {
-                    myFileUtils.deleteFile("profile/" + currentPic);
+                    myFileUtils.deleteFile(folderPath + currentPic);
                 } catch (IOException e) {
                     throw new RuntimeException("기존 프로필 사진 삭제 실패", e);
                 }
             }
 
             // 새로운 프로필 사진
-            String folderPath = "profile/";
-            myFileUtils.makeFolders(folderPath);
             String savedPicName = myFileUtils.makeRandomFileName(userPic);
-
             try {
                 myFileUtils.transferTo(userPic, folderPath + savedPicName);
             } catch (IOException e) {

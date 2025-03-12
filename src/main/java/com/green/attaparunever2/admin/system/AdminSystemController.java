@@ -248,4 +248,28 @@ public class AdminSystemController {
                 .resultData(result)
                 .build();
     }
+
+    @GetMapping("v3/systemPost-management")
+    @Operation(summary = "시스템 문의 관리")
+    public ResultResponse<GetSystemPostRes> getSystemPostManagement(@ParameterObject GetSystemPostReq req){
+        GetSystemPostRes res = adminSystemService.getSystemPost(req);
+
+        return ResultResponse.<GetSystemPostRes>builder()
+                .statusCode("200")
+                .resultMsg("시스템 문의관리 조회 완료")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/systemPost-count")
+    @Operation(summary = "불만 접수 현황")
+    public ResultResponse<SelSystemPostPercentageRes> getSystemPostPercentage(){
+        SelSystemPostPercentageRes res = adminSystemService.getSystemPostPercentage();
+
+        return ResultResponse.<SelSystemPostPercentageRes>builder()
+                .statusCode("200")
+                .resultMsg("불만 접수 현황 조회 완료")
+                .resultData(res)
+                .build();
+    }
 }

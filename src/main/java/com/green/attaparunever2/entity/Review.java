@@ -25,7 +25,7 @@ public class Review extends UpdatedAt{
     @Column(nullable = false)
     private int rating;
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 1000)
     private String reviewText;
 
     @Column(nullable = false, columnDefinition = "int default 0")
