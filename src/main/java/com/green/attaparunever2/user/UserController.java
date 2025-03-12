@@ -185,7 +185,7 @@ public class UserController {
     @PostMapping("v3/review")
     @Operation(summary = "리뷰 등록")
     public ResultResponse<Review> postReview(
-            @RequestPart("reviewRequestDto") @Valid @ParameterObject ReviewRequestDto reviewRequestDto,
+            @RequestPart("reviewRequestDto") @Valid ReviewRequestDto reviewRequestDto,
             @RequestPart("reviewPics") List<MultipartFile> reviewPics) throws Exception {
 
         Review review = reviewService.postReview(reviewRequestDto, reviewPics);

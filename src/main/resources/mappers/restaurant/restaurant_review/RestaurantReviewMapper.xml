@@ -18,7 +18,37 @@
         LEFT JOIN review_comment G ON A.order_id = G.order_id
         JOIN restaurant F ON A.restaurant_id = F.restaurant_id
         WHERE A.restaurant_id = #{restaurantId}
-        ORDER BY C.created_at DESC;
+        <if test="startDate != null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            AND DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+
+        <if test="startDate != null and endDate == null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ >= ]]>
+            #{startDate}
+            )
+        </if>
+
+        <if test="startDate == null and endDate != null">
+            AND
+            (
+            DATE_FORMAT(A.created_at, '%Y-%m-%d')
+            <![CDATA[ <= ]]>
+            #{endDate}
+            )
+        </if>
+        ORDER BY C.created_at DESC
+        LIMIT #{size} OFFSET #{startIdx}
     </select>
 
     <select id="getReviewPic">
