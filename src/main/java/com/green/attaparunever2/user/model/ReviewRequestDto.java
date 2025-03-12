@@ -19,4 +19,5 @@ public class ReviewRequestDto {
     private int rating;
 
     private String reviewText;
+    private List<String> reviewPic;
 }
