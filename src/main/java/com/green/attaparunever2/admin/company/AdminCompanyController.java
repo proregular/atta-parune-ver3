@@ -163,8 +163,8 @@ public class AdminCompanyController {
         ResponseEntity result = adminCompanyService.patchPoint(request, jsonBody);
 
         return ResultResponse.<ResponseEntity>builder()
-                .statusCode("200")
-                .resultMsg("결재 정보 임시 저장을 완료했습니다.")
+                .statusCode(result.getStatusCode().toString())
+                .resultMsg("포인트 구매를 완료했습니다.")
                 .resultData(result)
                 .build();
     }
