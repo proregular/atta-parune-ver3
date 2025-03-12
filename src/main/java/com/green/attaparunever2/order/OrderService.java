@@ -129,7 +129,6 @@ public class OrderService {
                 .orElseThrow(() -> new CustomException("해당 주문을 찾을 수 없습니다", HttpStatus.BAD_REQUEST));
 
         order.setReservationStatus(p.getReservationStatus());
-        order.setCreatedAt(p.getCreatedAt());
         orderRepository.save(order);
         orderRepository.flush();
         OrderAccessMessageRes res = new OrderAccessMessageRes();
