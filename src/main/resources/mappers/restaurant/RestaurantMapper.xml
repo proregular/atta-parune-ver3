@@ -327,10 +327,10 @@
                 ORDER BY distance ASC
             </if>
             <if test=" orderFilter == 2">
-                ORDER BY avgRestaurant ASC
+                ORDER BY avgRating DESC
             </if>
             <if test=" orderFilter == 3">
-                ORDER BY avgRating DESC
+                ORDER BY avgRestaurant ASC
             </if>
         </if>
     </select>
