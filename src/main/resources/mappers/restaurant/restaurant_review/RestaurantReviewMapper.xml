@@ -82,11 +82,11 @@
     </select>
 
     <select id="getAvgRating">
-        SELECT AVG(A.rating)
+        SELECT IFNULL(ROUND(AVG(A.rating), 1), 0.0)
         FROM review A
         JOIN `order` B ON A.order_id = B.order_id
         JOIN restaurant C ON B.restaurant_id = C.restaurant_id
-        WHERE C.restaurant_id = #{restaurantId}
+        WHERE C.restaurant_id = #{restaurantId};
     </select>
 
 </mapper>
