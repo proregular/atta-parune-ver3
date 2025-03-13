@@ -366,7 +366,10 @@
         ON B.order_id = C.order_id
         LEFT JOIN review D
         ON B.order_id = D.order_id
+        INNER JOIN ticket E
+        ON B.order_id = E.order_id
         WHERE B.user_id = #{signedUserId}
+        AND E.ticket_status = 1
         GROUP BY B.order_id;
     </select>
 
