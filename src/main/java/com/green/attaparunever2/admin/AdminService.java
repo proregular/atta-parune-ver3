@@ -178,7 +178,7 @@ public class AdminService {
             JwtUser jwtUser = new JwtUser();
 
             jwtUser.setSignedUserId(res.getAdminId());
-            jwtUser.setRoles(res.getRoleId());
+            jwtUser.setRoles(res.getCode());
 
             String accessToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getAccessTokenExpiry());
             String refreshToken = jwtTokenProvider.generateToken(jwtUser, jwtConst.getRefreshTokenExpiry());
