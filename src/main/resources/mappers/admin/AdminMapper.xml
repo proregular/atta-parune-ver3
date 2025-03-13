@@ -117,6 +117,7 @@
     <select id="signInAdminByAid">
         SELECT admin_id AS adminId, `code` AS code, aid
              , apw, name, email, phone, division_id AS divisionId
+             , coalition_state AS coalitionState
           FROM admin A
          WHERE aid = #{aid}
     </select>
