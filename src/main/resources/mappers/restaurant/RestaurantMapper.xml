@@ -344,7 +344,7 @@
         , max_capacity AS maxCapacity, created_at AS createdAt
         , lat, lng
         , (
-        SELECT IFNULL(AVG(rating), 0)
+        SELECT IFNULL(ROUND(AVG(rating), 1), 0.0)
         FROM review B INNER JOIN `order` C
         ON b.order_id = C.order_id
         AND c.restaurant_id = #{restaurantId}
