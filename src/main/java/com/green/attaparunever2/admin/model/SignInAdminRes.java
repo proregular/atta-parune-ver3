@@ -19,6 +19,9 @@ public class SignInAdminRes {
     @Schema(description = "아이디")
     private String aid;
 
+    @Schema(description = "제휴 상태")
+    private int coalitionState;
+
     @JsonIgnore
     @Schema(description = "비밀번호")
     private String apw;
