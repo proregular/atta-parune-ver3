@@ -121,7 +121,7 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("v3/upw")
+    @PutMapping("upw")
     @Operation(summary = "비밀번호 변경")
     public ResultResponse<Integer> patchUpw(@Valid @RequestBody UserUpwPatchReq p) {
         int res = userService.patchUpw(p);
