@@ -199,7 +199,7 @@ public class UserController {
 
     @GetMapping("v3/review")
     @Operation(summary = "사용자 리뷰 조회", description = "사용자가 본인이 작성한 리뷰를 조회")
-    public ResultResponse<List<GetReviewRes>> getReview(@Valid @ModelAttribute GetReviewReq p) {
+    public ResultResponse<List<GetReviewRes>> getReview(@Valid @ParameterObject GetReviewReq p) {
         try {
             List<GetReviewRes> list = reviewService.getReview(p);
 
