@@ -248,7 +248,7 @@
         FROM meal_time B
         WHERE B.restaurant_id = A.restaurant_id
         AND ABS(TIMESTAMPDIFF(MINUTE, B.start_meal_date, B.end_meal_date)) <![CDATA[ < ]]> 60) AS avgRestaurant
-        , IFNULL(AVG(R.rating), 0) AS avgRating
+        , IFNULL(ROUND(AVG(R.rating), 1), 0.0) AS avgRating
         FROM restaurant A
         LEFT JOIN `order` O
         ON A.restaurant_id = O.restaurant_id
@@ -327,10 +327,10 @@
                 ORDER BY distance ASC
             </if>
             <if test=" orderFilter == 2">
-                ORDER BY avgRestaurant ASC
+                ORDER BY avgRating DESC
             </if>
             <if test=" orderFilter == 3">
-                ORDER BY avgRating DESC
+                ORDER BY avgRestaurant ASC
             </if>
         </if>
     </select>
