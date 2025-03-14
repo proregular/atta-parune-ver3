@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +17,7 @@ public class Review extends UpdatedAt{
     @Id
     private Long orderId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @MapsId
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;

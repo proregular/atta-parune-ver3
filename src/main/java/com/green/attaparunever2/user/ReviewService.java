@@ -176,6 +176,7 @@ public class ReviewService {
             List<String> reviewPics = reviewMapper.getReviewPicList(orderId); // 리뷰 사진 리스트
 
             GetReviewRes reviewRes = new GetReviewRes();
+            reviewRes.setOrderId(reviewDto.getOrderId());
             reviewRes.setRestaurantName(reviewDto.getRestaurantName());
             reviewRes.setPicName(picName);
             reviewRes.setMenuName(menuNames);
