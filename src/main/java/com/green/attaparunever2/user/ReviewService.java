@@ -182,6 +182,9 @@ public class ReviewService {
             reviewRes.setRating(reviewDto.getRating());
             reviewRes.setReviewText(reviewDto.getReviewText());
             reviewRes.setCreatedAt(reviewDto.getCreatedAt());
+            reviewRes.setRestaurantId(reviewDto.getRestaurantId());
+            reviewRes.setCommentText(reviewDto.getCommentText());
+            reviewRes.setCommentCreatedAt(reviewDto.getCommentCreatedAt());
             reviewRes.setReviewPic(reviewPics);
 
             reviewResList.add(reviewRes);
