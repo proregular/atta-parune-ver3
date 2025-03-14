@@ -30,7 +30,7 @@ public class SignInAdminRes {
     private String email;
 
     @Schema(description = "전화번호")
-    private int phone;
+    private String phone;
 
     @Schema(description = "식당, 회사 PK")
     private long divisionId;
