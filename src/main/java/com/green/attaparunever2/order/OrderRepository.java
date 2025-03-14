@@ -17,6 +17,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByRestaurantIdAndUserId(Restaurant restaurant, User user);
 
+    List<Order> findByUserId(User user);
+
     @Query(value = "SELECT order_detail_id FROM order_detail WHERE menu_id = :menuId LIMIT 1", nativeQuery = true)
     Long findOrderDetailIdByMenuId(@Param("menuId") Long menuId);
 
