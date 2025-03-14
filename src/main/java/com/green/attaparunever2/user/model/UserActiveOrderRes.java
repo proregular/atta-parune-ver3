@@ -52,4 +52,7 @@ public class UserActiveOrderRes {
 
         @Schema(description = "메뉴 총 가격")
         private int totalMenuCost;
+
+        @Schema(description = "예약 인원 수")
+        private int reservationPeopleCount;
 }
