@@ -13,7 +13,7 @@ public class ReviewPic extends UpdatedAt{
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment
     private Long reviewPicId;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
