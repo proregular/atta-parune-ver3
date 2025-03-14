@@ -114,13 +114,25 @@ public class ReservationService {
             throw new CustomException("해당 식당이 비활성화 상태입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 해당 유저의 진행중인 결제가 있는지 조회
-        List<Order> existingOrder = orderRepository.findByRestaurantIdAndUserId(restaurant, user);
+        // 해당 유저의 진행 중인 결제 확인
+        List<Order> existingOrder = orderRepository.findByUserId(user);
         if (!existingOrder.isEmpty()) {
             for (Order order : existingOrder) {
-                Optional<Ticket> ticket = ticketRepository.findByOrderOrderId(order.getOrderId());
-                if (ticket.isPresent() && ticket.get().getTicketStatus() != 1) {
-                    throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+                // 예약 상태가 0 또는 1인 경우에 대해서만 처리
+                if (order.getReservationStatus() == 0 || order.getReservationStatus() == 1) {
+                    // 해당 주문에 연결된 티켓을 조회
+                    Optional<Ticket> ticketOpt = ticketRepository.findByOrderOrderId(order.getOrderId());
+
+                    // 티켓이 없으면 예외 발생
+                    if (ticketOpt.isEmpty()) {
+                        throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+                    }
+
+                    // 티켓이 있는 경우, 티켓 상태가 완료(1)가 아니면 예외 발생
+                    Ticket ticket = ticketOpt.get();
+                    if (ticket.getTicketStatus() != 1) {
+                        throw new CustomException("이미 진행중인 결제를 완료하기 전에는 새로운 주문을 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+                    }
                 }
             }
         }
