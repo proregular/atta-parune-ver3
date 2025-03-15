@@ -15,7 +15,7 @@ public class Review extends UpdatedAt{
     @Id
     private Long orderId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @MapsId
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;
@@ -30,4 +30,5 @@ public class Review extends UpdatedAt{
 
     @Column(nullable = false, columnDefinition = "int default 0")
     private int reviewStatus;
+
 }
