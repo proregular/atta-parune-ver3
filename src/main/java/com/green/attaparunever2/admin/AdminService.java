@@ -281,7 +281,8 @@ public class AdminService {
             admin.setApw(hashedPassword);
             adminRepository.save(admin);
             adminRepository.flush();
-            if (admin.getAdminId() != null) {
+
+            if (!(admin.getApw().equals(hashedPassword))) {
                 throw new CustomException("비밀번호 변경에 실패하였습니다.", HttpStatus.BAD_REQUEST);
             } else {
                 // 변경된 비밀번호 이메일 전송

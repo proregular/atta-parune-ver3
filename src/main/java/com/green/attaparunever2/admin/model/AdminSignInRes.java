@@ -1,7 +1,6 @@
 package com.green.attaparunever2.admin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.green.attaparunever2.entity.Code;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

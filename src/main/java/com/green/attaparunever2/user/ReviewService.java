@@ -176,12 +176,16 @@ public class ReviewService {
             List<String> reviewPics = reviewMapper.getReviewPicList(orderId); // 리뷰 사진 리스트
 
             GetReviewRes reviewRes = new GetReviewRes();
+            reviewRes.setOrderId(reviewDto.getOrderId());
             reviewRes.setRestaurantName(reviewDto.getRestaurantName());
             reviewRes.setPicName(picName);
             reviewRes.setMenuName(menuNames);
             reviewRes.setRating(reviewDto.getRating());
             reviewRes.setReviewText(reviewDto.getReviewText());
             reviewRes.setCreatedAt(reviewDto.getCreatedAt());
+            reviewRes.setRestaurantId(reviewDto.getRestaurantId());
+            reviewRes.setCommentText(reviewDto.getCommentText());
+            reviewRes.setCommentCreatedAt(reviewDto.getCommentCreatedAt());
             reviewRes.setReviewPic(reviewPics);
 
             reviewResList.add(reviewRes);

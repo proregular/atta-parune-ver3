@@ -41,8 +41,7 @@
     </insert>
 
     <select id="selAdminByAid">
-        SELECT admin_id AS adminId, code, division_id as divisionId
-        , aid, apw, name, email, phone
+        SELECT admin_id AS adminId, code, aid, apw, name, email, phone
         , (
         SELECT restaurant_id
         FROM restaurant
