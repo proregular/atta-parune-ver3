@@ -265,14 +265,18 @@
 
     <!-- 결재 사용자 추가화면 사용자 리스트 조회 -->
     <select id="selCompanyUserByUserId">
-        SELECT B.`name`, B.uid, B.user_id AS userId
-        FROM user A INNER JOIN user B
-        ON A.company_id = B.company_id
-        WHERE A.user_id = #{userId}
+        SELECT A.`name`, A.uid, A.user_id AS userId
+        FROM user A
+        WHERE A.company_id = (
+            SELECT B.company_id
+            FROM user B
+            WHERE B.user_id = #{userId}
+        )
+        AND A.user_id <![CDATA[<>]]> #{userId}
         <if test="searchText != null and searchText != ''">
-            AND B.name LIKE '%${searchText}%'
+            AND A.name LIKE '%${searchText}%'
         </if>
-        ORDER BY B.`name` ASC
+        ORDER BY A.`name` ASC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 
