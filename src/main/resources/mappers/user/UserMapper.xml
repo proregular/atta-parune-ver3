@@ -103,9 +103,9 @@
         AND A.order_id = D.order_id
         LEFT JOIN ticket F
         ON A.order_id = F.order_id
-        AND F.ticket_status = 0
         WHERE A.user_id = #{userId}
         AND A.reservation_status IN(0, 1)
+        AND F.ticket_status = 0
         ORDER BY A.order_id DESC
         LIMIT 1
     </select>
