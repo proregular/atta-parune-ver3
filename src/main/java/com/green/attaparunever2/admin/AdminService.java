@@ -513,11 +513,6 @@ public class AdminService {
                     throw new CustomException("관리자는 문의사항 또는 불편사항을 등록할 수 없습니다.", HttpStatus.FORBIDDEN);
                 }
                 break;
-            case "00204": // 자주 묻는 질문
-                if (!"00103".equals(req.getRoleCode())) {
-                    throw new CustomException("자주 묻는 질문은 관리자만 작성할 수 있습니다.", HttpStatus.FORBIDDEN);
-                }
-                break;
         }
 
         String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
@@ -622,7 +617,7 @@ public class AdminService {
             List<SelSystemPostRes> noticePosts = adminMapper.selSystemBoard();
             resultPosts.addAll(noticePosts);
 
-            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), 7);
+            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), 5);
             resultPosts.addAll(additionalPosts);
         } else {
             resultPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), adjustedPaging.getSize());
@@ -637,6 +632,8 @@ public class AdminService {
 
         return res;
     }
+
+    // 자주 묻는 질문 게시글 조회
 
     // 게시글 삭제
     @Transactional

@@ -205,7 +205,7 @@
         FROM system_post A
         WHERE A.post_code = '00201'
         ORDER BY A.created_at DESC
-        LIMIT 3
+        LIMIT 5
     </select>
 
     <!-- 전체 게시글 조회 -->
@@ -213,11 +213,12 @@
         SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
+        WHERE A.post_code != '00201'
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 
-    <!-- 전체 게시글 count: 공지사항 제외(공지사항은 무조건3개) -->
+    <!-- 전체 게시글 count: 공지사항 제외(공지사항은 무조건 5개) -->
     <select id="selPostCount">
         SELECT COUNT(*)
         FROM system_post
