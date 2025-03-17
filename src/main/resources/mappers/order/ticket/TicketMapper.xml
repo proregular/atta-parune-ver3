@@ -54,7 +54,7 @@
         D.restaurant_name AS restaurantName,
         D.restaurant_id AS restaurantId,
         SUM(OD.menu_count) AS menuCount,
-        SUM(H.`point`) AS totalAmount,
+        SUM(DISTINCT H.`point`) AS totalAmount,
         E.reservation_people_count AS personCount,
         OD.created_at AS reservationTime,
         GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuNames
