@@ -63,7 +63,6 @@
         INNER JOIN `order` g ON f.user_id = g.user_id
         WHERE g.user_id = #{orderUserId} AND g.order_id = #{orderId}) AS orderUserName
         FROM user_payment_member a
-        INNER JOIN order_detail b ON a.order_id = b.order_id
         INNER JOIN `order` c ON a.order_id = c.order_id
         INNER JOIN restaurant d ON c.restaurant_id = d.restaurant_id
         INNER JOIN user e ON e.user_id = a.user_id
