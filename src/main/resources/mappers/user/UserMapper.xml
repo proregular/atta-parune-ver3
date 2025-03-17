@@ -87,12 +87,15 @@
     <select id="selUserActiveOrderCheck">
         SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, B.restaurant_name AS restaurantName, C.category_name AS categoryName
         , A.created_at AS orderDate, E.user_id AS reservationUserId
-        , E.`name` AS reservationUserName, D.user_phone AS reservationUserPhone
+        , E.`name` AS reservationUserName, E.phone AS reservationUserPhone
         , D.reservation_time AS reservationTime, D.reservation_people_count AS reservationPeopleCount
         , ticket_id AS ticketId
         , A.reservation_yn AS reservationYn
         , A.reservation_status AS reservationStatus
-        FROM `order` A INNER JOIN restaurant B
+        , A2.user_id AS orderUserId, A2.`name` AS orderUserName, A2.phone AS orderUserPhone
+        FROM `order` A INNER JOIN user A2
+        ON A.user_id = A2.user_id
+        INNER JOIN restaurant B
         ON A.restaurant_id = B.restaurant_id
         INNER JOIN restaurant_category C
         ON B.category_id = C.category_id
