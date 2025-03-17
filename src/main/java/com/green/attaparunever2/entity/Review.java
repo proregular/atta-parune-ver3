@@ -15,7 +15,7 @@ public class Review extends UpdatedAt{
     @Id
     private Long orderId;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne
     @MapsId
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;
