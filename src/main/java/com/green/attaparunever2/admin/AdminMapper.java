@@ -34,4 +34,7 @@ public interface AdminMapper {
     List<SelSystemPostRes> selSystemBoard();
     List<SelSystemPostRes> selSystemPost(int startIdx, Integer size);
     int selPostCount();
+
+    List<SelQuestionPostRes> selQuestionBoard(SelQuestionPostReq p);
+    int selQuestionCount();
 }

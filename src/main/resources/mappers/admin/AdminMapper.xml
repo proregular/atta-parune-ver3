@@ -213,16 +213,33 @@
         SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
-        WHERE A.post_code != '00201'
+        WHERE A.post_code != '00201' AND A.post_code != '00204'
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 
-    <!-- 전체 게시글 count: 공지사항 제외(공지사항은 무조건 5개) -->
+    <!-- 자주 묻는 질문 조회 -->
+    <select id="selQuestionBoard">
+        SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
+        , A.role_code AS roleCode, A.created_at AS createdAt
+        FROM system_post A
+        WHERE A.post_code = '00204'
+        ORDER BY A.created_at DESC
+        LIMIT #{size} OFFSET #{startIdx}
+    </select>
+
+    <!-- 전체 게시글 count: 공지사항, 자주 묻는 질문 제외(공지사항은 무조건 5개) -->
     <select id="selPostCount">
         SELECT COUNT(*)
         FROM system_post
-        WHERE post_code != '00201'
+        WHERE post_code != '00201' AND post_code != '00204'
+    </select>
+
+    <!-- 자주 묻는 질문 count -->
+    <select id="selQuestionCount">
+        SELECT COUNT(*)
+        FROM system_post
+        WHERE post_code = '00204'
     </select>
 
     <select id="selCompanyPointHistoryByAdminId">

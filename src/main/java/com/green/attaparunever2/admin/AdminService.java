@@ -2,6 +2,7 @@ package com.green.attaparunever2.admin;
 
 import com.green.attaparunever2.admin.model.AdminSignUpReq;
 import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
+import com.green.attaparunever2.admin.system.model.SystemQuestionGetRes;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
@@ -634,6 +635,19 @@ public class AdminService {
     }
 
     // 자주 묻는 질문 게시글 조회
+    public SystemQuestionGetRes getQuestionPost (SelQuestionPostReq p) {
+        SystemQuestionGetRes res = new SystemQuestionGetRes();
+
+        List<SelQuestionPostRes> posts = adminMapper.selQuestionBoard(p);
+
+        int totalListCount = adminMapper.selQuestionCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / (double) p.getSize());
+
+        res.setTotalPageCount(totalPageCount);
+        res.setPostList(posts);
+
+        return res;
+    }
 
     // 게시글 삭제
     @Transactional

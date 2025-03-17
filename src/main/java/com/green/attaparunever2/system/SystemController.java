@@ -1,11 +1,9 @@
 package com.green.attaparunever2.system;
 
 import com.green.attaparunever2.admin.AdminService;
-import com.green.attaparunever2.admin.model.InsSystemInquiryReq;
-import com.green.attaparunever2.admin.model.SelOneSystemPostRes;
-import com.green.attaparunever2.admin.model.SelSystemPostRes;
-import com.green.attaparunever2.admin.model.SystemPostDetailGetReq;
+import com.green.attaparunever2.admin.model.*;
 import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
+import com.green.attaparunever2.admin.system.model.SystemQuestionGetRes;
 import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.common.model.ResultResponse;
 import com.green.attaparunever2.system.model.UpdSystemPostReq;
@@ -78,6 +76,18 @@ public class SystemController {
         return ResultResponse.<SystemPostGetRes>builder()
                 .statusCode("200")
                 .resultMsg("게시글 조회가 완료되었습니다.")
+                .resultData(res)
+                .build();
+    }
+
+    @GetMapping("v3/post-question")
+    @Operation(summary = "자주 묻는 질문 조회하기")
+    public ResultResponse<SystemQuestionGetRes> getQuestionPost (@ParameterObject @ModelAttribute SelQuestionPostReq p) {
+        SystemQuestionGetRes res = adminService.getQuestionPost(p);
+
+        return ResultResponse.<SystemQuestionGetRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("자주 묻는 질문 조회가 완료되었습니다.")
                 .resultData(res)
                 .build();
     }
