@@ -140,6 +140,10 @@ public class ReviewService {
         Review review = reviewRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰 정보가 존재하지 않습니다."));
 
+        if (review.getReviewStatus() != 1) {
+            throw new IllegalArgumentException("삭제할 수 없는 리뷰입니다.");
+        }
+
         // 해당 리뷰에 연결된 리뷰 사진 삭제
         List<ReviewPic> reviewPics = reviewPicRepository.findByOrder_OrderId(orderId);
         for (ReviewPic pic : reviewPics) {
@@ -176,12 +180,16 @@ public class ReviewService {
             List<String> reviewPics = reviewMapper.getReviewPicList(orderId); // 리뷰 사진 리스트
 
             GetReviewRes reviewRes = new GetReviewRes();
+            reviewRes.setOrderId(reviewDto.getOrderId());
             reviewRes.setRestaurantName(reviewDto.getRestaurantName());
             reviewRes.setPicName(picName);
             reviewRes.setMenuName(menuNames);
             reviewRes.setRating(reviewDto.getRating());
             reviewRes.setReviewText(reviewDto.getReviewText());
             reviewRes.setCreatedAt(reviewDto.getCreatedAt());
+            reviewRes.setRestaurantId(reviewDto.getRestaurantId());
+            reviewRes.setCommentText(reviewDto.getCommentText());
+            reviewRes.setCommentCreatedAt(reviewDto.getCommentCreatedAt());
             reviewRes.setReviewPic(reviewPics);
 
             reviewResList.add(reviewRes);

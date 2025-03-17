@@ -11,7 +11,7 @@ import lombok.Setter;
 public class AdminSignInRes {
     private long adminId;
     private long restaurantId;
-    private String roleId;
+    private String code;
     private String aid;
     private String name;
     private String email;

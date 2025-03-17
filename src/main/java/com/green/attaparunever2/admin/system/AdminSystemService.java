@@ -9,6 +9,7 @@ import com.green.attaparunever2.company.CompanyRepository;
 import com.green.attaparunever2.company.RefundRepository;
 import com.green.attaparunever2.config.security.AuthenticationFacade;
 import com.green.attaparunever2.entity.*;
+import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.user.ReviewMapper;
 import com.green.attaparunever2.user.ReviewRepository;
 import com.green.attaparunever2.user.model.GetReviewReq;
@@ -43,6 +44,7 @@ public class AdminSystemService {
     private final SettlementDayRepository settlementDayRepository;
     private final ReviewMapper reviewMapper;
     private final ReviewRepository reviewRepository;
+    private final MailSendService mailSendService;
 
     @Transactional
     public int patchCoalition(UpdCoalitionReq req) {
@@ -101,13 +103,22 @@ public class AdminSystemService {
         return 1;
     }
 
-    //입점신청서 승인 및 거절
+    //입점 신청서 승인 및 거절
     public int patchEnrollmentState(UpdAdmin req) {
         Admin admin = adminRepository.findById(req.getAdminId())
                 .orElseThrow(() -> new CustomException("해당 관라자가 없습니다", HttpStatus.BAD_REQUEST));
 
         admin.setCoalitionState(req.getCoalitionState());
         adminRepository.save(admin);
+
+        // 입점 or 제휴 신청이 승인되었다면 해당 Admin의 이메일에 회원가입 링크를 전송한다.
+        if(req.getCoalitionState() == 0) {
+            // 관리자 정보를 가져온다.
+            Admin sendingAdmin = adminRepository.findById(req.getAdminId()).orElseThrow(() -> new CustomException("관리자가 존재하지 않습니다.", HttpStatus.BAD_REQUEST));
+
+            // 관리자의 이메일로 링크 전송
+            mailSendService.sendAdminSignUpMail(sendingAdmin.getEmail(), sendingAdmin.getAdminId(), sendingAdmin.getCode().getCode());
+        }
 
         return 1;
     }

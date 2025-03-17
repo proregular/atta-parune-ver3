@@ -10,39 +10,46 @@
         , A.rating
         , A.review_text AS reviewText
         , A.created_at AS createdAt
+        , C.restaurant_id AS restaurantId
+        , D.comment_text AS commentText
+        , D.created_at AS commentCreatedAt
         FROM review A
         JOIN `order` B ON A.order_id = B.order_id
         JOIN restaurant C ON B.restaurant_id = C.restaurant_id
-        WHERE B.user_id = #{userId}
-        <if test="startDate != null and endDate != null">
-            AND
-            (
-            DATE_FORMAT(A.created_at, '%Y-%m-%d')
-            <![CDATA[ >= ]]>
-            #{startDate}
-            AND DATE_FORMAT(A.created_at, '%Y-%m-%d')
-            <![CDATA[ <= ]]>
-            #{endDate}
-            )
-        </if>
+        LEFT JOIN review_comment D ON A.order_id = D.order_id
+        <where>
+            B.user_id = #{userId}
 
-        <if test="startDate != null and endDate == null">
-            AND
-            (
-            DATE_FORMAT(A.created_at, '%Y-%m-%d')
-            <![CDATA[ >= ]]>
-            #{startDate}
-            )
-        </if>
+            <if test="startDate != null and endDate != null">
+                AND
+                (
+                DATE_FORMAT(A.created_at, '%Y-%m-%d')
+                <![CDATA[ >= ]]>
+                #{startDate}
+                AND DATE_FORMAT(A.created_at, '%Y-%m-%d')
+                <![CDATA[ <= ]]>
+                #{endDate}
+                )
+            </if>
 
-        <if test="startDate == null and endDate != null">
-            AND
-            (
-            DATE_FORMAT(A.created_at, '%Y-%m-%d')
-            <![CDATA[ <= ]]>
-            #{endDate}
-            )
-        </if>
+            <if test="startDate != null and endDate == null">
+                AND
+                (
+                DATE_FORMAT(A.created_at, '%Y-%m-%d')
+                <![CDATA[ >= ]]>
+                #{startDate}
+                )
+            </if>
+
+            <if test="startDate == null and endDate != null">
+                AND
+                (
+                DATE_FORMAT(A.created_at, '%Y-%m-%d')
+                <![CDATA[ <= ]]>
+                #{endDate}
+                )
+            </if>
+        </where>
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>

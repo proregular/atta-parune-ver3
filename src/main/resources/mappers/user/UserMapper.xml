@@ -69,8 +69,8 @@
     <select id="selUserByEmailAndName">
         SELECT A.user_id AS userId,  B.name AS companyName
         , A.company_id AS companyId
-        , A.role_id AS roleId
-        , A.uid, A.upw, A.name, A.pic
+        , A.code
+        , A.uid, A.upw, A.name, A.user_pic AS pic
         , A.email, A.phone, A.point
         FROM user A INNER JOIN company B
         ON A.company_id = B.company_id
@@ -87,12 +87,15 @@
     <select id="selUserActiveOrderCheck">
         SELECT A.order_id AS orderId, A.restaurant_id AS restaurantId, B.restaurant_name AS restaurantName, C.category_name AS categoryName
         , A.created_at AS orderDate, E.user_id AS reservationUserId
-        , E.`name` AS reservationUserName, D.user_phone AS reservationUserPhone
-        , D.reservation_time AS reservationTime
+        , E.`name` AS reservationUserName, E.phone AS reservationUserPhone
+        , D.reservation_time AS reservationTime, D.reservation_people_count AS reservationPeopleCount
         , ticket_id AS ticketId
         , A.reservation_yn AS reservationYn
         , A.reservation_status AS reservationStatus
-        FROM `order` A INNER JOIN restaurant B
+        , A2.user_id AS orderUserId, A2.`name` AS orderUserName, A2.phone AS orderUserPhone
+        FROM `order` A INNER JOIN user A2
+        ON A.user_id = A2.user_id
+        INNER JOIN restaurant B
         ON A.restaurant_id = B.restaurant_id
         INNER JOIN restaurant_category C
         ON B.category_id = C.category_id
@@ -103,9 +106,9 @@
         AND A.order_id = D.order_id
         LEFT JOIN ticket F
         ON A.order_id = F.order_id
-        AND F.ticket_status = 0
         WHERE A.user_id = #{userId}
         AND A.reservation_status IN(0, 1)
+        AND (F.ticket_status = 0 OR F.ticket_status IS NULL)
         ORDER BY A.order_id DESC
         LIMIT 1
     </select>
@@ -265,14 +268,18 @@
 
     <!-- 결재 사용자 추가화면 사용자 리스트 조회 -->
     <select id="selCompanyUserByUserId">
-        SELECT B.`name`, B.uid, B.user_id AS userId
-        FROM user A INNER JOIN user B
-        ON A.company_id = B.company_id
-        WHERE A.user_id = #{userId}
+        SELECT A.`name`, A.uid, A.user_id AS userId
+        FROM user A
+        WHERE A.company_id = (
+            SELECT B.company_id
+            FROM user B
+            WHERE B.user_id = #{userId}
+        )
+        AND A.user_id <![CDATA[<>]]> #{userId}
         <if test="searchText != null and searchText != ''">
-            AND B.name LIKE '%${searchText}%'
+            AND A.name LIKE '%${searchText}%'
         </if>
-        ORDER BY B.`name` ASC
+        ORDER BY A.`name` ASC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 

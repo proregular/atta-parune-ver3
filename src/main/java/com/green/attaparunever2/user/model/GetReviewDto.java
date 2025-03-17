@@ -15,4 +15,7 @@ public class GetReviewDto {
     private int rating;
     private String reviewText;
     private String createdAt;
+    private long restaurantId;
+    private String commentText;
+    private String commentCreatedAt;
 }

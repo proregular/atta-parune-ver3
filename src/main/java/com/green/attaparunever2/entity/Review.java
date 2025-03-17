@@ -30,4 +30,5 @@ public class Review extends UpdatedAt{
 
     @Column(nullable = false, columnDefinition = "int default 0")
     private int reviewStatus;
+
 }

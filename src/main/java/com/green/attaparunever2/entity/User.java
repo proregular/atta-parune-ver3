@@ -21,7 +21,7 @@ public class User extends UpdatedAt{
     @JoinColumn(name = "code", nullable = false)
     private Code code;
 
-    @Column(nullable = false, length = 8, unique = true)
+    @Column(nullable = false, length = 12, unique = true)
     private String uid;
 
     @Column(nullable = false, length = 100)

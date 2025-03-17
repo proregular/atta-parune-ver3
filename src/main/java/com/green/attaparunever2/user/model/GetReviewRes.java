@@ -12,6 +12,9 @@ import java.util.List;
 @ToString
 @Schema(title = "리뷰 정보")
 public class GetReviewRes {
+    @Schema(title = "주문 PK")
+    private Long orderId;
+
     @Schema(title = "식당 이름")
     private String restaurantName;
 
@@ -29,6 +32,15 @@ public class GetReviewRes {
 
     @Schema(title = "작성일자")
     private String createdAt;
+
+    @Schema(title = "식당 PK")
+    private long restaurantId;
+
+    @Schema(title = "댓글 내용")
+    private String commentText;
+
+    @Schema(title = "댓글 작성일")
+    private String commentCreatedAt;
 
     @Schema(title = "리뷰 사진")
     private List<String> reviewPic;

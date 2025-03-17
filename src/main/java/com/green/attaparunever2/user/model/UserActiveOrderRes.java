@@ -26,6 +26,15 @@ public class UserActiveOrderRes {
         @Schema(description = "주문 일시")
         private LocalDateTime orderDate;
 
+        @Schema(description = "주문 유저 PK")
+        private Long orderUserId;
+
+        @Schema(description = "주문 유저 이름")
+        private LocalDateTime orderUserName;
+
+        @Schema(description = "주문 유저 핸드폰")
+        private String orderUserPhone;
+
         @Schema(description = "예약자 유저 PK")
         private Long reservationUserId;
 
@@ -52,4 +61,7 @@ public class UserActiveOrderRes {
 
         @Schema(description = "메뉴 총 가격")
         private int totalMenuCost;
+
+        @Schema(description = "예약 인원 수")
+        private int reservationPeopleCount;
 }
