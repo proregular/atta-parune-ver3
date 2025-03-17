@@ -52,6 +52,7 @@
     <select id="getTicket">
         SELECT
         D.restaurant_name AS restaurantName,
+        D.restaurant_id AS restaurantId,
         SUM(OD.menu_count) AS menuCount,
         SUM(H.`point`) AS totalAmount,
         E.reservation_people_count AS personCount,
