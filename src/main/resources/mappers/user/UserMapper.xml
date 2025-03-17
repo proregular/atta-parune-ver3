@@ -108,7 +108,7 @@
         ON A.order_id = F.order_id
         WHERE A.user_id = #{userId}
         AND A.reservation_status IN(0, 1)
-        AND F.ticket_status = 0
+        AND (F.ticket_status = 0 OR F.ticket_status IS NULL)
         ORDER BY A.order_id DESC
         LIMIT 1
     </select>
