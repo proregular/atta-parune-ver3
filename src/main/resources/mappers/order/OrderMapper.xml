@@ -55,7 +55,7 @@
              , B.menu_count AS menuCount
              , B.price
              , C.menu_name AS menuName
-             , B.price * B.menu_count AS menuPrice
+             , B.price AS menuPrice
           FROM order_detail B
           LEFT JOIN restaurant_menu C
             ON B.menu_id = C.menu_id
