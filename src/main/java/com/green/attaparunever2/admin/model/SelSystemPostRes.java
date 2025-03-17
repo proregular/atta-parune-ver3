@@ -9,6 +9,8 @@ import lombok.Setter;
 public class SelSystemPostRes {
     @Schema(description = "게시글 코드")
     private String postCode;
+    @Schema(description = "게시글 PK")
+    private long inquiryId;
     @Schema(description = "게시글 제목")
     private String inquiryTitle;
     @Schema(description = "권한 코드")

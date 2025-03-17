@@ -10,6 +10,8 @@ import lombok.Setter;
 public class SelOneSystemPostRes {
     @Schema(description = "게시글 PK")
     private long inquiryId;
+    @Schema(description = "관리자 or 사용자 PK")
+    private long id;
     @Schema(description = "게시글 제목")
     private String inquiryTitle;
     @Schema(description = "게시글 내용")
