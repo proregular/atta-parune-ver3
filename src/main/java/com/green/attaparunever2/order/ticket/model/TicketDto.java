@@ -11,6 +11,7 @@ import lombok.ToString;
 @ToString
 @Schema(title = "식권 정보")
 public class TicketDto {
+    private long restaurantId;
     private String restaurantName;
     private int menuCount;
     private int totalAmount;
