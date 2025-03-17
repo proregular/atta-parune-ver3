@@ -8,6 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetEmployeeRes {
+    @Schema(description = "사원 PK")
+    private long userId;
+
     @Schema(description = "사원 아이디", example = "10000001")
     private String uid;
 
