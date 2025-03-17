@@ -54,8 +54,8 @@
         INNER JOIN company C
         ON C.company_id = B.division_id
         WHERE company_id = #{companyId}
-        GROUP BY A.admin_id
         AND DATE_FORMAT(A.created_at, '%Y-%m') = #{date}
+        GROUP BY A.admin_id
         ) AS buyPoint
         FROM company
         WHERE company_id = #{companyId}
