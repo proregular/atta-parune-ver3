@@ -30,4 +30,6 @@ public class SelRecentAmountRes {
     private Long companyId;
     @Schema(description = "사용일자")
     private String createdAt;
+    @Schema(description = "사용자 이름")
+    private String name;
 }
