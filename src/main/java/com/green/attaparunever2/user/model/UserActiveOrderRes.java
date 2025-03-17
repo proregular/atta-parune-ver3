@@ -33,7 +33,7 @@ public class UserActiveOrderRes {
         private LocalDateTime orderUserName;
 
         @Schema(description = "주문 유저 핸드폰")
-        private LocalDateTime orderUserPhone;
+        private String orderUserPhone;
 
         @Schema(description = "예약자 유저 PK")
         private Long reservationUserId;
