@@ -140,6 +140,10 @@ public class ReviewService {
         Review review = reviewRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰 정보가 존재하지 않습니다."));
 
+        if (review.getReviewStatus() != 1) {
+            throw new IllegalArgumentException("삭제할 수 없는 리뷰입니다.");
+        }
+
         // 해당 리뷰에 연결된 리뷰 사진 삭제
         List<ReviewPic> reviewPics = reviewPicRepository.findByOrder_OrderId(orderId);
         for (ReviewPic pic : reviewPics) {

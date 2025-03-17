@@ -26,6 +26,15 @@ public class UserActiveOrderRes {
         @Schema(description = "주문 일시")
         private LocalDateTime orderDate;
 
+        @Schema(description = "주문 유저 PK")
+        private Long orderUserId;
+
+        @Schema(description = "주문 유저 이름")
+        private LocalDateTime orderUserName;
+
+        @Schema(description = "주문 유저 핸드폰")
+        private LocalDateTime orderUserPhone;
+
         @Schema(description = "예약자 유저 PK")
         private Long reservationUserId;
 
