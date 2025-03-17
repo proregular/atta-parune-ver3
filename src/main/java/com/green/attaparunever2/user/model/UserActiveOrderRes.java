@@ -30,7 +30,7 @@ public class UserActiveOrderRes {
         private Long orderUserId;
 
         @Schema(description = "주문 유저 이름")
-        private LocalDateTime orderUserName;
+        private String orderUserName;
 
         @Schema(description = "주문 유저 핸드폰")
         private String orderUserPhone;
