@@ -20,6 +20,7 @@ import com.green.attaparunever2.restaurant.RestaurantCategoryRepository;
 import com.green.attaparunever2.restaurant.RestaurantRepository;
 import com.green.attaparunever2.user.MailSendService;
 import com.green.attaparunever2.admin.model.AdminMailVerificationDTO;
+import com.green.attaparunever2.user.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,6 +55,7 @@ public class AdminService {
     private final RestaurantCategoryRepository restaurantCategoryRepository;
     private final MyFileUtils myFileUtils;
     private final SystemPostRepository systemPostRepository;
+    private final UserRepository userRepository;
 
     // 관리자 회원가입
     @Transactional
@@ -480,6 +482,7 @@ public class AdminService {
 
         // 작성자 권한 조회
         Long signedUserId = authenticationFacade.getSignedUserId();
+
         if (!signedUserId.equals(req.getId())) {
             throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
         }
@@ -489,6 +492,12 @@ public class AdminService {
 
         if (!validPostCodes.contains(req.getPostCode())) {
             throw new CustomException("유효하지 않은 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isUserExist = userRepository.existsByCode_Code(req.getRoleCode());
+
+        if (!isUserExist) {
+            throw new CustomException("해당 권한 코드에 해당하는 사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
         }
 
         // 추가) 게시글 유형
@@ -538,6 +547,7 @@ public class AdminService {
 
         return 1;
     }
+
 
     //게시글 자세히 보기
     public SelOneSystemPostRes getOneSystemPost(SystemPostDetailGetReq req) {
