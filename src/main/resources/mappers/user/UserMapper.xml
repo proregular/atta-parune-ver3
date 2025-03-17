@@ -231,6 +231,23 @@
         AND (
         SELECT D.order_id FROM ticket D WHERE D.order_id = B.order_id LIMIT 1
         ) IS NULL
+        AND (SELECT COUNT(*) FROM user_payment_member E WHERE E.order_id = B.order_id) = 0
+    </select>
+
+    <select id="selUserUserPaymentMemberAlertByUserId">
+        SELECT A.reservation_id AS reservationId, A.reservation_time AS reservationTime
+        , A.reservation_people_count AS reservationPeopleCount, B.reservation_status AS reservationStatus
+        , B.restaurant_id AS restaurantId, C.restaurant_name AS restaurantName, B.order_id AS orderId, '식권 생성 요청 메세지' AS message
+        FROM `order` B LEFT JOIN reservation A
+        ON B.order_id = A.order_id
+        INNER JOIN restaurant C
+        ON B.restaurant_id = C.restaurant_id
+        WHERE B.user_id = #{userId}
+        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 0))
+        AND (
+        SELECT D.order_id FROM ticket D WHERE D.order_id = B.order_id LIMIT 1
+        ) IS NULL
+        AND (SELECT COUNT(*) FROM user_payment_member E WHERE E.order_id = B.order_id) <![CDATA[>]]> 0
     </select>
 
     <!-- 예약은 허용 됐는데 사용자가 생성되지 않은 경우 -->

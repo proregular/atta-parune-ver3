@@ -377,8 +377,10 @@ public class UserService {
     // 사용자 메인 페이지 알림
     public List<UserAlertDto> getUserAlertV3(long userId) {
         List<UserAlertDto> reservationList = userMapper.selUserReservationAlertByUserId(userId);
+        List<UserAlertDto> userPaymentList = userMapper.selUserUserPaymentMemberAlertByUserId(userId);
         List<UserAlertDto> paymentList = userMapper.selUserPaymentAlertByUserId(userId);
 
+        reservationList.addAll(userPaymentList);
         reservationList.addAll(paymentList);
 
         return reservationList;
