@@ -222,7 +222,8 @@
 
     <!-- 자주 묻는 질문 조회 -->
     <select id="selQuestionBoard">
-        SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
+        SELECT A.post_code AS postCode, A.inquiry_id AS inquiryId
+        , A.inquiry_title AS inquiryTitle
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
         WHERE A.post_code = '00204'
