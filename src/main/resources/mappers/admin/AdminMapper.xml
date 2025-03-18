@@ -226,6 +226,9 @@
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
         WHERE A.post_code = '00204'
+        <if test=" searchFilter != null and searchFilter != '' ">
+            AND A.inquiry_title LIKE '%${searchFilter}%'
+        </if>
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
