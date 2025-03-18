@@ -329,9 +329,6 @@ public class CompanyService {
         }
 
         // 유저 상태 변경
-        if (user.getActivation() == 1) {
-            throw new CustomException("이미 비활성화 된 사용자입니다.", HttpStatus.BAD_REQUEST);
-        }
         user.setActivation(req.getActivation());
 
         Company company = user.getCompany();
