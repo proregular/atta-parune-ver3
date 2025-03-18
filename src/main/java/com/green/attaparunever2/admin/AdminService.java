@@ -555,14 +555,27 @@ public class AdminService {
         Admin admin = adminRepository.findById(req.getId())
                 .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
 
-        // 게시글 조회 권한 확인
-        if (!systemPost.getId().equals(req.getId()) || !admin.getCode().getCode().equals("00103")) {
-            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        if ("00201".equals(systemPost.getPost().getCode()) || "00204".equals(systemPost.getPost().getCode())) {
+            return adminMapper.selOneSystemPost(req);
         }
 
-        SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
+        if ("00103".equals(admin.getCode().getCode())) {
+            return adminMapper.selOneSystemPost(req);
+        }
 
-        return res;
+        if (("00202".equals(systemPost.getPost().getCode()) || "00203".equals(systemPost.getPost().getCode())) &&
+                ("00101".equals(admin.getCode().getCode()) ||
+                        "00102".equals(admin.getCode().getCode()) ||
+                        "00104".equals(admin.getCode().getCode()))) {
+
+            if (!systemPost.getId().equals(req.getId())) {
+                throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+            SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
+
+            return res;
+        }
+        throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
     }
 
     //공지사항 등록
