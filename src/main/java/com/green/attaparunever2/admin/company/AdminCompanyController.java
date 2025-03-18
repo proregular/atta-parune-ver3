@@ -217,4 +217,15 @@ public class AdminCompanyController {
                 .build();
     }
 
+    @GetMapping("v3/info")
+    @Operation(summary = "회사 및 관리자 정보 조회")
+    public ResultResponse<SelCompanyAndAdminInfoRes> getCompanyAndAdminInfo(SelCompanyAndAdminInfoReq req){
+        SelCompanyAndAdminInfoRes res = adminCompanyService.getCompanyAndAdminInfo(req);
+
+        return ResultResponse.<SelCompanyAndAdminInfoRes>builder()
+                .statusCode(HttpStatus.OK.toString())
+                .resultMsg("회사 및 관리자 정보 조회 완료")
+                .resultData(res)
+                .build();
+    }
 }
