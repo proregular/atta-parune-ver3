@@ -191,7 +191,7 @@
     </select>
     
     <select id="selOneSystemPost">
-        SELECT A.inquiry_id AS inquiryId, A.inquiry_title AS inquiryTitle
+        SELECT A.inquiry_id AS inquiryId, A.id, A.inquiry_title AS inquiryTitle
              , A.inquiry_detail AS inquiryDetail, A.pic
              , A.post_code AS postCode, A.role_code AS roleCode
           FROM system_post A
@@ -200,28 +200,51 @@
 
     <!-- 공지사항 -->
     <select id="selSystemBoard">
-        SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
+        SELECT A.post_code AS postCode, A.inquiry_id AS inquiryId
+        , A.inquiry_title AS inquiryTitle
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
         WHERE A.post_code = '00201'
         ORDER BY A.created_at DESC
-        LIMIT 3
+        LIMIT 5
     </select>
 
     <!-- 전체 게시글 조회 -->
     <select id="selSystemPost">
-        SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
+        SELECT A.post_code AS postCode, A.inquiry_id AS inquiryId
+        , A.inquiry_title AS inquiryTitle
         , A.role_code AS roleCode, A.created_at AS createdAt
         FROM system_post A
+        WHERE A.post_code != '00201' AND A.post_code != '00204'
         ORDER BY A.created_at DESC
         LIMIT #{size} OFFSET #{startIdx}
     </select>
 
-    <!-- 전체 게시글 count: 공지사항 제외(공지사항은 무조건3개) -->
+    <!-- 자주 묻는 질문 조회 -->
+    <select id="selQuestionBoard">
+        SELECT A.post_code AS postCode, A.inquiry_title AS inquiryTitle
+        , A.role_code AS roleCode, A.created_at AS createdAt
+        FROM system_post A
+        WHERE A.post_code = '00204'
+        <if test=" searchFilter != null and searchFilter != '' ">
+            AND A.inquiry_title LIKE '%${searchFilter}%'
+        </if>
+        ORDER BY A.created_at DESC
+        LIMIT #{size} OFFSET #{startIdx}
+    </select>
+
+    <!-- 전체 게시글 count: 공지사항, 자주 묻는 질문 제외(공지사항은 무조건 5개) -->
     <select id="selPostCount">
         SELECT COUNT(*)
         FROM system_post
-        WHERE post_code != '00201'
+        WHERE post_code != '00201' AND post_code != '00204'
+    </select>
+
+    <!-- 자주 묻는 질문 count -->
+    <select id="selQuestionCount">
+        SELECT COUNT(*)
+        FROM system_post
+        WHERE post_code = '00204'
     </select>
 
     <select id="selCompanyPointHistoryByAdminId">

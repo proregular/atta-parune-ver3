@@ -335,6 +335,13 @@ public class UserPaymentMemberService {
         UserPaymentMember userPaymentMember = userPaymentMemberRepository.findById(ids)
                 .orElseThrow(() -> new CustomException("해당 결제 승인 요청이 없습니다.", HttpStatus.NOT_FOUND));
 
+        // 이미 식권이 존재하는 경우 수정 불가하게
+        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+
+        if(ticketDto != null) {
+            throw new CustomException("이미 식권이 생성되어 취소할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
         userPaymentMember.setApprovalStatus(p.getApprovalStatus());
         userPaymentMember.setSelectDate(LocalDateTime.now());
         userPaymentMemberRepository.save(userPaymentMember);
