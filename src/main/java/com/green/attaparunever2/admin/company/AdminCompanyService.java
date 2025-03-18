@@ -104,7 +104,7 @@ public class AdminCompanyService {
 
             companyPointDeposit.setAdminId(admin);
             companyPointDeposit.setCashAmount(amount);
-            companyPointDeposit.setPointAmount((int)(amount * POINT_PERCENTAGE));
+            companyPointDeposit.setPointAmount(companyPointDeposit.getCashAmount() + ((int)(amount * POINT_PERCENTAGE)));
             companyPointDeposit.setPaymentKey(paymentKey);
 
             companyPointDepositRepository.save(companyPointDeposit);
