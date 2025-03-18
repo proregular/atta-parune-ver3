@@ -77,4 +77,18 @@
         WHERE adminId = #{adminId}
         ORDER BY E.createdAt DESC
     </select>
+    
+    <select id="selCompanyAndAdminInfo">
+        SELECT A.admin_id AS adminId
+        , A.division_id AS companyId
+        , A.aid, A.email, A.phone
+        , A.coalition_state AS coalitionState
+        , C.`name` AS companyName
+        , C.address AS companyAddress
+        , C.ceo_name AS companyCeoName
+        FROM `admin` A
+        INNER JOIN company C
+        ON A.division_id = C.company_id
+        WHERE A.admin_id = #{adminId}
+    </select>
 </mapper>
