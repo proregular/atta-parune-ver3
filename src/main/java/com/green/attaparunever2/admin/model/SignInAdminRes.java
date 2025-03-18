@@ -26,6 +26,9 @@ public class SignInAdminRes {
     @Schema(description = "비밀번호")
     private String apw;
 
+    @Schema(description = "이름")
+    private String name;
+
     @Schema(description = "이메일")
     private String email;
 

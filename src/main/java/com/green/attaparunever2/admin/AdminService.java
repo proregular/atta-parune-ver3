@@ -618,7 +618,8 @@ public class AdminService {
             List<SelSystemPostRes> noticePosts = adminMapper.selSystemBoard();
             resultPosts.addAll(noticePosts);
 
-            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), 5);
+            int remainingSize = 10 - noticePosts.size();
+            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), remainingSize);
             resultPosts.addAll(additionalPosts);
         } else {
             resultPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), adjustedPaging.getSize());
