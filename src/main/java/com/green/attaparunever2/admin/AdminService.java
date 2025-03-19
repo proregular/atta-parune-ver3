@@ -564,15 +564,14 @@ public class AdminService {
             return adminMapper.selOneSystemPost(req);
         }
 
-        // 게시글의 postCode와 비교
         String postCode = systemPost.getPost().getCode();
 
-        // 공지사항(00201) & 자주 묻는 질문(00204)은 모든 사용자 조회 가능
+        // 공지사항, 자주 묻는 질문은 모든 사용자 조회 가능
         if ("00201".equals(postCode) || "00204".equals(postCode)) {
             return adminMapper.selOneSystemPost(req);
         }
 
-        // postCode가 00202 또는 00203이면 본인이 작성한 글만 조회 가능 + roleCode도 일치해야 함
+        // postCode가 00202 또는 00203이면 본인이 작성한 글만 조회 가능 + roleCode 일치 여부 확인
         if ("00202".equals(postCode) || "00203".equals(postCode)) {
             if (!systemPost.getId().equals(signedUserId) || !req.getRoleCode().equals(systemPost.getRole().getCode())) {
                 throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.FORBIDDEN);
