@@ -11,6 +11,7 @@
         INNER JOIN company C
         ON B.division_id = C.company_id
         WHERE C.company_id = #{companyId}
+        ORDER BY A.created_at DESC
         LIMIT #{startIdx}, #{size}
     </select>
 
@@ -35,6 +36,7 @@
         INNER JOIN `user` D
         ON A.user_id = D.user_id
         WHERE C.company_id = #{companyId}
+        ORDER BY A.crated_at DESC
         LIMIT #{startIdx}, #{size}
     </select>
 
