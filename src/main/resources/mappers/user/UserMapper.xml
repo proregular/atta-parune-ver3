@@ -396,7 +396,8 @@
         ON B.order_id = E.order_id
         WHERE B.user_id = #{signedUserId}
         AND E.ticket_status = 1
-        GROUP BY B.order_id;
+        GROUP BY B.order_id
+        ORDER BY B.created_at DESC
     </select>
 
     <select id="selUserOrderMenuPastCheck">
