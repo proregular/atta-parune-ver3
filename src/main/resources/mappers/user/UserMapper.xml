@@ -329,6 +329,7 @@
         ON A.order_id = C.order_id
         AND C.ticket_status = 1
         WHERE A.user_id = #{userId}
+        ORDER BY orderDate DESC
     </select>
 
     <!-- 진행 중인 주문 내역 -->
