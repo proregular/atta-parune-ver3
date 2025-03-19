@@ -33,6 +33,9 @@ public class SelUserOrderPastCheckRes {
     @Schema(description = "리뷰 상태 0 : 없음 1 : 존재")
     private int reviewStatus;
 
+    @Schema(description = "24시간 초과 여부 0 : 안지남 1 : 지남")
+    private int is24hourLeft;
+
     private List<SelUserOrderPastCheckDto> pastDtoList;
 
 }
