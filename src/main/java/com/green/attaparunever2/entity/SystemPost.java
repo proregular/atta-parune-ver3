@@ -22,7 +22,7 @@ public class SystemPost extends UpdatedAt {
     @JoinColumn(name = "role_code", nullable = false)
     private Code role;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 50, nullable = false)
     private String inquiryTitle;
 
     @Column(length = 500, nullable = false)

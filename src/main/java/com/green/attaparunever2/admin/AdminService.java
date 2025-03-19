@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -547,22 +548,42 @@ public class AdminService {
 
     //게시글 자세히 보기
     public SelOneSystemPostRes getOneSystemPost(SystemPostDetailGetReq req) {
+        Long signedUserId = authenticationFacade.getSignedUserId();
+        String codeName = authenticationFacade.getSignedUserCodeName();
+
         // 게시글 정보 조회
         SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
                 .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
+        System.out.println("게시글의 역할 코드 이름: " + systemPost.getRole().getName());
+
+
+        if (!codeName.equals(systemPost.getRole().getName())) {
+            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 시스템 관리자 확인
         Admin admin = adminRepository.findById(req.getId())
                 .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
 
-        // 게시글 조회 권한 확인
-        if (!systemPost.getId().equals(req.getId()) || !admin.getCode().getCode().equals("00103")) {
-            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        if ("00201".equals(systemPost.getPost().getCode()) || "00204".equals(systemPost.getPost().getCode())) {
+            return adminMapper.selOneSystemPost(req);
         }
 
-        SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
+        if ("00103".equals(admin.getCode().getCode())) {
+            return adminMapper.selOneSystemPost(req);
+        }
 
-        return res;
+
+        if ("00202".equals(systemPost.getPost().getCode()) || "00203".equals(systemPost.getPost().getCode())) {
+            if (!systemPost.getId().equals(signedUserId)) {
+                throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+
+            return adminMapper.selOneSystemPost(req);
+        }
+
+        throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
     }
 
     //공지사항 등록
