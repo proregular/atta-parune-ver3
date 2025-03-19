@@ -192,7 +192,7 @@ public class CompanyService {
         AdminCompanyEmployeeGetRes res = new AdminCompanyEmployeeGetRes();
         List<GetEmployeeRes> list = companyMapper.selEmployee(req);
         int listTotalCount = companyMapper.selEmployeeCount(req);
-        int totalPageCount = (int)Math.ceil(listTotalCount / req.getSize());
+        int totalPageCount = (int)Math.ceil((double)listTotalCount / req.getSize());
 
         // 관리자 권한 조회
         Long signedAdminId = authenticationFacade.getSignedUserId();
