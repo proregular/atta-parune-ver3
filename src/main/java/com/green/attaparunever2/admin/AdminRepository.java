@@ -21,4 +21,6 @@ public interface AdminRepository  extends JpaRepository<Admin, Long> {
 
     @Query("SELECT a.code FROM Admin a WHERE a.adminId = :adminId")
     Code findCodeByAdminId(@Param("adminId") Long adminId);
+
+    boolean existsByCode_Code(String code);
 }
