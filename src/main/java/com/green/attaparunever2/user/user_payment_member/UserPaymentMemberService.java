@@ -300,7 +300,24 @@ public class UserPaymentMemberService {
     }
 
     public int deletePaymentMember(UserPaymentMemberDelReq p) {
-        int result = userPaymentMemberRepository.deleteByOrderIdAndUserId(p.getOrderId(), p.getUserId());
+        Long signedUserId = authenticationFacade.getSignedUserId();
+
+        Order order = orderRepository.findByOrderId(p.getOrderId())
+                .orElseThrow(() -> new CustomException("해당 주문이 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 해당 주문의 주문자 사용자가 맞는지
+        if(order.getUserId().getUserId() != signedUserId) {
+            throw new CustomException("해당 주문의 주문자가 아니면 인원삭제가 불가 합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 이미 식권이 존재하는 경우 삭제 불가하게
+        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+
+        if(ticketDto != null) {
+            throw new CustomException("이미 식권이 생성되어 결재인원을 삭제 할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        int result = userPaymentMemberRepository.deleteByOrderIdAndUserId(p.getOrderId());
 
         return result;
     }
@@ -334,6 +351,13 @@ public class UserPaymentMemberService {
 
         UserPaymentMember userPaymentMember = userPaymentMemberRepository.findById(ids)
                 .orElseThrow(() -> new CustomException("해당 결제 승인 요청이 없습니다.", HttpStatus.NOT_FOUND));
+
+        // 이미 식권이 존재하는 경우 수정 불가하게
+        TicketSelDto ticketDto =  ticketMapper.selTicketByOrderId(p.getOrderId());
+
+        if(ticketDto != null) {
+            throw new CustomException("이미 식권이 생성되어 취소할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         userPaymentMember.setApprovalStatus(p.getApprovalStatus());
         userPaymentMember.setSelectDate(LocalDateTime.now());

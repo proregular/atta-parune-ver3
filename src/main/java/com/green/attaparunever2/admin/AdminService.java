@@ -2,6 +2,7 @@ package com.green.attaparunever2.admin;
 
 import com.green.attaparunever2.admin.model.AdminSignUpReq;
 import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
+import com.green.attaparunever2.admin.system.model.SystemQuestionGetRes;
 import com.green.attaparunever2.common.DateTimeUtils;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.PasswordGenerator;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -513,11 +515,6 @@ public class AdminService {
                     throw new CustomException("관리자는 문의사항 또는 불편사항을 등록할 수 없습니다.", HttpStatus.FORBIDDEN);
                 }
                 break;
-            case "00204": // 자주 묻는 질문
-                if (!"00103".equals(req.getRoleCode())) {
-                    throw new CustomException("자주 묻는 질문은 관리자만 작성할 수 있습니다.", HttpStatus.FORBIDDEN);
-                }
-                break;
         }
 
         String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
@@ -551,22 +548,39 @@ public class AdminService {
 
     //게시글 자세히 보기
     public SelOneSystemPostRes getOneSystemPost(SystemPostDetailGetReq req) {
+
+        Long signedUserId = authenticationFacade.getSignedUserId();
+
+        if (!signedUserId.equals(req.getId())) {
+            throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
+
         // 게시글 정보 조회
         SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
                 .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+
 
         // 시스템 관리자 확인
         Admin admin = adminRepository.findById(req.getId())
                 .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
 
-        // 게시글 조회 권한 확인
-        if (!systemPost.getId().equals(req.getId()) || !admin.getCode().getCode().equals("00103")) {
-            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        if ("00201".equals(systemPost.getPost().getCode()) || "00204".equals(systemPost.getPost().getCode())) {
+            return adminMapper.selOneSystemPost(req);
         }
 
-        SelOneSystemPostRes res = adminMapper.selOneSystemPost(req);
+        if ("00103".equals(admin.getCode().getCode())) {
+            return adminMapper.selOneSystemPost(req);
+        }
 
-        return res;
+
+        if ("00202".equals(systemPost.getPost().getCode()) || "00203".equals(systemPost.getPost().getCode())) {
+            if (!systemPost.getId().equals(signedUserId)) {
+                throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        return adminMapper.selOneSystemPost(req);
     }
 
     //공지사항 등록
@@ -622,7 +636,8 @@ public class AdminService {
             List<SelSystemPostRes> noticePosts = adminMapper.selSystemBoard();
             resultPosts.addAll(noticePosts);
 
-            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), 7);
+            int remainingSize = 10 - noticePosts.size();
+            List<SelSystemPostRes> additionalPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), remainingSize);
             resultPosts.addAll(additionalPosts);
         } else {
             resultPosts = adminMapper.selSystemPost(adjustedPaging.getStartIdx(), adjustedPaging.getSize());
@@ -634,6 +649,21 @@ public class AdminService {
 
         res.setTotalPageCount(totalPageCount);
         res.setPostList(resultPosts);
+
+        return res;
+    }
+
+    // 자주 묻는 질문 게시글 조회
+    public SystemQuestionGetRes getQuestionPost (SelQuestionPostReq p) {
+        SystemQuestionGetRes res = new SystemQuestionGetRes();
+
+        List<SelQuestionPostRes> posts = adminMapper.selQuestionBoard(p);
+
+        int totalListCount = adminMapper.selQuestionCount();
+        int totalPageCount = (int)Math.ceil(totalListCount / (double) p.getSize());
+
+        res.setTotalPageCount(totalPageCount);
+        res.setPostList(posts);
 
         return res;
     }

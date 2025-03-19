@@ -13,6 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserPaymentMemberRepository extends JpaRepository<UserPaymentMember, UserPaymentMemberIds> {
     @Modifying
     @Transactional
-    @Query("DELETE FROM UserPaymentMember upm WHERE upm.userPaymentMemberIds.orderId = :orderId AND upm.userPaymentMemberIds.userId = :userId")
-    int deleteByOrderIdAndUserId(@Param("orderId") Long orderId, @Param("userId") Long userId);
+    @Query("DELETE FROM UserPaymentMember upm WHERE upm.userPaymentMemberIds.orderId = :orderId")
+    int deleteByOrderIdAndUserId(@Param("orderId") Long orderId);
 }

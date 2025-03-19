@@ -173,5 +173,4 @@
         WHERE order_id = #{orderId}
         AND user_id = #{userId}
     </select>
-
 </mapper>

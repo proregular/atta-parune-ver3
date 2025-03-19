@@ -155,7 +155,8 @@ public class UserController {
                 .build();
     }*/
 
-    @PutMapping("/find-password")
+
+    @PutMapping("v3/find-password")
     @Operation(summary = "비밀번호 찾기")
     public ResultResponse<Integer> findPassword(@Valid @RequestBody UserFindPasswordReq p) {
         int result = userService.findPassword(p);
@@ -186,7 +187,7 @@ public class UserController {
     @Operation(summary = "리뷰 등록")
     public ResultResponse<Review> postReview(
             @RequestPart("reviewRequestDto") @Valid ReviewRequestDto reviewRequestDto,
-            @RequestPart("reviewPics") List<MultipartFile> reviewPics) throws Exception {
+            @RequestPart(required = false) List<MultipartFile> reviewPics) throws Exception {
 
         Review review = reviewService.postReview(reviewRequestDto, reviewPics);
 

@@ -104,7 +104,7 @@ public class AdminCompanyService {
 
             companyPointDeposit.setAdminId(admin);
             companyPointDeposit.setCashAmount(amount);
-            companyPointDeposit.setPointAmount((int)(amount * POINT_PERCENTAGE));
+            companyPointDeposit.setPointAmount(companyPointDeposit.getCashAmount() + ((int)(amount * POINT_PERCENTAGE)));
             companyPointDeposit.setPaymentKey(paymentKey);
 
             companyPointDepositRepository.save(companyPointDeposit);
@@ -229,6 +229,18 @@ public class AdminCompanyService {
 
         res.setHistoryList(resList);
         res.setTotalPageCount(totalPageCount);
+
+        return res;
+    }
+
+    // 관리자 & 회사 정보 조회
+    public SelCompanyAndAdminInfoRes getCompanyAndAdminInfo(SelCompanyAndAdminInfoReq req){
+        Long adminId = authenticationFacade.getSignedUserId();
+        if (!adminId.equals(req.getAdminId())) {
+            throw new CustomException("정보를 조회할 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        SelCompanyAndAdminInfoRes res = adminCompanyMapper.selCompanyAndAdminInfo(req);
 
         return res;
     }
