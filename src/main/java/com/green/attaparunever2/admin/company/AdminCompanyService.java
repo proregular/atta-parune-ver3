@@ -212,7 +212,7 @@ public class AdminCompanyService {
         CompanyPurchaseHistoryGetRes res = new CompanyPurchaseHistoryGetRes();
         List<SelPurchaseHistoryRes> resList = adminCompanyMapper.selPurchaseHistory(req);
         int totalListCount = adminCompanyMapper.selPurchaseHistoryTotalCount(req);
-        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+        int totalPageCount = (int)Math.ceil((double)totalListCount / req.getSize());
 
         res.setTotalPageCount(totalPageCount);
         res.setHistoryList(resList);
@@ -225,7 +225,7 @@ public class AdminCompanyService {
         CompanyDepositHistoryGetRes res = new CompanyDepositHistoryGetRes();
         List<SelDepositDetailRes> resList = adminCompanyMapper.selDepositDetail(req);
         int totalListCount = adminCompanyMapper.selDepositTotalCount(req);
-        int totalPageCount = (int)Math.ceil(totalListCount / req.getSize());
+        int totalPageCount = (int)Math.ceil((double)totalListCount / req.getSize());
 
         res.setHistoryList(resList);
         res.setTotalPageCount(totalPageCount);
