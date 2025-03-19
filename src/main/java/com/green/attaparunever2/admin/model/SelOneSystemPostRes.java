@@ -22,4 +22,6 @@ public class SelOneSystemPostRes {
     private String postCode;
     @Schema(description = "권한 코드")
     private String roleCode;
+    @Schema(description = "생성일")
+    private String createdAt;
 }
