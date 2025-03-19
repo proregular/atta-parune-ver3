@@ -1,5 +1,6 @@
 package com.green.attaparunever2.user;
 
+import com.green.attaparunever2.admin.restaurant.ReviewCommentRepository;
 import com.green.attaparunever2.common.MyFileUtils;
 import com.green.attaparunever2.common.excprion.CustomException;
 import com.green.attaparunever2.common.model.Paging;
@@ -35,6 +36,7 @@ public class ReviewService {
     private final AuthenticationFacade authenticationFacade;
     private final MyFileUtils myFileUtils;
     private final ReviewMapper reviewMapper;
+    private final ReviewCommentRepository reviewCommentRepository;
 
     @Transactional
     public Review postReview(ReviewRequestDto reviewRequestDto, List<MultipartFile> reviewPics) throws IOException {
@@ -140,10 +142,6 @@ public class ReviewService {
         Review review = reviewRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰 정보가 존재하지 않습니다."));
 
-        if (review.getReviewStatus() != 1) {
-            throw new IllegalArgumentException("삭제할 수 없는 리뷰입니다.");
-        }
-
         // 해당 리뷰에 연결된 리뷰 사진 삭제
         List<ReviewPic> reviewPics = reviewPicRepository.findByOrder_OrderId(orderId);
         for (ReviewPic pic : reviewPics) {
@@ -153,6 +151,9 @@ public class ReviewService {
             // DB에서 삭제
             reviewPicRepository.delete(pic);
         }
+
+        // 리뷰 댓글 삭제
+        reviewCommentRepository.deleteById(review.getOrderId());
 
         // 리뷰 삭제
         reviewRepository.delete(review);
