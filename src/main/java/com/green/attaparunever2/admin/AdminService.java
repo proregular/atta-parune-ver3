@@ -548,19 +548,18 @@ public class AdminService {
 
     //게시글 자세히 보기
     public SelOneSystemPostRes getOneSystemPost(SystemPostDetailGetReq req) {
+
         Long signedUserId = authenticationFacade.getSignedUserId();
-        String codeName = authenticationFacade.getSignedUserCodeName();
+
+        if (!signedUserId.equals(req.getId())) {
+            throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
+        }
+
 
         // 게시글 정보 조회
         SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
                 .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-        System.out.println("게시글의 역할 코드 이름: " + systemPost.getRole().getName());
-
-
-        if (!codeName.equals(systemPost.getRole().getName())) {
-            throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
-        }
 
         // 시스템 관리자 확인
         Admin admin = adminRepository.findById(req.getId())
@@ -579,11 +578,9 @@ public class AdminService {
             if (!systemPost.getId().equals(signedUserId)) {
                 throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
             }
-
-            return adminMapper.selOneSystemPost(req);
         }
 
-        throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        return adminMapper.selOneSystemPost(req);
     }
 
     //공지사항 등록

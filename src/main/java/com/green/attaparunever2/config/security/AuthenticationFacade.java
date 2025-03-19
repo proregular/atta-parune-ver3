@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticationFacade {
-    @Autowired
-    private CodeRepository codeRepository;
 
     public JwtUser getSignedUser() {
         MyUserDetails myUserDetails = (MyUserDetails) SecurityContextHolder.getContext()
@@ -24,14 +22,4 @@ public class AuthenticationFacade {
         return getSignedUser().getSignedUserId();
     }
 
-    public String getSignedUserCodeName() {
-        JwtUser signedUser = getSignedUser();
-        if (signedUser != null) {
-            Code code = codeRepository.findByCode(signedUser.getRoles());
-            if (code != null) {
-                return code.getName();
-            }
-        }
-        return null;
-    }
 }
