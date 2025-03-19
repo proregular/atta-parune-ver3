@@ -383,6 +383,7 @@
         , B.created_at AS createdAt, B.reservation_yn AS reservationYn
         , (SUM(C.menu_count * C.price)) AS menuTotalPrice
         , IFNULL((SELECT 1 FROM review B WHERE B.order_id = D.order_id LIMIT 1), 0) AS reviewStatus
+        , (E.use_date <![CDATA[<=]]> NOW() - INTERVAL 24 HOUR) AS is24hourLeft
         FROM restaurant A
         LEFT JOIN `order` B
         ON A.restaurant_id = B.restaurant_id
