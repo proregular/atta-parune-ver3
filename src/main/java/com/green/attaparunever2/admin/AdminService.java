@@ -476,7 +476,7 @@ public class AdminService {
 
     //게시글 등록하기
     @Transactional
-    public int postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
+    public SystemPost postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
         Code postCode = new Code();
         postCode.setCode(req.getPostCode());
         Code roleCode = new Code();
@@ -529,15 +529,19 @@ public class AdminService {
         if (pic != null) {
             String middlePath = String.format("systemPost/%d", systemId);
             myFileUtils.makeFolders(middlePath);
+
+            String savedFileName = myFileUtils.makeRandomFileName(pic);
             String filePath = String.format("%s/%s", middlePath, savedPicName);
+
             try {
                 myFileUtils.transferTo(pic, filePath);
             } catch (IOException e) {
                 throw new RuntimeException("파일 저장 실패", e);
             }
-        }
 
-        return 1;
+           systemPost.setPic(savedFileName);
+        }
+        return systemPost;
     }
 
 
