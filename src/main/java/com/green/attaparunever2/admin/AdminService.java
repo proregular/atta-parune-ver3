@@ -496,11 +496,6 @@ public class AdminService {
             throw new CustomException("유효하지 않은 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        boolean isUserExist = userRepository.existsByCode_Code(req.getRoleCode());
-
-        if (!isUserExist) {
-            throw new CustomException("해당 권한 코드에 해당하는 사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
 
         // 추가) 게시글 유형
         switch (req.getPostCode()) {
