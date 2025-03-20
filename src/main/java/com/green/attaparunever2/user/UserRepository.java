@@ -1,5 +1,6 @@
 package com.green.attaparunever2.user;
 
+import com.green.attaparunever2.entity.Code;
 import com.green.attaparunever2.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Long findUserIdByUidAndEmail(@Param("uid") String uid, @Param("email") String email);
 
     boolean existsByCode_Code(String code);
+
+    @Query("SELECT u.code FROM User u WHERE u.userId = :userId")
+    Optional<Code> findRoleCodeById(Long userId);
 }

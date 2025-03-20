@@ -13,4 +13,7 @@ public class SystemPostDetailGetReq {
 
     @Schema(description = "관리자 or 사용자 PK", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private long id;
+
+    @Schema(description = "권한 코드", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String roleCode;
 }
