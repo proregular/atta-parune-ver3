@@ -227,7 +227,7 @@
         INNER JOIN restaurant C
         ON B.restaurant_id = C.restaurant_id
         WHERE B.user_id = #{userId}
-        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 0))
+        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 1))
         AND (
         SELECT D.order_id FROM ticket D WHERE D.order_id = B.order_id LIMIT 1
         ) IS NULL
@@ -329,6 +329,7 @@
         ON A.order_id = C.order_id
         AND C.ticket_status = 1
         WHERE A.user_id = #{userId}
+        ORDER BY orderDate DESC
     </select>
 
     <!-- 진행 중인 주문 내역 -->
@@ -383,6 +384,7 @@
         , B.created_at AS createdAt, B.reservation_yn AS reservationYn
         , (SUM(C.menu_count * C.price)) AS menuTotalPrice
         , IFNULL((SELECT 1 FROM review B WHERE B.order_id = D.order_id LIMIT 1), 0) AS reviewStatus
+        , (E.use_date <![CDATA[<=]]> NOW() - INTERVAL 24 HOUR) AS is24hourLeft
         FROM restaurant A
         LEFT JOIN `order` B
         ON A.restaurant_id = B.restaurant_id
@@ -394,7 +396,8 @@
         ON B.order_id = E.order_id
         WHERE B.user_id = #{signedUserId}
         AND E.ticket_status = 1
-        GROUP BY B.order_id;
+        GROUP BY B.order_id
+        ORDER BY B.created_at DESC
     </select>
 
     <select id="selUserOrderMenuPastCheck">

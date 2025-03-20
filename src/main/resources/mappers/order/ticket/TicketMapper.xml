@@ -54,7 +54,7 @@
         D.restaurant_name AS restaurantName,
         D.restaurant_id AS restaurantId,
         SUM(OD.menu_count) AS menuCount,
-        SUM(DISTINCT H.`point`) AS totalAmount,
+        SUM(OD.price * OD.menu_count) AS totalAmount,
         E.reservation_people_count AS personCount,
         OD.created_at AS reservationTime,
         GROUP_CONCAT(DISTINCT F.menu_name SEPARATOR ', ') AS menuNames
@@ -70,10 +70,7 @@
         ON OD.menu_id = F.menu_id
         INNER JOIN ticket G
         ON C.order_id = G.order_id
-        INNER JOIN user_payment_member H
-        ON C.order_id = H.order_id
         WHERE G.ticket_id = #{ticketId}
-        GROUP BY C.order_id;
     </select>
 
     <delete id="delTicket">

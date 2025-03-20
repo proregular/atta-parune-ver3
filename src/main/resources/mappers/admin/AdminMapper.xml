@@ -194,6 +194,7 @@
         SELECT A.inquiry_id AS inquiryId, A.id, A.inquiry_title AS inquiryTitle
              , A.inquiry_detail AS inquiryDetail, A.pic
              , A.post_code AS postCode, A.role_code AS roleCode
+             , A.created_at AS createdAt
           FROM system_post A
          WHERE A.inquiry_id = #{inquiryId}
     </select>
