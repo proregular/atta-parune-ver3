@@ -476,7 +476,7 @@ public class AdminService {
 
     //게시글 등록하기
     @Transactional
-    public SystemPost postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
+    public SystemPost postSystemPost(MultipartFile file, InsSystemInquiryReq req) {
         Code postCode = new Code();
         postCode.setCode(req.getPostCode());
         Code roleCode = new Code();
@@ -520,23 +520,24 @@ public class AdminService {
         systemPost.setId(req.getId());
 
         systemPost = systemPostRepository.save(systemPost);
-        Long systemId = systemPost.getInquiryId();
 
-        if (pic != null) {
+        if (file != null && !file.isEmpty()) {
+
+            // 파일 저장 경로 설정
+            String folderPath = "systemPost/" + systemPost.getInquiryId();
+            myFileUtils.makeFolders(folderPath);
+
+            String savedFileName = myFileUtils.makeRandomFileName(file);
+            String filePath = folderPath + "/" + savedFileName;
+
             try {
-                String savedPicName = myFileUtils.makeRandomFileName(pic);
-
-                String middlePath = String.format("systemPost/%d", systemId);
-                myFileUtils.makeFolders(middlePath);
-
-                String filePath = String.format("%s, %s", middlePath, savedPicName);
-                myFileUtils.transferTo(pic, filePath);
-
-                systemPost.setPic(savedPicName);
-                systemPostRepository.save(systemPost);
+                myFileUtils.transferTo(file, filePath);
             } catch (IOException e) {
+                log.error("파일 저장 실패: {}", e.getMessage());
                 throw new RuntimeException("파일 저장 실패", e);
             }
+            systemPost.setPic(savedFileName);
+            systemPostRepository.save(systemPost);
         }
         return systemPost;
     }
