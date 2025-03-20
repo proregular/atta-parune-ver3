@@ -227,7 +227,7 @@
         INNER JOIN restaurant C
         ON B.restaurant_id = C.restaurant_id
         WHERE B.user_id = #{userId}
-        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 0))
+        AND((B.reservation_yn = 1 AND B.reservation_status = 1) OR (B.reservation_yn = 0 AND B.reservation_status = 1))
         AND (
         SELECT D.order_id FROM ticket D WHERE D.order_id = B.order_id LIMIT 1
         ) IS NULL
