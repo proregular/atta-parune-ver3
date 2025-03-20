@@ -476,7 +476,7 @@ public class AdminService {
 
     //게시글 등록하기
     @Transactional
-    public SystemPost postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
+    public SystemPost postSystemPost(MultipartFile file, InsSystemInquiryReq req) {
         Code postCode = new Code();
         postCode.setCode(req.getPostCode());
         Code roleCode = new Code();
@@ -512,34 +512,32 @@ public class AdminService {
                 break;
         }
 
-        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
-
         SystemPost systemPost = new SystemPost();
         systemPost.setPost(postCode);
         systemPost.setRole(roleCode);
         systemPost.setInquiryTitle(req.getInquiryTitle());
         systemPost.setInquiryDetail(req.getInquiryDetail());
-        systemPost.setPic(savedPicName);
         systemPost.setId(req.getId());
-        systemPostRepository.save(systemPost);
-        systemPostRepository.flush();
 
-        Long systemId = systemPost.getInquiryId();
+        systemPost = systemPostRepository.save(systemPost);
 
-        if (pic != null) {
-            String middlePath = String.format("systemPost/%d", systemId);
-            myFileUtils.makeFolders(middlePath);
+        if (file != null && !file.isEmpty()) {
 
-            String savedFileName = myFileUtils.makeRandomFileName(pic);
-            String filePath = String.format("%s/%s", middlePath, savedPicName);
+            // 파일 저장 경로 설정
+            String folderPath = "systemPost/" + systemPost.getInquiryId();
+            myFileUtils.makeFolders(folderPath);
+
+            String savedFileName = myFileUtils.makeRandomFileName(file);
+            String filePath = folderPath + "/" + savedFileName;
 
             try {
-                myFileUtils.transferTo(pic, filePath);
+                myFileUtils.transferTo(file, filePath);
             } catch (IOException e) {
+                log.error("파일 저장 실패: {}", e.getMessage());
                 throw new RuntimeException("파일 저장 실패", e);
             }
-
-           systemPost.setPic(savedFileName);
+            systemPost.setPic(savedFileName);
+            systemPostRepository.save(systemPost);
         }
         return systemPost;
     }
