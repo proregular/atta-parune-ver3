@@ -36,7 +36,7 @@
         INNER JOIN `user` D
         ON A.user_id = D.user_id
         WHERE C.company_id = #{companyId}
-        ORDER BY A.crated_at DESC
+        ORDER BY A.created_at DESC
         LIMIT #{startIdx}, #{size}
     </select>
 
