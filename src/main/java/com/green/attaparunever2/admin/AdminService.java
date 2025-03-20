@@ -521,16 +521,15 @@ public class AdminService {
         systemPost.setInquiryDetail(req.getInquiryDetail());
         systemPost.setPic(savedPicName);
         systemPost.setId(req.getId());
-        systemPostRepository.save(systemPost);
-        systemPostRepository.flush();
 
-        Long systemId = systemPost.getInquiryId();
+
 
         if (pic != null) {
+            Long systemId = systemPost.getInquiryId();
+
             String middlePath = String.format("systemPost/%d", systemId);
             myFileUtils.makeFolders(middlePath);
 
-            String savedFileName = myFileUtils.makeRandomFileName(pic);
             String filePath = String.format("%s/%s", middlePath, savedPicName);
 
             try {
@@ -538,9 +537,9 @@ public class AdminService {
             } catch (IOException e) {
                 throw new RuntimeException("파일 저장 실패", e);
             }
-
-           systemPost.setPic(savedFileName);
         }
+        systemPostRepository.save(systemPost);
+
         return systemPost;
     }
 
