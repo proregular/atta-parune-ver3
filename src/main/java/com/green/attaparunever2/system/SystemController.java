@@ -6,6 +6,7 @@ import com.green.attaparunever2.admin.system.model.SystemPostGetRes;
 import com.green.attaparunever2.admin.system.model.SystemQuestionGetRes;
 import com.green.attaparunever2.common.model.Paging;
 import com.green.attaparunever2.common.model.ResultResponse;
+import com.green.attaparunever2.entity.SystemPost;
 import com.green.attaparunever2.system.model.UpdSystemPostReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,14 +28,14 @@ public class SystemController {
 
     @PostMapping("v3/post")
     @Operation(summary = "게시글 등록하기")
-    public ResultResponse<Integer> postSystemPost(@RequestPart(required = false) MultipartFile pic
+    public ResultResponse<SystemPost> postSystemPost(@RequestPart(required = false) MultipartFile pic
             , @RequestPart InsSystemInquiryReq req){
-        int result = adminService.postSystemPost(pic, req);
+        SystemPost res = adminService.postSystemPost(pic, req);
 
-        return ResultResponse.<Integer>builder()
+        return ResultResponse.<SystemPost>builder()
                 .statusCode(HttpStatus.OK.toString())
                 .resultMsg("게시글 등록완료")
-                .resultData(result)
+                .resultData(res)
                 .build();
     }
 

@@ -476,7 +476,7 @@ public class AdminService {
 
     //게시글 등록하기
     @Transactional
-    public int postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
+    public SystemPost postSystemPost(MultipartFile pic, InsSystemInquiryReq req) {
         Code postCode = new Code();
         postCode.setCode(req.getPostCode());
         Code roleCode = new Code();
@@ -496,11 +496,6 @@ public class AdminService {
             throw new CustomException("유효하지 않은 게시글 코드입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        boolean isUserExist = userRepository.existsByCode_Code(req.getRoleCode());
-
-        if (!isUserExist) {
-            throw new CustomException("해당 권한 코드에 해당하는 사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
-        }
 
         // 추가) 게시글 유형
         switch (req.getPostCode()) {
@@ -534,15 +529,19 @@ public class AdminService {
         if (pic != null) {
             String middlePath = String.format("systemPost/%d", systemId);
             myFileUtils.makeFolders(middlePath);
+
+            String savedFileName = myFileUtils.makeRandomFileName(pic);
             String filePath = String.format("%s/%s", middlePath, savedPicName);
+
             try {
                 myFileUtils.transferTo(pic, filePath);
             } catch (IOException e) {
                 throw new RuntimeException("파일 저장 실패", e);
             }
-        }
 
-        return 1;
+           systemPost.setPic(savedFileName);
+        }
+        return systemPost;
     }
 
 
@@ -555,31 +554,30 @@ public class AdminService {
             throw new CustomException("로그인한 사용자 정보와 일치하지 않는 정보입니다.", HttpStatus.BAD_REQUEST);
         }
 
-
-        // 게시글 정보 조회
+        // 게시글 조회
         SystemPost systemPost = systemPostRepository.findById(req.getInquiryId())
                 .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
 
-
-        // 시스템 관리자 확인
-        Admin admin = adminRepository.findById(req.getId())
-                .orElseThrow(() -> new CustomException("시스템 관리자가 아닙니다.", HttpStatus.NOT_FOUND));
-
-        if ("00201".equals(systemPost.getPost().getCode()) || "00204".equals(systemPost.getPost().getCode())) {
+        // roleCode가 00103이면 모든 게시글 조회 가능
+        if (req.getRoleCode().equals("00103")) {
             return adminMapper.selOneSystemPost(req);
         }
 
-        if ("00103".equals(admin.getCode().getCode())) {
+        String postCode = systemPost.getPost().getCode();
+
+        // 공지사항, 자주 묻는 질문은 모든 사용자 조회 가능
+        if ("00201".equals(postCode) || "00204".equals(postCode)) {
             return adminMapper.selOneSystemPost(req);
         }
 
-
-        if ("00202".equals(systemPost.getPost().getCode()) || "00203".equals(systemPost.getPost().getCode())) {
-            if (!systemPost.getId().equals(signedUserId)) {
-                throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        // postCode가 00202 또는 00203이면 본인이 작성한 글만 조회 가능 + roleCode 일치 여부 확인
+        if ("00202".equals(postCode) || "00203".equals(postCode)) {
+            if (!systemPost.getId().equals(signedUserId) || !req.getRoleCode().equals(systemPost.getRole().getCode())) {
+                throw new CustomException("게시글 조회 권한이 없습니다.", HttpStatus.FORBIDDEN);
             }
         }
 
+        // 권한이 맞다면, 게시글 조회 응답 반환
         return adminMapper.selOneSystemPost(req);
     }
 
