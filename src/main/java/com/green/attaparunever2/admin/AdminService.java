@@ -512,34 +512,32 @@ public class AdminService {
                 break;
         }
 
-        String savedPicName = pic != null ? myFileUtils.makeRandomFileName(pic) : null;
-
         SystemPost systemPost = new SystemPost();
         systemPost.setPost(postCode);
         systemPost.setRole(roleCode);
         systemPost.setInquiryTitle(req.getInquiryTitle());
         systemPost.setInquiryDetail(req.getInquiryDetail());
-        systemPost.setPic(savedPicName);
         systemPost.setId(req.getId());
 
-
+        systemPost = systemPostRepository.save(systemPost);
+        Long systemId = systemPost.getInquiryId();
 
         if (pic != null) {
-            Long systemId = systemPost.getInquiryId();
-
-            String middlePath = String.format("systemPost/%d", systemId);
-            myFileUtils.makeFolders(middlePath);
-
-            String filePath = String.format("%s/%s", middlePath, savedPicName);
-
             try {
+                String savedPicName = myFileUtils.makeRandomFileName(pic);
+
+                String middlePath = String.format("systemPost/%d", systemId);
+                myFileUtils.makeFolders(middlePath);
+
+                String filePath = String.format("%s, %s", middlePath, savedPicName);
                 myFileUtils.transferTo(pic, filePath);
+
+                systemPost.setPic(savedPicName);
+                systemPostRepository.save(systemPost);
             } catch (IOException e) {
                 throw new RuntimeException("파일 저장 실패", e);
             }
         }
-        systemPostRepository.save(systemPost);
-
         return systemPost;
     }
 
