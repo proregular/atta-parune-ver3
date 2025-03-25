@@ -30,4 +30,4 @@ Gradle
 
 ## 참고자료
 * [3차 팀 프로젝트 대시보드](https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
-* [1차 팀 프로젝트 발표자료](https://www.canva.com/design/DAGiDtrOZbg/hjT4h26Mths_hXKFvrDTcA/edit?ui=eyJIIjp7IkEiOnRydWV9fQ)
+* [3차 팀 프로젝트 발표자료](https://www.canva.com/design/DAGiDtrOZbg/hjT4h26Mths_hXKFvrDTcA/edit?ui=eyJIIjp7IkEiOnRydWV9fQ)
