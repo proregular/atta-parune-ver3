@@ -49,6 +49,23 @@ Gradle
 4. 도메인 및 HTTPS 적용
 5. 스프링시큐리티 및 JWT 적용
 
+## 사이트 접속 URL
+* [https://attaparune.kro.kr:5232](https://attaparune.kro.kr:5232)
+> **서비스 페이지 하단 우측에 각 서비스별 페이지 접속 링크가 있습니다.**
+  
+> **사용자 테스트 ID, PW**<br>
+> > **ID**: 00010009<br>
+> > **PW**: qwer12#$
+
+> **식당관리자 테스트 ID, PW**<br>
+> > **ID**: restaurant5<br>
+> > **PW**: qwer12#$
+
+> **사용자 테스트 ID, PW**<br>
+> > **ID**: companyadmin1<br>
+> > **PW**: qwer12#$
+
+
 ## 참고자료
 * [3차 팀 프로젝트 대시보드](https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
 * [3차 팀 프로젝트 발표자료](https://www.canva.com/design/DAGiDtrOZbg/hjT4h26Mths_hXKFvrDTcA/edit?ui=eyJIIjp7IkEiOnRydWV9fQ)
