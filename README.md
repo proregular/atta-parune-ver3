@@ -42,6 +42,13 @@ Gradle
 ![image](./capture-143942.png)
 > 토스페이먼트를 사용해 포인트 구매를 간편히 진행할 수 있습니다.
 
+## 담당파트
+1. 실시간 알림을 위한 소켓통신 적용(SockJS & STOMP)
+2. 사용자 이메일인증을 위한 SMTP서버 연동(Google SMTP 서버)
+3. 포인트 구매를 위한 토스페이먼트 API 연동    
+4. 도메인 및 HTTPS 적용
+5. 스프링시큐리티 및 JWT 적용
+
 ## 참고자료
 * [3차 팀 프로젝트 대시보드](https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
 * [3차 팀 프로젝트 발표자료](https://www.canva.com/design/DAGiDtrOZbg/hjT4h26Mths_hXKFvrDTcA/edit?ui=eyJIIjp7IkEiOnRydWV9fQ)
