@@ -29,5 +29,5 @@ Gradle
 ## 주요 기능
 
 ## 참고자료
-* [3차 팀 프로젝트 대시보드]((https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
+* [3차 팀 프로젝트 대시보드](https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
 * [1차 팀 프로젝트 발표자료](https://www.canva.com/design/DAGb-BkIDFQ/zFsEsUygb-Yvwanmdpemow/view?utm_content=DAGb-BkIDFQ&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb9932b6d4b) 
