@@ -9,6 +9,11 @@
 - Postman
 - GitHub
 
+## E-R 다이어그램
+![image](./3rdERD.png)
+
+## 주요 기능
+
 ## 사용 기술
 ### 백엔드
 #### 주요 프레임워크 / 라이브러리
@@ -21,12 +26,6 @@
 
 #### Build tool
 Gradle
-
-## E-R 다이어그램
-![image](./3rdERD.png)
-
-
-## 주요 기능
 
 ## 참고자료
 * [3차 팀 프로젝트 대시보드](https://www.notion.so/3-1986d625693f80cfab29d5280d07a881)
