@@ -15,17 +15,15 @@
 - Java 11 openjdk
 - SpringBoot 3.3.6
 - Mybatis
+- jjwt:0.12.6
+- hibernate-60:3.9.1(JPA)
+- SpringSecurity
 
 #### Build tool
 Gradle
 
-### 기타 주요 라이브러리
-- Lombok
-- springopen-api(SWAGGER)
-
-
 ## E-R 다이어그램
-![image](./erd.png)
+![image](./3rdERD.png)
 
 
 ## 주요 기능
